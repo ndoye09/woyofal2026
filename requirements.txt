@@ -1,0 +1,4 @@
+pandas==2.1.4
+numpy==1.26.2
+python-dateutil==2.8.2
+psycopg2-binary==2.9.9
