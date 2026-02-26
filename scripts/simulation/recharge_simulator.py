@@ -91,8 +91,11 @@ class RechargeSimulator:
 
     def calculate_deductions(self, montant_brut: float, debut_mois: bool) -> Tuple[float, float, float]:
         redevance = REDEVANCE_MENSUELLE if debut_mois else 0.0
-        taxe_communale = montant_brut * TAXE_COMMUNALE_TAUX
+        taxe_communale = round(montant_brut * TAXE_COMMUNALE_TAUX, 2)
         montant_net = montant_brut - redevance - taxe_communale
+        # Ne pas autoriser montant net négatif
+        if montant_net < 0:
+            montant_net = 0.0
         return redevance, taxe_communale, montant_net
 
     def calculate_kwh_progressif(self, montant_net: float, cumul_avant: float) -> Tuple[float, Dict[str, float]]:
@@ -143,7 +146,8 @@ class RechargeSimulator:
 
     def calculate_economie(self, kwh_obtenus: float, tranche_finale: int) -> float:
         if tranche_finale == 1:
-            return kwh_obtenus * (ECONOMIE_DPP_T1 if self.type_compteur == 'DPP' else ECONOMIE_PPP_T1)
+            val = kwh_obtenus * (ECONOMIE_DPP_T1 if self.type_compteur == 'DPP' else ECONOMIE_PPP_T1)
+            return max(0.0, val)
         return 0.0
 
     def simulate(self, recharge_input: RechargeInput) -> RechargeResult:
