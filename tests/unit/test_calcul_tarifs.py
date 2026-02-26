@@ -123,8 +123,9 @@ def calculate_kwh_obtenus_simple(montant_net, cumul_avant):
 
 class TestCalculKwhObtenus:
     def test_recharge_totalement_t1(self):
-        kwh = calculate_kwh_obtenus_simple(5000, 100)
-        assert kwh == pytest.approx(5000 / 82, rel=0.01)
+        # montant (en FCFA) <= montant_max pour rester entièrement en tranche 1
+        kwh = calculate_kwh_obtenus_simple(4000, 100)
+        assert kwh == pytest.approx(4000 / 82, rel=0.01)
     def test_recharge_depasse_t1(self):
         kwh = calculate_kwh_obtenus_simple(2000, 140)
         kwh_t1 = 10

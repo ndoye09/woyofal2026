@@ -45,3 +45,19 @@ docs/               → Documentation
 ```
 
 Voir `requirements.txt` pour les dépendances.
+
+**Simulateur de recharge**
+
+- Module: `scripts/simulation/recharge_simulator.py`
+- CLI interactive: `python scripts/simulation/cli_simulator.py`
+- Tests unitaires: `pytest tests/unit/test_simulator.py -v`
+
+Exemple rapide :
+
+```powershell
+# Simulateur CLI
+python scripts/simulation/cli_simulator.py
+
+# Lancer tous les tests
+pytest tests/ -v
+```
