@@ -4,62 +4,237 @@
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
 [![Tests](https://img.shields.io/badge/tests-passing-brightgreen)](https://github.com/VOTRE-USERNAME/woyofal-data-platform)
 [![Coverage](https://img.shields.io/badge/coverage-85%25-green)](https://github.com/VOTRE-USERNAME/woyofal-data-platform)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Guide d'installation rapide et usage
+Plateforme d'analyse de données pour la consommation électrique prépayée (Woyofal) au Sénégal.
 
-## Quick Start (Windows PowerShell)
+**Grille tarifaire officielle Senelec 2026** (Décision n° 2025-140 du 26/12/2025)
 
-1) Créer et activer un venv
+---
 
-```powershell
-python -m venv venv
-.\venv\Scripts\Activate.ps1
+## 📊 Vue d'Ensemble
+
+```
+CSV (330k lignes) → ETL Pipeline → PostgreSQL → Analytics → Dashboards BI
 ```
 
-2) Installer dépendances
+### Données Générées
+- ✅ 23 zones géographiques (14 régions Sénégal)
+- ✅ 10,000 utilisateurs (profils réalistes)
+- ✅ 300,000 lignes consommation quotidienne
+- ✅ ~20,000 transactions recharges
 
-```powershell
-python -m pip install -U pip
+### Fonctionnalités Clés
+- 🔄 Pipeline ETL automatisé (8-12 min)
+- 🗄️ Data Warehouse PostgreSQL (star schema)
+- 🎮 Simulateur recharge interactif
+- 📊 Analyses exploratoires (Jupyter)
+- 🧪 Tests automatisés (85% coverage)
+- 🚀 CI/CD GitHub Actions
+
+---
+
+## 🏗️ Architecture
+
+```
+┌──────────────┐
+│  CSV Files   │  330k lignes générées
+└──────┬───────┘
+	│
+	▼
+┌──────────────┐
+│   ETL        │  Validation + Transformation
+│   Python     │  Grille tarifaire 2026
+└──────┬───────┘
+	│
+	▼
+┌──────────────┐
+│  PostgreSQL  │  Star Schema (4 dims + 2 facts)
+│  Data WH     │  330k lignes chargées
+└──────┬───────┘
+	│
+	▼
+┌──────────────┐
+│  Analytics   │  Jupyter + ML + Simulation
+│  & BI        │  Streamlit Dashboards
+└──────────────┘
+```
+
+📐 **[Architecture détaillée](docs/ARCHITECTURE_ASCII.md)**
+
+---
+
+## 🚀 Quick Start
+
+### 1. Installation
+
+```bash
+# Clone
+git clone https://github.com/VOTRE-USERNAME/woyofal-data-platform.git
+cd woyofal-data-platform
+
+# Setup Python
+python3 -m venv venv
+source venv/bin/activate
 pip install -r requirements.txt
+
+# Setup Docker
+docker-compose up -d
 ```
 
-3) Exécuter génération de données
+### 2. Générer Données
 
-```powershell
+```bash
 python scripts/generate_all_data.py
+# ⏱️ ~15 minutes → 330k lignes CSV
 ```
 
-4) Lancer tests
+### 3. Charger Data Warehouse
 
-```powershell
-pytest tests/ -v
+```bash
+# Créer schéma
+docker exec -i woyofal-postgres psql -U woyofal_user -d woyofal_dwh < sql/01_create_schema.sql
+
+# Ingestion
+python scripts/etl/load_to_warehouse.py
+# ⏱️ ~10 minutes → PostgreSQL prêt
 ```
 
-## Structure
+### 4. Simuler Recharge
 
-```
-data/raw/           → Données sources (CSV)
-scripts/            → Scripts génération & ETL
-tests/              → Tests automatisés (pytest)
-notebooks/          → Analyses exploratoires
-sql/                → Schémas Data Warehouse
-docs/               → Documentation
-```
-
-Voir `requirements.txt` pour les dépendances.
-
-**Simulateur de recharge**
-
-- Module: `scripts/simulation/recharge_simulator.py`
-- CLI interactive: `python scripts/simulation/cli_simulator.py`
-- Tests unitaires: `pytest tests/unit/test_simulator.py -v`
-
-Exemple rapide :
-
-```powershell
-# Simulateur CLI
+```bash
 python scripts/simulation/cli_simulator.py
-
-# Lancer tous les tests
-pytest tests/ -v
 ```
+
+---
+
+## 📚 Documentation
+
+| Document | Description |
+|----------|-------------|
+| [Guide Utilisateur](docs/USER_GUIDE.md) | Installation et usage |
+| [Pipeline Ingestion](docs/PIPELINE_INGESTION.md) | ETL détaillé |
+| [Simulation Recharge](docs/SIMULATION_RECHARGE.md) | Algorithmes et cas d'usage |
+| [Guide Tests](docs/TESTING.md) | Tests et coverage |
+| [Architecture](docs/ARCHITECTURE_ASCII.md) | Schémas complets |
+
+---
+
+## 🧪 Tests
+
+```bash
+# Tous les tests
+pytest tests/ -v
+
+# Avec couverture
+pytest tests/ --cov=scripts --cov-report=html
+
+# Tests spécifiques
+pytest tests/unit/ -v              # Unitaires
+pytest tests/integration/ -v       # Intégration
+```
+
+**Résultats :**
+- ✅ 50+ tests passés
+- ✅ 85% code coverage
+- ✅ CI/CD GitHub Actions
+
+---
+
+## 🎯 Cas d'Usage
+
+### Optimiser Recharge Fin de Mois
+
+```python
+from scripts.simulation.recharge_simulator import RechargeSimulator, RechargeInput
+
+sim = RechargeSimulator('DPP')
+
+# Scénario : 145 kWh cumul, recharge 5000 F le 28 fév
+result = sim.simulate(RechargeInput(5000, 145, 'DPP', False))
+
+# Conseil : Attendre le 1er mars pour rester en T1
+# Économie : 2,900 FCFA/mois
+```
+
+### Calculer Budget Mensuel
+
+```python
+# Objectif : Rester en Tranche 1 (≤150 kWh)
+# Conso moyenne : 5 kWh/jour
+# Budget nécessaire : 150 kWh × 82 F/kWh + 429 F ≈ 13,200 FCFA
+```
+
+---
+
+## 🛠️ Stack Technique
+
+### Data Engineering
+- Python 3.10 (Pandas, NumPy)
+- PostgreSQL 14 (Data Warehouse)
+- Docker Compose
+
+### Analytics & BI
+- Jupyter Notebooks
+- Scikit-learn (ML)
+- Streamlit (Dashboards)
+- Plotly, Folium
+
+### Tests & CI/CD
+- pytest (50+ tests)
+- GitHub Actions
+- Coverage 85%+
+
+---
+
+## 📁 Structure Projet
+
+```
+woyofal-data-platform/
+├── data/
+│   └── raw/                    # CSV sources (330k lignes)
+├── scripts/
+│   ├── data_generation/        # Génération données
+│   ├── etl/                    # Pipeline ingestion
+│   └── simulation/             # Simulateur recharge
+├── sql/                        # Schémas PostgreSQL
+├── tests/                      # Tests (50+)
+│   ├── unit/
+│   └── integration/
+├── notebooks/                  # Analyses Jupyter
+├── docs/                       # Documentation
+├── docker-compose.yml
+└── README.md
+```
+
+---
+
+## 🤝 Contribution
+
+1. Fork le projet
+2. Créer une branche (`git checkout -b feature/AmazingFeature`)
+3. Commit (`git commit -m 'Add AmazingFeature'`)
+4. Push (`git push origin feature/AmazingFeature`)
+5. Ouvrir une Pull Request
+
+---
+
+## 📄 License
+
+MIT License - voir [LICENSE](LICENSE)
+
+---
+
+## 📞 Contact
+
+**Projet :** Woyofal Data Platform  
+**Grille tarifaire :** Senelec 2026 (Décision n° 2025-140)
+
+---
+
+## 🙏 Remerciements
+
+- CRSE (Commission de Régulation du Secteur de l'Électricité)
+- Senelec (Société nationale d'électricité du Sénégal)
+- Données conformes grille officielle 2026
+
