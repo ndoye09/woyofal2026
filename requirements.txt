@@ -2,3 +2,16 @@ pandas==2.1.4
 numpy==1.26.2
 python-dateutil==2.8.2
 psycopg2-binary==2.9.9
+SQLAlchemy>=1.4
+pg8000>=1.29
+
+# Jupyter & visualisation pour EDA
+jupyter>=1.0.0
+matplotlib>=3.7
+seaborn>=0.12
+plotly>=5.15
+ 
+# Tests
+pytest==7.4.3
+pytest-cov==4.1.0
+pytest-mock==3.12.0

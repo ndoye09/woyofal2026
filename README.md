@@ -1,42 +1,47 @@
-**Installation Python 3.11 et venv (Windows, PowerShell)**
+# 🚀 Woyofal Data Platform 2026
 
-Ce guide rapide montre comment installer Python 3.11, créer un environnement virtuel et installer les dépendances pour ce projet.
+[![CI/CD](https://github.com/VOTRE-USERNAME/woyofal-data-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/VOTRE-USERNAME/woyofal-data-platform/actions/workflows/ci.yml)
+[![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/)
 
-1) Télécharger et installer Python 3.11 (manuellement)
+Guide d'installation rapide et usage
 
-- Téléchargez l'installateur officiel depuis https://www.python.org/downloads/
-- Lancez l'installateur, cochez "Add Python to PATH" et installez.
+## Quick Start (Windows PowerShell)
 
-Alternativement, téléchargez puis exécutez (PowerShell) :
+1) Créer et activer un venv
+
 ```powershell
-Start-Process "https://www.python.org/ftp/python/3.11.6/python-3.11.6-amd64.exe"
+python -m venv venv
+.\venv\Scripts\Activate.ps1
 ```
 
-2) Vérifier que Python 3.11 est disponible
+2) Installer dépendances
+
 ```powershell
-py -0p            # liste les interpréteurs Python installés
-py -3.11 -V       # vérifie la version 3.11
+python -m pip install -U pip
+pip install -r requirements.txt
 ```
 
-3) Créer et activer un venv Python 3.11
+3) Exécuter génération de données
+
 ```powershell
-py -3.11 -m venv venv311
-.\venv311\Scripts\Activate.ps1
+python scripts/generate_all_data.py
 ```
 
-4) Mettre à jour pip et installer les dépendances
+4) Lancer tests
+
 ```powershell
-.\venv311\Scripts\python.exe -m pip install -U pip setuptools wheel
-.\venv311\Scripts\python.exe -m pip install -r requirements.txt
+pytest tests/ -v
 ```
 
-5) Exécuter le script de génération
-```powershell
-.\venv311\Scripts\python.exe scripts\data_generation\generate_zones.py
+## Structure
+
+```
+data/raw/           → Données sources (CSV)
+scripts/            → Scripts génération & ETL
+tests/              → Tests automatisés (pytest)
+notebooks/          → Analyses exploratoires
+sql/                → Schémas Data Warehouse
+docs/               → Documentation
 ```
 
-Remarques
-- Le dépôt contient déjà un script `scripts/data_generation/generate_zones.py` qui fonctionne sans `pandas` et écrit `data/raw/zones_senegal.csv`.
-- Si vous préférez `conda`, créez un env conda avec `python=3.11` puis installez les dépendances.
-
-Si vous souhaitez que j'automatise le téléchargement et l'installation de Python 3.11 ici, confirmez et j'essaierai (cela peut demander des droits d'administrateur).
+Voir `requirements.txt` pour les dépendances.

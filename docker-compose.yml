@@ -1,0 +1,53 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: woyofal-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: woyofal_dwh
+      POSTGRES_USER: woyofal_user
+      POSTGRES_PASSWORD: woyofal2026
+      POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./sql:/sql
+      - ./data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U woyofal_user -d woyofal_dwh"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - woyofal-network
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: woyofal-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@woyofal.sn
+      PGADMIN_DEFAULT_PASSWORD: admin2026
+      PGADMIN_CONFIG_SERVER_MODE: 'False'
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: 'False'
+    ports:
+      - "5050:80"
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    depends_on:
+      - postgres
+    networks:
+      - woyofal-network
+
+volumes:
+  postgres_data:
+    driver: local
+  pgadmin_data:
+    driver: local
+
+networks:
+  woyofal-network:
+    driver: bridge
