@@ -24,6 +24,26 @@ Module de simulation conforme à la **grille tarifaire officielle Senelec 2026**
 | T2 | 51-500 kWh | 189,84 FCFA |
 | T3 | >500 kWh | 189,84 FCFA |
 
+<!-- No-op placeholder to keep context (will append EDA summary next) -->
+
+## 🔎 Résumé EDA & Résultats clés
+
+Les analyses exploratoires ont été exécutées via `scripts/run_eda.py` et les artefacts exportés dans `docs/`.
+
+- **Corrélation montant ↔ kWh obtenus :** 0.975 (forte linéarité)
+- **Distribution par tranche :** T1 = 86.5%, T2 = 13.2%, T3 = 0.4%
+- **Économie totale (baisse 10% sur T1) :** 15,238,322 FCFA
+- **Surcoût total estimé (T2+T3 vs tarif T1 hypothétique) :** 55,963,425 FCFA
+
+Artefacts :
+- [eda_consommation_overview.png](docs/eda_consommation_overview.png)
+- [eda_recharge_correlation.png](docs/eda_recharge_correlation.png)
+- [eda_monthly_trend.png](docs/eda_monthly_trend.png)
+- [eda_economies_t1.png](docs/eda_economies_t1.png)
+- [eda_surcouts_tranches.png](docs/eda_surcouts_tranches.png)
+- [eda_stats_recap.csv](docs/eda_stats_recap.csv)
+
+Ces résultats servent d'entrée pour les discussions tarifaires et les dashboards. Le notebook interactif `notebooks/02_EDA_Complete.ipynb` reproduit les analyses pas-à-pas.
 ### Déductions Standards
 
 - **Redevance mensuelle :** 429 FCFA (si recharge 1-5 du mois)
@@ -129,6 +149,7 @@ FUNCTION calculate_kwh_progressif(montant_net, cumul_avant):
         IF reste_montant ≤ montant_max:
             kwh_total += reste_montant / 136.49
             RETURN kwh_total
+            
         ELSE:
             kwh_total += kwh_disponibles
             reste_montant -= montant_max

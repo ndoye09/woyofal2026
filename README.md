@@ -18,6 +18,28 @@ Plateforme d'analyse de données pour la consommation électrique prépayée (Wo
 CSV (330k lignes) → ETL Pipeline → PostgreSQL → Analytics → Dashboards BI
 ```
 
+## 🔎 Résultats EDA (Exploratory Data Analysis)
+
+Analyse exploratoire complète et graphiques générés automatiquement par `scripts/run_eda.py`.
+
+- **Fichiers générés** (dans `docs/`):
+	- `eda_consommation_overview.png` — distribution consommation & répartition tranches
+	- `eda_recharge_correlation.png` — corrélation montant ↔ kWh obtenus
+	- `eda_monthly_trend.png` — évolution mensuelle totale (marqueur post-2026)
+	- `eda_economies_t1.png` — économies mensuelles tranches sociales (T1)
+	- `eda_surcouts_tranches.png` — surcoûts estimés T2/T3 vs T1
+	- `eda_stats_recap.csv` — récapitulatif chiffré
+
+Voir `docs/` pour les images et les CSV produits.
+
+### Aperçus EDA
+
+![Distribution consommation](docs/eda_consommation_overview.png)
+
+![Corrélation recharge vs kWh](docs/eda_recharge_correlation.png)
+
+![Évolution mensuelle consommation](docs/eda_monthly_trend.png)
+
 ### Données Générées
 - ✅ 23 zones géographiques (14 régions Sénégal)
 - ✅ 10,000 utilisateurs (profils réalistes)

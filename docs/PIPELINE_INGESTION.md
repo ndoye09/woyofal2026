@@ -284,7 +284,33 @@ python scripts/etl/load_to_warehouse.py
 psql -U woyofal_user -d woyofal_dwh -c "SELECT COUNT(*) FROM fact_consumption"
 ```
 
-### Chargement incrémental (TODO)
+### Chargement incrémental
+
+Pour les jeux de données volumineux, le pipeline supporte un mode incrémental basé sur un watermark simple :
+
+- Watermark : colonne `loaded_at` ou `id` (dernier `date_id`/`id` chargé).
+- Extraction : ne lire que les lignes > watermark (fichier source ou métadonnées d'objet).
+- Chargement : upsert sur les tables de dimensions et insert append pour les faits, ou partitionnement par mois.
+- Idempotence : toutes les étapes sont idempotentes (transactions, upsert, fichiers marqués comme "ingérés").
+- Orchestration : tâche Airflow dédiée qui lit le watermark depuis la table `meta.ingestion_watermark`.
+
+Exemple de pseudo-procédure :
+
+1. Lire `watermark = SELECT last_loaded_at FROM meta.ingestion_watermark`.
+2. Extraire les nouvelles lignes depuis la source où `updated_at > watermark`.
+3. Valider et transformer.
+4. Charger dans tables temporaires puis `BEGIN;` upsert dimensions; insert facts; UPDATE meta.ingestion_watermark SET last_loaded_at = NOW(); COMMIT;
+
+Notes opérationnelles :
+- Penser à la purge/archivage des partitions anciennes.
+- Sur fortes volumétries, utiliser COPY/parallel loading et batch size paramétrable.
+- Tests d'intégration : scénarios d'insert/duplicate/update pour valider l'idempotence.
+
+## Artefacts EDA
+
+Un ensemble d'artefacts EDA a été généré et stocké dans `docs/` (graphes PNG et CSV) via `scripts/run_eda.py`. Ils fournissent des métriques opérationnelles utiles : distribution consommation, corrélation recharge/montant, évolution temporelle, économies T1 et estimation des surcoûts T2/T3.
+
+Fichiers : `eda_consommation_overview.png`, `eda_recharge_correlation.png`, `eda_monthly_trend.png`, `eda_economies_t1.png`, `eda_surcouts_tranches.png`, `eda_stats_recap.csv`.
 ```python
 # Charger seulement nouvelles données
 last_date = get_last_date_in_db()
