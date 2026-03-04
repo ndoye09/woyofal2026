@@ -32,6 +32,14 @@ Analyse exploratoire complète et graphiques générés automatiquement par `scr
 
 Voir `docs/` pour les images et les CSV produits.
 
+### Aperçus EDA
+
+![Distribution consommation](docs/eda_consommation_overview.png)
+
+![Corrélation recharge vs kWh](docs/eda_recharge_correlation.png)
+
+![Évolution mensuelle consommation](docs/eda_monthly_trend.png)
+
 ### Données Générées
 - ✅ 23 zones géographiques (14 régions Sénégal)
 - ✅ 10,000 utilisateurs (profils réalistes)
