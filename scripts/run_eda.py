@@ -124,3 +124,70 @@ stats_recap = {
 
 pd.DataFrame([stats_recap]).to_csv(os.path.join('..','docs','eda_stats_recap.csv'), index=False)
 print('✅ Statistiques sauvegardées : docs/eda_stats_recap.csv')
+
+# --- Analyses supplémentaires demandées ---
+print('\n🔎 Analyses supplémentaires : correlation recharge/montant, evolution post-2026, économies T1, surcoûts T2/T3')
+
+# 1) Corrélation recharge montant ↔ kWh obtenus
+if 'montant_brut' in df_recharges.columns and 'kwh_obtenus' in df_recharges.columns:
+    corr = df_recharges[['montant_brut','kwh_obtenus']].corr().iloc[0,1]
+    print(f'🔗 Corrélation montant↔kWh obtenus: {corr:.3f}')
+    plt.figure(figsize=(8,6))
+    plt.scatter(df_recharges['montant_brut'], df_recharges['kwh_obtenus'], alpha=0.6)
+    plt.xlabel('Montant brut (FCFA)')
+    plt.ylabel('kWh obtenus')
+    plt.title(f'Corrélation recharge: montant vs kWh (r={corr:.2f})')
+    plt.grid(True)
+    plt.savefig(os.path.join('..','docs','eda_recharge_correlation.png'), dpi=300, bbox_inches='tight')
+    print('✅ Graphique sauvegardé : docs/eda_recharge_correlation.png')
+else:
+    print('ℹ️ Données de recharges manquantes pour corrélation')
+
+# 2) Evolution temporelle (monthly) et marquer post-2026
+df_consumption['year_month'] = df_consumption['date'].dt.to_period('M').dt.to_timestamp()
+monthly = df_consumption.groupby('year_month')['conso_kwh'].sum().reset_index()
+plt.figure(figsize=(12,5))
+plt.plot(monthly['year_month'], monthly['conso_kwh'], marker='o')
+plt.xlabel('Mois')
+plt.ylabel('Consommation totale (kWh)')
+plt.title('Évolution mensuelle consommation')
+plt.axvline(pd.Timestamp('2027-01-01'), color='red', linestyle='--', alpha=0.7, label='Post-2026 start')
+plt.legend()
+plt.tight_layout()
+plt.savefig(os.path.join('..','docs','eda_monthly_trend.png'), dpi=300, bbox_inches='tight')
+print('✅ Graphique sauvegardé : docs/eda_monthly_trend.png')
+
+# 3) Visualiser économies (Tranche sociale T1)
+if 'economie_baisse_10pct' in df_consumption.columns:
+    eco_t1_month = df_consumption[df_consumption['tranche']==1].groupby('year_month')['economie_baisse_10pct'].sum()
+    plt.figure(figsize=(10,4))
+    eco_t1_month.plot(kind='bar', color='green')
+    plt.xlabel('Mois')
+    plt.ylabel('Économie totale T1 (FCFA)')
+    plt.title('Économies mensuelles - Tranche sociale (T1)')
+    plt.tight_layout()
+    plt.savefig(os.path.join('..','docs','eda_economies_t1.png'), dpi=300, bbox_inches='tight')
+    print('✅ Graphique sauvegardé : docs/eda_economies_t1.png')
+else:
+    print('ℹ️ Colonne economie_baisse_10pct absente — impossible de produire économies T1')
+
+# 4) Identifier surcoûts T2/T3 vs T1 (estimation simple)
+price_map = {1:82.0, 2:136.49, 3:136.49}
+df_consumption['price_avg'] = df_consumption['cout_fcfa'] / df_consumption['conso_kwh'].replace(0, np.nan)
+df_consumption['hypo_cost_if_T1'] = df_consumption['conso_kwh'] * price_map[1]
+df_consumption['actual_cost'] = df_consumption['cout_fcfa']
+df_consumption['surcout_if_T1'] = df_consumption['actual_cost'] - df_consumption['hypo_cost_if_T1']
+surcouts = df_consumption[df_consumption['tranche'].isin([2,3])]['surcout_if_T1'].sum()
+print(f'💸 Surcoût total (T2+T3) vs tarif T1 hypothétique: {surcouts:,.0f} FCFA')
+surcout_par_tranche = df_consumption.groupby('tranche')['surcout_if_T1'].sum()
+surcout_par_tranche.to_csv(os.path.join('..','docs','eda_surcouts_tranches.csv'))
+plt.figure(figsize=(6,4))
+surcout_par_tranche.plot(kind='bar', color=['gray','orange','red'])
+plt.xlabel('Tranche')
+plt.ylabel('Surcoût total vs T1 (FCFA)')
+plt.title('Surcoûts par tranche (estimation vs T1)')
+plt.tight_layout()
+plt.savefig(os.path.join('..','docs','eda_surcouts_tranches.png'), dpi=300, bbox_inches='tight')
+print('✅ Surcoûts exportés : docs/eda_surcouts_tranches.png, docs/eda_surcouts_tranches.csv')
+
+print('\n✅ Toutes les analyses EDA demandées ont été exécutées et exportées dans `docs/`')
