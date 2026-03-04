@@ -1,0 +1,28 @@
+======================================================================
+RAPPORT NETTOYAGE DONNÉES
+======================================================================
+
+Date : 2026-03-04T21:59:56.196371
+
+
+ZONES:
+  Lignes brutes  : 23
+  Lignes propres : 23
+  Doublons       : 0
+
+USERS:
+  Lignes brutes  : 10,000
+  Lignes propres : 10,000
+  Doublons       : 0
+
+CONSUMPTION:
+  Lignes brutes  : 300,000
+  Lignes propres : 300,000
+  Doublons       : 0
+  Outliers       : 66754
+
+RECHARGES:
+  Lignes brutes  : 21,544
+  Lignes propres : 21,544
+  Doublons       : 0
+  Outliers       : 9744

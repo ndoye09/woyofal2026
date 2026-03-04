@@ -1,0 +1,45 @@
+{
+  "timestamp": "2026-03-04T21:59:56.196371",
+  "datasets": {
+    "zones": {
+      "raw_rows": 23,
+      "raw_cols": 6,
+      "nulls_found": 0,
+      "duplicates_removed": 0,
+      "clean_rows": 23,
+      "clean_cols": 6
+    },
+    "users": {
+      "raw_rows": 10000,
+      "raw_cols": 16,
+      "nulls_found": 3985,
+      "duplicates_removed": 0,
+      "clean_rows": 10000,
+      "clean_cols": 16
+    },
+    "consumption": {
+      "raw_rows": 300000,
+      "raw_cols": 15,
+      "nulls_found": 0,
+      "duplicates_removed": 0,
+      "outliers": {
+        "conso_kwh": 26998,
+        "cout_fcfa": 39756
+      },
+      "clean_rows": 300000,
+      "clean_cols": 15
+    },
+    "recharges": {
+      "raw_rows": 21544,
+      "raw_cols": 18,
+      "nulls_found": 0,
+      "duplicates_removed": 0,
+      "outliers": {
+        "montant_brut": 5126,
+        "kwh_obtenus": 4618
+      },
+      "clean_rows": 21544,
+      "clean_cols": 18
+    }
+  }
+}

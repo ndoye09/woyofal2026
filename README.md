@@ -139,6 +139,7 @@ python scripts/simulation/cli_simulator.py
 | [Simulation Recharge](docs/SIMULATION_RECHARGE.md) | Algorithmes et cas d'usage |
 | [Guide Tests](docs/TESTING.md) | Tests et coverage |
 | [Architecture](docs/ARCHITECTURE_ASCII.md) | Schémas complets |
+| [Workflow (ordre corrigé)](docs/WORKFLOW_ORDRE_CORRIGE.md) | Nouveau workflow : Gen → Clean → Ingest → Features |
 
 ---
 
