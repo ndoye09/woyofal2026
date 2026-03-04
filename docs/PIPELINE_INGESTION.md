@@ -305,6 +305,12 @@ Notes opérationnelles :
 - Penser à la purge/archivage des partitions anciennes.
 - Sur fortes volumétries, utiliser COPY/parallel loading et batch size paramétrable.
 - Tests d'intégration : scénarios d'insert/duplicate/update pour valider l'idempotence.
+
+## Artefacts EDA
+
+Un ensemble d'artefacts EDA a été généré et stocké dans `docs/` (graphes PNG et CSV) via `scripts/run_eda.py`. Ils fournissent des métriques opérationnelles utiles : distribution consommation, corrélation recharge/montant, évolution temporelle, économies T1 et estimation des surcoûts T2/T3.
+
+Fichiers : `eda_consommation_overview.png`, `eda_recharge_correlation.png`, `eda_monthly_trend.png`, `eda_economies_t1.png`, `eda_surcouts_tranches.png`, `eda_stats_recap.csv`.
 ```python
 # Charger seulement nouvelles données
 last_date = get_last_date_in_db()
