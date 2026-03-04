@@ -17,7 +17,16 @@ cd woyofal-data-platform
 
 # 2. Créer environnement virtuel
 python3 -m venv venv
-source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# Activer l'environnement virtuel
+## Unix / macOS
+source venv/bin/activate
+
+## Windows (PowerShell)
+venv\Scripts\Activate.ps1
+
+## Windows (cmd.exe)
+venv\Scripts\activate.bat
 
 # 3. Installer dépendances
 pip install -r requirements.txt
