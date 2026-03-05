@@ -1,0 +1,11 @@
+﻿table,row_count,size_mb
+fact_consumption,300000,101.02
+fact_recharges,21544,13.80
+dim_users,9997,7.30
+dimension_dates,30,0.15
+dimension_tarifs,6,0.14
+dim_zones,23,0.12
+mart_conso_users,19994,
+mart_tarifs_2026,8,
+mart_recharges_analyse,369,
+mart_performance_journaliere,30,
