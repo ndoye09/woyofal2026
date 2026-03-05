@@ -14,7 +14,7 @@
 -- DROP TABLE IF EXISTS dimension_tarifs CASCADE;
 -- DROP TABLE IF EXISTS dimension_dates CASCADE;
 
-BEGIN;
+-- Note: Pas de transaction globale pour permettre l'exécution idempotente
 
 -- ═══════════════════════════════════════════════════════════════
 -- 1. DIMENSION DATES (Enrichie)
@@ -59,11 +59,11 @@ CREATE TABLE IF NOT EXISTS dimension_dates (
 );
 
 -- Index
-CREATE INDEX idx_dimension_dates_date ON dimension_dates(date);
-CREATE INDEX idx_dimension_dates_mois_annee ON dimension_dates(mois, annee);
-CREATE INDEX idx_dimension_dates_jour_semaine ON dimension_dates(jour_semaine);
-CREATE INDEX idx_dimension_dates_weekend ON dimension_dates(est_weekend);
-CREATE INDEX idx_dimension_dates_saison ON dimension_dates(saison);
+CREATE INDEX IF NOT EXISTS idx_dimension_dates_date ON dimension_dates(date);
+CREATE INDEX IF NOT EXISTS idx_dimension_dates_mois_annee ON dimension_dates(mois, annee);
+CREATE INDEX IF NOT EXISTS idx_dimension_dates_jour_semaine ON dimension_dates(jour_semaine);
+CREATE INDEX IF NOT EXISTS idx_dimension_dates_weekend ON dimension_dates(est_weekend);
+CREATE INDEX IF NOT EXISTS idx_dimension_dates_saison ON dimension_dates(saison);
 
 COMMENT ON TABLE dimension_dates IS 'Dimension dates enrichie avec calendrier sénégalais';
 
@@ -117,10 +117,10 @@ CREATE TABLE IF NOT EXISTS dimension_tarifs (
 );
 
 -- Index
-CREATE INDEX idx_dimension_tarifs_type ON dimension_tarifs(type_compteur);
-CREATE INDEX idx_dimension_tarifs_tranche ON dimension_tarifs(tranche);
-CREATE INDEX idx_dimension_tarifs_actif ON dimension_tarifs(est_actif);
-CREATE INDEX idx_dimension_tarifs_date ON dimension_tarifs(date_application);
+CREATE INDEX IF NOT EXISTS idx_dimension_tarifs_type ON dimension_tarifs(type_compteur);
+CREATE INDEX IF NOT EXISTS idx_dimension_tarifs_tranche ON dimension_tarifs(tranche);
+CREATE INDEX IF NOT EXISTS idx_dimension_tarifs_actif ON dimension_tarifs(est_actif);
+CREATE INDEX IF NOT EXISTS idx_dimension_tarifs_date ON dimension_tarifs(date_application);
 
 COMMENT ON TABLE dimension_tarifs IS 'Dimension tarifs Senelec avec historique règlementaire';
 
@@ -179,9 +179,9 @@ CREATE TABLE IF NOT EXISTS dim_zones (
 );
 
 -- Index
-CREATE INDEX idx_dim_zones_region ON dim_zones(region);
-CREATE INDEX idx_dim_zones_type ON dim_zones(type_zone);
-CREATE INDEX idx_dim_zones_population ON dim_zones(population);
+CREATE INDEX IF NOT EXISTS idx_dim_zones_region ON dim_zones(region);
+CREATE INDEX IF NOT EXISTS idx_dim_zones_type ON dim_zones(type_zone);
+CREATE INDEX IF NOT EXISTS idx_dim_zones_population ON dim_zones(population);
 
 COMMENT ON TABLE dim_zones IS 'Dimension géographique Sénégal';
 
@@ -232,12 +232,12 @@ CREATE TABLE IF NOT EXISTS dim_users (
 );
 
 -- Index
-CREATE INDEX idx_dim_users_zone ON dim_users(zone_id);
-CREATE INDEX idx_dim_users_type_compteur ON dim_users(type_compteur);
-CREATE INDEX idx_dim_users_numero ON dim_users(numero_compteur);
-CREATE INDEX idx_dim_users_actif ON dim_users(actif);
-CREATE INDEX idx_dim_users_segment ON dim_users(segment_client);
-CREATE INDEX idx_dim_users_telephone ON dim_users(telephone);
+CREATE INDEX IF NOT EXISTS idx_dim_users_zone ON dim_users(zone_id);
+CREATE INDEX IF NOT EXISTS idx_dim_users_type_compteur ON dim_users(type_compteur);
+CREATE INDEX IF NOT EXISTS idx_dim_users_numero ON dim_users(numero_compteur);
+CREATE INDEX IF NOT EXISTS idx_dim_users_actif ON dim_users(actif);
+CREATE INDEX IF NOT EXISTS idx_dim_users_segment ON dim_users(segment_client);
+CREATE INDEX IF NOT EXISTS idx_dim_users_telephone ON dim_users(telephone);
 
 COMMENT ON TABLE dim_users IS 'Dimension utilisateurs avec segmentation';
 
@@ -285,21 +285,21 @@ CREATE TABLE IF NOT EXISTS fact_consumption (
 );
 
 -- Index composites pour performance
-CREATE INDEX idx_fact_consumption_date ON fact_consumption(date_id);
-CREATE INDEX idx_fact_consumption_user ON fact_consumption(user_id);
-CREATE INDEX idx_fact_consumption_zone ON fact_consumption(zone_id);
-CREATE INDEX idx_fact_consumption_tarif ON fact_consumption(tarif_id);
-CREATE INDEX idx_fact_consumption_mois_annee ON fact_consumption(mois, annee);
-CREATE INDEX idx_fact_consumption_tranche ON fact_consumption(tranche);
-CREATE INDEX idx_fact_consumption_type ON fact_consumption(type_compteur);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_date ON fact_consumption(date_id);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_user ON fact_consumption(user_id);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_zone ON fact_consumption(zone_id);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_tarif ON fact_consumption(tarif_id);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_mois_annee ON fact_consumption(mois, annee);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_tranche ON fact_consumption(tranche);
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_type ON fact_consumption(type_compteur);
 
 -- Index composite pour requêtes analytiques
-CREATE INDEX idx_fact_consumption_analytics ON fact_consumption(
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_analytics ON fact_consumption(
     user_id, mois, annee, tranche
 );
 
 -- Index pour agrégations
-CREATE INDEX idx_fact_consumption_aggregation ON fact_consumption(
+CREATE INDEX IF NOT EXISTS idx_fact_consumption_aggregation ON fact_consumption(
     zone_id, mois, annee, type_compteur
 );
 
@@ -363,15 +363,15 @@ CREATE TABLE IF NOT EXISTS fact_recharges (
 );
 
 -- Index
-CREATE INDEX idx_fact_recharges_date ON fact_recharges(date_id);
-CREATE INDEX idx_fact_recharges_user ON fact_recharges(user_id);
-CREATE INDEX idx_fact_recharges_zone ON fact_recharges(zone_id);
-CREATE INDEX idx_fact_recharges_canal ON fact_recharges(canal_paiement);
-CREATE INDEX idx_fact_recharges_statut ON fact_recharges(statut);
-CREATE INDEX idx_fact_recharges_mois_annee ON fact_recharges(mois, annee);
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_date ON fact_recharges(date_id);
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_user ON fact_recharges(user_id);
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_zone ON fact_recharges(zone_id);
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_canal ON fact_recharges(canal_paiement);
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_statut ON fact_recharges(statut);
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_mois_annee ON fact_recharges(mois, annee);
 
 -- Index composite analytics
-CREATE INDEX idx_fact_recharges_analytics ON fact_recharges(
+CREATE INDEX IF NOT EXISTS idx_fact_recharges_analytics ON fact_recharges(
     user_id, mois, annee, canal_paiement
 );
 
@@ -417,8 +417,8 @@ JOIN dimension_dates dd ON fc.date_id = dd.date_id
 JOIN dim_zones z ON fc.zone_id = z.zone_id
 GROUP BY z.region, z.type_zone, dd.mois, dd.annee, dd.nom_mois;
 
-CREATE UNIQUE INDEX ON mart_conso_regions_mensuel(region, mois, annee);
-CREATE INDEX ON mart_conso_regions_mensuel(annee, mois);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_mart_conso_regions_region_mois_annee ON mart_conso_regions_mensuel(region, mois, annee);
+CREATE INDEX IF NOT EXISTS idx_mart_conso_regions_annee_mois ON mart_conso_regions_mensuel(annee, mois);
 
 COMMENT ON MATERIALIZED VIEW mart_conso_regions_mensuel IS 'Data Mart - Consommation mensuelle par région';
 
@@ -460,7 +460,7 @@ LEFT JOIN fact_recharges fr ON fc.user_id = fr.user_id
     AND fc.date_id = fr.date_id
 GROUP BY dd.mois, dd.annee, dd.nom_mois;
 
-CREATE UNIQUE INDEX ON mart_kpis_globaux(annee, mois);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_mart_kpis_globaux_annee_mois ON mart_kpis_globaux(annee, mois);
 
 COMMENT ON MATERIALIZED VIEW mart_kpis_globaux IS 'Data Mart - KPIs globaux mensuels';
 
@@ -502,7 +502,7 @@ JOIN dimension_tarifs dt ON fc.tarif_id = dt.tarif_id
 GROUP BY dt.type_compteur, dt.tranche, dt.nom_tranche, 
          dt.prix_kwh_actuel, dd.mois, dd.annee;
 
-CREATE UNIQUE INDEX ON mart_analyse_tranches(type_compteur, tranche, annee, mois);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_mart_analyse_tranches_type_tranche_annee_mois ON mart_analyse_tranches(type_compteur, tranche, annee, mois);
 
 COMMENT ON MATERIALIZED VIEW mart_analyse_tranches IS 'Data Mart - Analyse détaillée par tranche';
 
@@ -526,7 +526,7 @@ $$ LANGUAGE plpgsql;
 COMMENT ON FUNCTION refresh_all_marts() IS 'Rafraîchit toutes les vues matérialisées';
 
 
--- Fonction : Statistiques Data Warehouse
+-- Fonction : Statistiques Data Warehouse (utilise pg_stat_all_tables pour n_live_tup)
 CREATE OR REPLACE FUNCTION get_dwh_stats()
 RETURNS TABLE (
     table_name VARCHAR,
@@ -535,26 +535,28 @@ RETURNS TABLE (
 ) AS $$
 BEGIN
     RETURN QUERY
-    SELECT 
-        relname::VARCHAR as table_name,
-        n_live_tup as row_count,
-        ROUND(pg_total_relation_size(C.oid) / 1024.0 / 1024.0, 2) as size_mb
-    FROM pg_class C
-    LEFT JOIN pg_namespace N ON (N.oid = C.relnamespace)
-    WHERE nspname = 'public' 
-    AND relkind = 'r'
-    AND relname IN (
-        'dimension_dates', 'dimension_tarifs', 'dim_zones', 'dim_users',
-        'fact_consumption', 'fact_recharges'
-    )
-    ORDER BY pg_total_relation_size(C.oid) DESC;
+    SELECT
+        c.relname::VARCHAR AS table_name,
+        COALESCE(s.n_live_tup, 0) AS row_count,
+        ROUND(pg_total_relation_size(c.oid) / 1024.0 / 1024.0, 2) AS size_mb
+    FROM pg_class c
+    LEFT JOIN pg_stat_all_tables s
+        ON s.relname = c.relname AND s.schemaname = 'public'
+    LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+    WHERE n.nspname = 'public'
+      AND c.relkind = 'r'
+      AND c.relname IN (
+            'dimension_dates', 'dimension_tarifs', 'dim_zones', 'dim_users',
+            'fact_consumption', 'fact_recharges'
+      )
+    ORDER BY pg_total_relation_size(c.oid) DESC;
 END;
 $$ LANGUAGE plpgsql;
 
-COMMENT ON FUNCTION get_dwh_stats() IS 'Statistiques volumétrie Data Warehouse';
+COMMENT ON FUNCTION get_dwh_stats() IS 'Statistiques volumétrie Data Warehouse (utilise pg_stat_all_tables)';
 
 
-COMMIT;
+-- Pas de COMMIT global (exécution idempotente, erreurs isolées)
 
 -- ═══════════════════════════════════════════════════════════════
 -- FIN DU SCRIPT
