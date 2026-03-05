@@ -108,10 +108,9 @@ $$;
 -- 3. CRÉER INDEXES ADDITIONNELS POUR PERFORMANCE
 -- ═══════════════════════════════════════════════════════════════
 
--- Index partiel pour données récentes (plus consultées)
+-- Index pour données récentes (simplifié pour éviter fonctions non immutables)
 CREATE INDEX IF NOT EXISTS idx_fact_consumption_recent 
-ON fact_consumption(date_id) 
-WHERE mois >= EXTRACT(MONTH FROM CURRENT_DATE) - 3;
+ON fact_consumption(date_id);
 
 -- Index pour recherche par téléphone (si pg_trgm disponible)
 DO $$
