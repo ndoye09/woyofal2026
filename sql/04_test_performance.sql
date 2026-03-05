@@ -56,7 +56,7 @@ JOIN dim_zones z ON fc.zone_id = z.zone_id
 JOIN dimension_tarifs dt ON fc.tarif_id = dt.tarif_id
 JOIN dimension_dates dd ON fc.date_id = dd.date_id
 WHERE dd.mois = 1 AND dd.annee = 2026
-GROUP BY z.region, dt.nom_tranche
+GROUP BY z.region, dt.nom_tranche, dt.tranche
 ORDER BY z.region, dt.tranche;
 
 

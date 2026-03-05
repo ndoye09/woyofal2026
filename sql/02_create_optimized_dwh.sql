@@ -152,7 +152,8 @@ INSERT INTO dimension_tarifs (
  '2025-140', '2026-01-01', 'Tarif intermédiaire pro', '#FFA07A'),
 
 ('PPP', 3, 'Tranche 3 Professionnelle', 501, NULL, 189.84, 210.93, 0.00, 0.00,
- '2025-140', '2026-01-01', 'Valorisée à T2 en prépaiement', '#CD5C5C');
+ '2025-140', '2026-01-01', 'Valorisée à T2 en prépaiement', '#CD5C5C')
+ON CONFLICT (type_compteur, tranche, date_application) DO NOTHING;
 
 
 -- ═══════════════════════════════════════════════════════════════

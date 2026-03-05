@@ -2,7 +2,7 @@
 -- MIGRATION VERS DATA WAREHOUSE OPTIMISÉ
 -- ═══════════════════════════════════════════════════════════════
 
-BEGIN;
+-- No global transaction: handle missing source table gracefully
 
 -- ═══════════════════════════════════════════════════════════════
 -- 1. PEUPLER dimension_dates
@@ -93,6 +93,15 @@ SELECT DISTINCT
 FROM consumption_daily
 ON CONFLICT (date) DO NOTHING;
 
+-- If source table does not exist, skip population with a notice
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_tables WHERE schemaname = 'public' AND tablename = 'consumption_daily') THEN
+        RAISE NOTICE 'Table consumption_daily introuvable : saut de la population de dimension_dates';
+    END IF;
+END
+$$;
+
 
 -- ═══════════════════════════════════════════════════════════════
 -- 2. MIGRER fact_consumption vers nouveau schéma
@@ -115,6 +124,6 @@ WHERE mois >= EXTRACT(MONTH FROM CURRENT_DATE) - 3;
 CREATE INDEX IF NOT EXISTS idx_dim_users_telephone_trgm 
 ON dim_users USING gin(telephone gin_trgm_ops);
 
-COMMIT;
+-- Pas de COMMIT global (opérations isolées)
 
 SELECT 'Migration terminée!' as status;
