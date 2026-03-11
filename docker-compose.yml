@@ -11,7 +11,7 @@ services:
       POSTGRES_PASSWORD: woyofal2026
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --lc-collate=C --lc-ctype=C"
     ports:
-      - "5432:5432"
+      - "55432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./sql:/sql
@@ -26,174 +26,147 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
-    version: '3.8'
-
-    services:
-      # ===================================
-      # POSTGRESQL (Data Warehouse)
-      # ===================================
-      postgres:
-        image: postgres:14-alpine
-        container_name: woyofal-postgres
-        ports:
-          - "5432:5432"
-        environment:
-          POSTGRES_DB: woyofal_dwh
-          POSTGRES_USER: woyofal_user
-          POSTGRES_PASSWORD: woyofal2026
-        volumes:
-          - postgres_data:/var/lib/postgresql/data
-          - ./sql:/sql
-          - ./data:/data
-        healthcheck:
-          test: ["CMD-SHELL", "pg_isready -U woyofal_user -d woyofal_dwh"]
-          interval: 10s
-          timeout: 5s
-          retries: 5
-        networks:
-          - woyofal-network
-
-      # ===================================
-      # PGADMIN (Interface PostgreSQL)
-      # ===================================
-      pgadmin:
-        image: dpage/pgadmin4:latest
-        container_name: woyofal-pgadmin
-        ports:
-          - "5050:80"
-        environment:
-          PGADMIN_DEFAULT_EMAIL: admin@woyofal.sn
-          PGADMIN_DEFAULT_PASSWORD: admin2026
-        depends_on:
-          - postgres
-        networks:
-          - woyofal-network
-
-      # ===================================
-      # AIRFLOW POSTGRES (Metadata DB)
-      # ===================================
-      airflow-postgres:
-        image: postgres:14-alpine
-        container_name: woyofal-airflow-db
-        environment:
-          POSTGRES_DB: airflow
-          POSTGRES_USER: airflow
-          POSTGRES_PASSWORD: airflow
-        volumes:
-          - airflow_postgres_data:/var/lib/postgresql/data
-        healthcheck:
-          test: ["CMD-SHELL", "pg_isready -U airflow"]
-          interval: 10s
-          timeout: 5s
-          retries: 5
-        networks:
-          - woyofal-network
-
-      # ===================================
-      # AIRFLOW WEBSERVER
-      # ===================================
-      airflow-webserver:
-        image: apache/airflow:2.8.1-python3.10
-        container_name: woyofal-airflow-webserver
-        restart: always
-        depends_on:
-          - airflow-postgres
-          - airflow-init
-        environment:
-          AIRFLOW__CORE__EXECUTOR: LocalExecutor
-          AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-          AIRFLOW__CORE__FERNET_KEY: ''
-          AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-          AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-          AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
-          AIRFLOW__WEBSERVER__SECRET_KEY: 'woyofal_secret_key_2026'
-        volumes:
-          - ./dags:/opt/airflow/dags
-          - ./logs:/opt/airflow/logs
-          - ./plugins:/opt/airflow/plugins
-          - ./data:/opt/airflow/data
-          - ./scripts:/opt/airflow/scripts
-          - ./sql:/opt/airflow/sql
-        ports:
-          - "8080:8080"
-        command: webserver
-        healthcheck:
-          test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-          interval: 30s
-          timeout: 10s
-          retries: 5
-        networks:
-          - woyofal-network
-
-      # ===================================
-      # AIRFLOW SCHEDULER
-      # ===================================
-      airflow-scheduler:
-        image: apache/airflow:2.8.1-python3.10
-        container_name: woyofal-airflow-scheduler
-        restart: always
-        depends_on:
-          - airflow-postgres
-          - airflow-init
-        environment:
-          AIRFLOW__CORE__EXECUTOR: LocalExecutor
-          AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-          AIRFLOW__CORE__FERNET_KEY: ''
-          AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-          AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-        volumes:
-          - ./dags:/opt/airflow/dags
-          - ./logs:/opt/airflow/logs
-          - ./plugins:/opt/airflow/plugins
-          - ./data:/opt/airflow/data
-          - ./scripts:/opt/airflow/scripts
-          - ./sql:/opt/airflow/sql
-        command: scheduler
-        healthcheck:
-          test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$${HOSTNAME}\""]
-          interval: 30s
-          timeout: 10s
-          retries: 5
-        networks:
-          - woyofal-network
-
-      # ===================================
-      # AIRFLOW INIT (One-time setup)
-      # ===================================
-      airflow-init:
-        image: apache/airflow:2.8.1-python3.10
-        container_name: woyofal-airflow-init
-        depends_on:
-          - airflow-postgres
-        environment:
-          AIRFLOW__CORE__EXECUTOR: LocalExecutor
-          AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
-          AIRFLOW__CORE__FERNET_KEY: ''
-          AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
-        volumes:
-          - ./dags:/opt/airflow/dags
-          - ./logs:/opt/airflow/logs
-          - ./plugins:/opt/airflow/plugins
-        entrypoint: /bin/bash
-        command:
-          - -c
-          - |
-            mkdir -p /opt/airflow/logs /opt/airflow/dags /opt/airflow/plugins
-            airflow db init
-            airflow users create \
-              --username admin \
-              --firstname Woyofal \
-              --lastname Admin \
-              --role Admin \
-              --email admin@woyofal.sn \
-              --password admin2026
-        networks:
-          - woyofal-network
-
-    volumes:
-      postgres_data:
-      airflow_postgres_data:
-
+    container_name: woyofal-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@woyofal.sn
+      PGADMIN_DEFAULT_PASSWORD: admin2026
+    depends_on:
+      - postgres
     networks:
-      woyofal-network:
-        driver: bridge
+      - woyofal-network
+
+  streamlit:
+    build: ./dashboards/streamlit
+    container_name: woyofal-streamlit
+    restart: unless-stopped
+    ports:
+      - "8501:8501"
+    environment:
+      - DB_HOST=woyofal-postgres
+      - DB_PORT=5432
+      - DB_NAME=woyofal_dwh
+      - DB_USER=woyofal_user
+      - DB_PASSWORD=woyofal2026
+    depends_on:
+      - postgres
+    networks:
+      - woyofal-network
+
+  airflow-postgres:
+    image: postgres:14-alpine
+    container_name: woyofal-airflow-db
+    environment:
+      POSTGRES_DB: airflow
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+    volumes:
+      - airflow_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U airflow"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - woyofal-network
+
+  airflow-webserver:
+    image: apache/airflow:2.8.1-python3.10
+    container_name: woyofal-airflow-webserver
+    restart: always
+    depends_on:
+      - airflow-postgres
+      - airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+      AIRFLOW__API__AUTH_BACKENDS: 'airflow.api.auth.backend.basic_auth'
+      AIRFLOW__WEBSERVER__SECRET_KEY: 'woyofal_secret_key_2026'
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+      - ./scripts:/opt/airflow/scripts
+      - ./sql:/opt/airflow/sql
+    ports:
+      - "8080:8080"
+    command: webserver
+    healthcheck:
+      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - woyofal-network
+
+  airflow-scheduler:
+    image: apache/airflow:2.8.1-python3.10
+    container_name: woyofal-airflow-scheduler
+    restart: always
+    depends_on:
+      - airflow-postgres
+      - airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+      - ./data:/opt/airflow/data
+      - ./scripts:/opt/airflow/scripts
+      - ./sql:/opt/airflow/sql
+    command: scheduler
+    healthcheck:
+      test: ["CMD-SHELL", "airflow jobs check --job-type SchedulerJob --hostname \"$${HOSTNAME}\""]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    networks:
+      - woyofal-network
+
+  airflow-init:
+    image: apache/airflow:2.8.1-python3.10
+    container_name: woyofal-airflow-init
+    depends_on:
+      - airflow-postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@airflow-postgres/airflow
+      AIRFLOW__CORE__FERNET_KEY: ''
+      AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    entrypoint: /bin/bash
+    command:
+      - -c
+      - |
+        mkdir -p /opt/airflow/logs /opt/airflow/dags /opt/airflow/plugins
+        airflow db init
+        airflow users create \
+          --username admin \
+          --firstname Woyofal \
+          --lastname Admin \
+          --role Admin \
+          --email admin@woyofal.sn \
+          --password admin2026
+    networks:
+      - woyofal-network
+
+volumes:
+  postgres_data:
+  airflow_postgres_data:
+
+networks:
+  woyofal-network:
+    driver: bridge

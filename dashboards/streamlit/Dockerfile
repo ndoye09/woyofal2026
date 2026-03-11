@@ -5,4 +5,4 @@ COPY requirements_dashboard.txt .
 RUN pip install --no-cache-dir -r requirements_dashboard.txt
 COPY . .
 EXPOSE 8501
-CMD ["streamlit","run","🏠_Accueil.py","--server.port=8501","--server.address=0.0.0.0"]
+CMD ["streamlit","run","Accueil.py","--server.port=8501","--server.address=0.0.0.0"]
