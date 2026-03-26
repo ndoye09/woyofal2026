@@ -1,0 +1,159 @@
+{
+  "info": {
+    "name": "Woyofal API",
+    "description": "Collection tests API Woyofal",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/health",
+          "host": ["{{base_url}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Simulation Recharge",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"montant_brut\": 10000,\n  \"cumul_actuel\": 120,\n  \"type_compteur\": \"DPP\",\n  \"avec_redevance\": false\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/simulation/recharge",
+          "host": ["{{base_url}}"],
+          "path": ["api", "simulation", "recharge"]
+        }
+      }
+    },
+    {
+      "name": "Recommandation",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"cumul_actuel\": 140,\n  \"conso_moy_jour\": 6.5,\n  \"jours_restants\": 8,\n  \"type_compteur\": \"DPP\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/simulation/recommandation",
+          "host": ["{{base_url}}"],
+          "path": ["api", "simulation", "recommandation"]
+        }
+      }
+    },
+    {
+      "name": "Tarifs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/simulation/tarifs?type_compteur=DPP",
+          "host": ["{{base_url}}"],
+          "path": ["api", "simulation", "tarifs"],
+          "query": [
+            {
+              "key": "type_compteur",
+              "value": "DPP"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "KPIs",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/consommation/kpis?periode=2026-01",
+          "host": ["{{base_url}}"],
+          "path": ["api", "consommation", "kpis"],
+          "query": [
+            {
+              "key": "periode",
+              "value": "2026-01"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Évolution",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/consommation/evolution?limit=30",
+          "host": ["{{base_url}}"],
+          "path": ["api", "consommation", "evolution"],
+          "query": [
+            {
+              "key": "limit",
+              "value": "30"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Tranches",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/consommation/tranches?periode=2026-01",
+          "host": ["{{base_url}}"],
+          "path": ["api", "consommation", "tranches"],
+          "query": [
+            {
+              "key": "periode",
+              "value": "2026-01"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Régions",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/api/consommation/regions?periode=2026-01",
+          "host": ["{{base_url}}"],
+          "path": ["api", "consommation", "regions"],
+          "query": [
+            {
+              "key": "periode",
+              "value": "2026-01"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000"
+    }
+  ]
+}

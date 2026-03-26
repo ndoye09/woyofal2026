@@ -1,0 +1,195 @@
+version: 2
+
+sources:
+  - name: woyofal_raw
+    description: "Tables sources du Data Warehouse Woyofal"
+    database: woyofal_dwh
+    schema: public
+    
+    tables:
+      - name: dimension_dates
+        description: "Dimension dates enrichie"
+        columns:
+          - name: date_id
+            description: "Clé primaire"
+            tests:
+              - unique
+              - not_null
+          - name: date
+            description: "Date (YYYY-MM-DD)"
+            tests:
+              - not_null
+              - unique
+               
+      - name: dimension_tarifs
+        description: "Dimension tarifs Senelec 2026"
+        columns:
+          - name: tarif_id
+            description: "Clé primaire"
+            tests:
+              - unique
+              - not_null
+          - name: type_compteur
+            description: "Type compteur (DPP/PPP)"
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['DPP', 'PPP']
+          - name: tranche
+            description: "Numéro tranche (1/2/3)"
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [1, 2, 3]
+          - name: prix_kwh_actuel
+            description: "Prix kWh actuel"
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"
+                  
+      - name: dim_zones
+        description: "Dimension zones géographiques"
+        columns:
+          - name: zone_id
+            description: "Clé primaire"
+            tests:
+              - unique
+              - not_null
+          - name: region
+            description: "Région Sénégal"
+            tests:
+              - not_null
+          - name: population
+            description: "Population zone"
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"
+                  
+      - name: dim_users
+        description: "Dimension utilisateurs"
+        columns:
+          - name: user_id
+            description: "Clé primaire"
+            tests:
+              - unique
+              - not_null
+          - name: type_compteur
+            description: "Type compteur"
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['DPP', 'PPP']
+          - name: zone_id
+            description: "Clé étrangère vers dim_zones"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dim_zones')
+                  field: zone_id
+          - name: numero_compteur
+            description: "Numéro compteur unique"
+            tests:
+              - unique
+              - not_null
+          - name: telephone
+            description: "Téléphone"
+            tests:
+              - not_null
+              
+      - name: fact_consumption
+        description: "Table de faits - Consommation"
+        columns:
+          - name: id
+            description: "Clé primaire"
+            tests:
+              - unique
+              - not_null
+          - name: date_id
+            description: "FK vers dimension_dates"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dimension_dates')
+                  field: date_id
+          - name: user_id
+            description: "FK vers dim_users"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dim_users')
+                  field: user_id
+          - name: zone_id
+            description: "FK vers dim_zones"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dim_zones')
+                  field: zone_id
+          - name: tarif_id
+            description: "FK vers dimension_tarifs"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dimension_tarifs')
+                  field: tarif_id
+          - name: conso_kwh
+            description: "Consommation kWh"
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: ">= 0"
+          - name: cout_fcfa
+            description: "Coût FCFA"
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: ">= 0"
+          - name: tranche
+            description: "Numéro tranche"
+            tests:
+              - not_null
+              - accepted_values:
+                  values: [1, 2, 3]
+                  
+      - name: fact_recharges
+        description: "Table de faits - Recharges"
+        columns:
+          - name: recharge_id
+            description: "Clé primaire"
+            tests:
+              - unique
+              - not_null
+          - name: date_id
+            description: "FK vers dimension_dates"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dimension_dates')
+                  field: date_id
+          - name: user_id
+            description: "FK vers dim_users"
+            tests:
+              - not_null
+              - relationships:
+                  to: source('woyofal_raw', 'dim_users')
+                  field: user_id
+          - name: montant_brut
+            description: "Montant brut recharge"
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"
+          - name: kwh_obtenus
+            description: "kWh obtenus"
+            tests:
+              - not_null
+              - dbt_utils.expression_is_true:
+                  expression: "> 0"
+          - name: statut
+            description: "Statut transaction"
+            tests:
+              - not_null
+              - accepted_values:
+                  values: ['success', 'failed', 'pending']
