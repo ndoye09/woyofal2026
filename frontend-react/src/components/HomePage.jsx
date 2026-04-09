@@ -275,7 +275,6 @@ export default function HomePage() {
           <StatItem value="2026" label="Tarifs officiels CRSE" />
           <StatItem value="DPP + PPP" label="Types de compteurs" />
           <StatItem value="FCFA ↔ kWh" label="Calcul double sens" />
-          <StatItem value="14 régions" label="Couverture Sénégal" />
         </div>
       </section>
 
@@ -325,59 +324,13 @@ export default function HomePage() {
               tag="IA"
               desc="Intelligence artificielle pour prédire votre consommation et vous alerter avant de passer en tranche supérieure."
             />
-            <FeatureCard
-              icon={MapPin}
-              gradient="from-danger to-rose-400"
-              title="14 Régions du Sénégal"
-              desc="Données par région : Dakar, Thiès, Saint-Louis, Kaolack, Ziguinchor et plus. Analyse géographique complète."
-            />
+
             <FeatureCard
               icon={Database}
               gradient="from-teal-500 to-cyan-400"
               title="Tarifs 2026 officiels"
               desc="Grille CRSE 2026. Mise à jour automatique. Plus fiable que les calculateurs qui utilisent encore les tarifs 2025."
             />
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════
-          COMPARATIF
-      ══════════════════════════════════ */}
-      <section className="py-24 px-4 bg-white">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="section-tag">Comparatif</span>
-            <h2 className="section-title">Pourquoi nous sommes différents</h2>
-            <p className="section-subtitle">Comparaison avec les autres calculateurs disponibles au Sénégal</p>
-          </div>
-          <div className="overflow-hidden rounded-3xl border border-slate-200 shadow-card">
-            <table className="w-full">
-              <thead>
-                <tr style={{ background: '#020C1B' }} className="text-white">
-                  <th className="py-4 px-5 text-left text-sm font-medium text-white/70">Fonctionnalité</th>
-                  <th className="py-4 px-5 text-center text-sm">
-                    <span className="flex items-center justify-center gap-1.5">
-                      <Zap className="w-4 h-4 text-accent" />
-                      <span className="font-semibold">Notre plateforme</span>
-                    </span>
-                  </th>
-                  <th className="py-4 px-5 text-center text-sm font-medium text-white/50">Autres</th>
-                </tr>
-              </thead>
-              <tbody className="bg-white">
-                <CompareRow feature="Simulateur FCFA → kWh" nous={true} eux={true} />
-                <CompareRow feature="Calculateur inverse kWh → FCFA" nous={true} eux={false} />
-                <CompareRow feature="Support DPP + PPP" nous={true} eux="DPP seulement" />
-                <CompareRow feature="Tarifs 2026 (CRSE)" nous={true} eux="Tarifs 2025" />
-                <CompareRow feature="Dashboard Analytics" nous={true} eux={false} />
-                <CompareRow feature="Prédictions ML" nous={true} eux={false} />
-                <CompareRow feature="Données par région" nous="14 régions" eux={false} />
-                <CompareRow feature="Détail par tranche" nous={true} eux={true} />
-                <CompareRow feature="Conseils économies" nous={true} eux="Basique" />
-                <CompareRow feature="Redevance configurable" nous={true} eux="Fixe" />
-              </tbody>
-            </table>
           </div>
         </div>
       </section>

@@ -11,23 +11,33 @@ import AIChat from './components/AIChat'
 import AuthModal from './components/AuthModal'
 import LectureCompteur from './components/LectureCompteur'
 import HistoriqueConsommation from './components/HistoriqueConsommation'
+import ProtectedRoute from './components/ProtectedRoute'
+import LoginRequired from './components/LoginRequired'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
-const NAV_LINKS = [
+// Liens accessibles à tous
+const PUBLIC_LINKS = [
   { to: '/', label: 'Accueil', icon: Home },
-  { to: '/compteur', label: 'Compteur', icon: Cpu },
   { to: '/simulateur', label: 'Simulateur', icon: Calculator },
-  { to: '/historique', label: 'Historique', icon: History },
   { to: '/tarifs', label: 'Tarifs 2026', icon: BookOpen },
   { to: '/conseils', label: 'Conseils', icon: Lightbulb },
   { to: '/faq', label: 'FAQ', icon: HelpCircle },
+]
+
+// Liens réservés aux utilisateurs connectés
+const PRIVATE_LINKS = [
   { to: '/dashboard', label: 'Dashboard', icon: BarChart3 },
+  { to: '/compteur', label: 'Compteur', icon: Cpu },
+  { to: '/historique', label: 'Historique', icon: History },
 ]
 
 function NavBar() {
   const location = useLocation()
+  const { isAuth } = useAuth()
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  const NAV_LINKS = isAuth ? [...PUBLIC_LINKS, ...PRIVATE_LINKS] : PUBLIC_LINKS
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12)
@@ -57,8 +67,9 @@ function NavBar() {
           </Link>
 
           {/* ── Desktop links ── */}
-          <div className="hidden md:flex items-center gap-0.5">
-            {NAV_LINKS.map(({ to, label, icon: Icon }) => {
+          <div className="hidden md:flex items-center gap-0.5 ml-auto mr-3">
+            {/* Séparateur visuel entre public et privé */}
+            {PUBLIC_LINKS.map(({ to, label, icon: Icon }) => {
               const active = location.pathname === to
               return (
                 <Link
@@ -78,17 +89,36 @@ function NavBar() {
                 </Link>
               )
             })}
+
+            {isAuth && (
+              <>
+                <span className="w-px h-5 bg-slate-200 mx-1" />
+                {PRIVATE_LINKS.map(({ to, label, icon: Icon }) => {
+                  const active = location.pathname === to
+                  return (
+                    <Link
+                      key={to}
+                      to={to}
+                      className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
+                        active
+                          ? 'text-primary bg-primary/8 font-semibold'
+                          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      {label}
+                      {active && (
+                        <span className="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-primary" />
+                      )}
+                    </Link>
+                  )
+                })}
+              </>
+            )}
           </div>
 
-          {/* ── CTA + Auth + Mobile toggle ── */}
+          {/* ── Auth + Mobile toggle ── */}
           <div className="flex items-center gap-2">
-            <Link
-              to="/simulateur"
-              className="hidden sm:flex btn-primary py-2 px-4 text-sm"
-            >
-              <Calculator className="w-3.5 h-3.5" />
-              Simuler
-            </Link>
             <AuthButton />
             <button
               onClick={() => setMobileOpen(o => !o)}
@@ -104,7 +134,8 @@ function NavBar() {
       {/* ── Mobile menu ── */}
       {mobileOpen && (
         <div className="md:hidden bg-white border-t border-slate-100 px-4 pb-4 pt-2 animate-in shadow-lg">
-          {NAV_LINKS.map(({ to, label, icon: Icon }) => {
+          {/* Liens publics */}
+          {PUBLIC_LINKS.map(({ to, label, icon: Icon }) => {
             const active = location.pathname === to
             return (
               <Link
@@ -119,6 +150,34 @@ function NavBar() {
               </Link>
             )
           })}
+
+          {isAuth && (
+            <>
+              {/* Séparateur Mon espace */}
+              <div className="flex items-center gap-2 my-2 px-3">
+                <div className="flex-1 h-px bg-slate-100" />
+                <span className="text-[10px] font-bold uppercase tracking-wider text-primary">Mon espace</span>
+                <div className="flex-1 h-px bg-slate-100" />
+              </div>
+
+              {/* Liens privés */}
+              {PRIVATE_LINKS.map(({ to, label, icon: Icon }) => {
+                const active = location.pathname === to
+                return (
+                  <Link
+                    key={to}
+                    to={to}
+                    className={`flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-medium mb-0.5 transition ${
+                      active ? 'bg-primary/8 text-primary font-semibold' : 'text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    <Icon className="w-4 h-4" />
+                    {label}
+                  </Link>
+                )
+              })}
+            </>
+          )}
         </div>
       )}
     </nav>
@@ -189,7 +248,7 @@ function Footer() {
             </p>
           </div>
           <div className="grid grid-cols-2 gap-x-12 gap-y-2 text-sm">
-            {NAV_LINKS.map(({ to, label }) => (
+            {PUBLIC_LINKS.map(({ to, label }) => (
               <Link key={to} to={to} className="hover:text-white transition py-1">{label}</Link>
             ))}
           </div>
@@ -211,14 +270,26 @@ function App() {
           <NavBar />
           <main className="flex-1">
             <Routes>
+              {/* ── Routes publiques ── */}
               <Route path="/" element={<HomePage />} />
-              <Route path="/compteur" element={<LectureCompteur />} />
               <Route path="/simulateur" element={<SimulateurRecharge />} />
-              <Route path="/historique" element={<HistoriqueConsommation />} />
               <Route path="/tarifs" element={<GuideTarifs />} />
               <Route path="/conseils" element={<Conseils />} />
               <Route path="/faq" element={<FAQ />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+
+              {/* ── Page d'accès refusé ── */}
+              <Route path="/connexion-requise" element={<LoginRequired />} />
+
+              {/* ── Routes protégées (connexion requise) ── */}
+              <Route path="/compteur" element={
+                <ProtectedRoute><LectureCompteur /></ProtectedRoute>
+              } />
+              <Route path="/historique" element={
+                <ProtectedRoute><HistoriqueConsommation /></ProtectedRoute>
+              } />
+              <Route path="/dashboard" element={
+                <ProtectedRoute><Dashboard /></ProtectedRoute>
+              } />
             </Routes>
           </main>
           <Footer />

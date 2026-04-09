@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Calculator, AlertCircle, TrendingUp, Zap, ArrowLeftRight, Save, CheckCircle } from 'lucide-react'
-import { simulateRecharge, getTarifs } from '../services/api'
+import { simulateRecharge, getTarifs, saveSimulation } from '../services/api'
+import { useAuth } from '../context/AuthContext'
 
 /* ── Sauvegarder une recharge dans localStorage ── */
 const sauvegarderRecharge = (data, typeCompteur) => {
@@ -116,12 +117,13 @@ const CalculateurInverse = ({ typeCompteur }) => {
 }
 
 const SimulateurRecharge = () => {
+  const { isAuth } = useAuth()
   const [mode, setMode] = useState('direct') // 'direct' | 'inverse'
   const [formData, setFormData] = useState({
     montant_brut: 10000,
     cumul_actuel: 120,
     type_compteur: 'DPP',
-    avec_redevance: false
+    avecRedevance: false
   })
 
   const [result, setResult] = useState(null)
@@ -270,7 +272,7 @@ const SimulateurRecharge = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <input type="checkbox" name="avec_redevance" checked={formData.avec_redevance} onChange={handleChange} className="w-4 h-4 text-primary" />
+              <input type="checkbox" name="avecRedevance" checked={formData.avecRedevance} onChange={handleChange} className="w-4 h-4 text-primary" />
               <label className="text-sm text-gray-700">Appliquer redevance (429 FCFA) - Début de mois</label>
             </div>
 
@@ -355,14 +357,27 @@ const SimulateurRecharge = () => {
               {/* ── Bouton Sauvegarder ── */}
               <div className="flex items-center gap-3 pt-2">
                 <button
-                  onClick={() => {
+                  onClick={async () => {
                     sauvegarderRecharge(result, formData.type_compteur)
+                    if (isAuth) {
+                      try {
+                        await saveSimulation({
+                          montant_brut:   result.montant_brut,
+                          kwh_obtenus:    result.kwh_obtenus,
+                          type_compteur:  formData.type_compteur,
+                          tranche_finale: result.tranche_finale,
+                          avecRedevance:  formData.avecRedevance,
+                          cumul_avant:    result.cumul_avant,
+                          cumul_final:    result.cumul_final,
+                        })
+                      } catch (_) { /* silencieux */ }
+                    }
                     setSavedMsg(true)
                     setTimeout(() => setSavedMsg(false), 3000)
                   }}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-primary/30 bg-primary/5 text-primary text-sm font-semibold hover:bg-primary/10 transition"
                 >
-                  <Save className="w-4 h-4" /> Sauvegarder dans l'historique
+                  <Save className="w-4 h-4" /> Sauvegarder dans l’historique
                 </button>
                 {savedMsg && (
                   <span className="text-emerald-600 text-sm font-semibold flex items-center gap-1">

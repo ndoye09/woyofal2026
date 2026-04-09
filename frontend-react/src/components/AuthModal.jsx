@@ -1,10 +1,12 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { X, Mail, Lock, User, LogIn, UserPlus, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import api from '../services/api'
 
-export default function AuthModal({ onClose }) {
+export default function AuthModal({ onClose, pageToRedirect }) {
   const { login } = useAuth()
+  const navigate  = useNavigate()
   const [tab, setTab]       = useState('login')   // 'login' | 'register'
   const [loading, setLoading] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
@@ -33,7 +35,10 @@ export default function AuthModal({ onClose }) {
       const { data } = await api.post(endpoint, body)
       login(data.user, data.access_token, data.refresh_token)
       setSuccess(tab === 'login' ? `Bienvenue ${data.user.name} !` : 'Compte créé — bienvenue !')
-      setTimeout(onClose, 900)
+      setTimeout(() => {
+        onClose()
+        if (pageToRedirect) navigate(pageToRedirect, { replace: true })
+      }, 900)
     } catch (err) {
       const errData = err.response?.data
       if (errData?.errors) setError(errData.errors.join(' '))

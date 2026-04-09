@@ -18,8 +18,7 @@ DB_PASS = os.getenv('WOYOFAL_DB_PASS', 'woyofal2026')
 
 
 def create_engine_url():
-    # use pg8000 (pure-Python) driver to avoid native psycopg2 encoding issues on Windows
-    return f"postgresql+pg8000://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+    return f"postgresql+psycopg2://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 
 def upsert_dim_date(engine, dates_series):

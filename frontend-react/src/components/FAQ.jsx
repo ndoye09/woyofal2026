@@ -66,7 +66,7 @@ const faqs = [
     questions: [
       {
         q: 'D\'où viennent les données du Dashboard ?',
-        a: 'Le Dashboard Analytics de notre plateforme utilise une base de données PostgreSQL alimentée par notre pipeline ETL. Les données couvrent 14 régions du Sénégal et permettent de visualiser les tendances de consommation, la répartition par tranches et les KPIs.'
+        a: "Le Dashboard est votre espace personnel : il affiche l'historique de vos simulations, vos statistiques de recharge (total FCFA, kWh moyen) et l'évolution de votre consommation dans le temps."
       },
       {
         q: 'Les prédictions ML sont-elles fiables ?',

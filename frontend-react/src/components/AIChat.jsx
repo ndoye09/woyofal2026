@@ -6,11 +6,13 @@ import api from '../services/api'
 
 const SUGGESTIONS = [
   'Combien de kWh pour 5 000 FCFA ?',
+  'C\'est quoi la redevance mensuelle ?',
+  'Différence DPP et PPP ?',
+  'C\'est quoi le cumul mensuel actuel ?',
+  'Tarifs 2025 vs 2026, quelle différence ?',
+  'Comment utiliser le calcul inverse ?',
   'Où recharger son compteur Woyofal ?',
   'Recharge non créditée, que faire ?',
-  'Comment migrer vers Woyofal ?',
-  'Comment lire son compteur ?',
-  'Contacts Senelec',
 ]
 
 function TypingDots() {
@@ -25,6 +27,106 @@ function TypingDots() {
       ))}
     </div>
   )
+}
+
+/** Rendu Markdown simplifié : gras, italique, listes, tableaux */
+function renderMarkdown(text) {
+  const lines = text.split('\n')
+  const elements = []
+  let i = 0
+
+  while (i < lines.length) {
+    const line = lines[i]
+
+    // Tableau Markdown (ligne contenant |)
+    if (line.includes('|') && i + 1 < lines.length && lines[i + 1].includes('---')) {
+      const headers = line.split('|').map(h => h.trim()).filter(Boolean)
+      i += 2 // skip separator
+      const rows = []
+      while (i < lines.length && lines[i].includes('|')) {
+        rows.push(lines[i].split('|').map(c => c.trim()).filter(Boolean))
+        i++
+      }
+      elements.push(
+        <div key={i} className="overflow-x-auto my-2">
+          <table className="text-xs w-full border-collapse">
+            <thead>
+              <tr className="bg-primary/10">
+                {headers.map((h, j) => (
+                  <th key={j} className="px-2 py-1 border border-slate-200 font-semibold text-left">{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, ri) => (
+                <tr key={ri} className={ri % 2 === 0 ? '' : 'bg-slate-50'}>
+                  {row.map((cell, ci) => (
+                    <td key={ci} className="px-2 py-1 border border-slate-200">{formatInline(cell)}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )
+      continue
+    }
+
+    // Ligne vide
+    if (!line.trim()) {
+      elements.push(<div key={i} className="h-1" />)
+      i++
+      continue
+    }
+
+    // Titre ##
+    if (line.startsWith('## ')) {
+      elements.push(<p key={i} className="font-bold text-slate-900 mt-2 mb-1">{line.slice(3)}</p>)
+      i++; continue
+    }
+
+    // Puce • ou -
+    if (/^[•\-\*]\s/.test(line)) {
+      elements.push(
+        <p key={i} className="leading-snug">
+          <span className="text-primary">•</span>{' '}
+          <span>{formatInline(line.slice(2).trim())}</span>
+        </p>
+      )
+      i++; continue
+    }
+
+    // Numérotation 1. 2. ...
+    if (/^\d+\.\s/.test(line)) {
+      const num = line.match(/^(\d+)\./)[1]
+      const content = line.replace(/^\d+\.\s+/, '')
+      elements.push(
+        <p key={i} className="leading-snug">
+          <span className="text-primary font-semibold">{num}.</span>{' '}
+          <span>{formatInline(content)}</span>
+        </p>
+      )
+      i++; continue
+    }
+
+    // Ligne normale
+    elements.push(<p key={i} className="leading-snug">{formatInline(line)}</p>)
+    i++
+  }
+
+  return elements
+}
+
+function formatInline(text) {
+  // **gras** et *italique*
+  const parts = text.split(/(\*\*[^*]+\*\*|\*[^*]+\*)/g)
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**'))
+      return <strong key={i}>{part.slice(2, -2)}</strong>
+    if (part.startsWith('*') && part.endsWith('*'))
+      return <em key={i}>{part.slice(1, -1)}</em>
+    return part
+  })
 }
 
 function ChatBubble({ msg }) {
@@ -43,7 +145,7 @@ function ChatBubble({ msg }) {
             : 'bg-slate-100 text-slate-800 rounded-tl-sm'
         }`}
       >
-        {msg.content}
+        {isUser ? msg.content : <div className="space-y-0.5">{renderMarkdown(msg.content)}</div>}
       </div>
     </div>
   )

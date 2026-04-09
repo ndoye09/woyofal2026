@@ -118,3 +118,14 @@ export const healthCheck = async () => {
   const response = await api.get('/health', { baseURL: 'http://localhost:5000' })
   return response.data
 }
+
+// ─── Simulations personnelles ─────────────────────────────────────────────────
+export const saveSimulation = async (data) => {
+  const response = await api.post('/auth/simulations', data)
+  return response.data
+}
+
+export const getMySimulations = async (limit = 50) => {
+  const response = await api.get(`/auth/simulations?limit=${limit}`)
+  return response.data
+}
