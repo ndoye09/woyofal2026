@@ -1,7 +1,7 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend-react && npm install && npm run build",
-  "outputDirectory": "frontend-react/dist",
+  "buildCommand": "npm install && npm run build",
+  "outputDirectory": "dist",
   "public": false,
   "rewrites": [
     {
@@ -12,5 +12,9 @@
   "env": {
     "VITE_API_URL": "@vite_api_url"
   },
-  "regions": ["iad1"]
+  "regions": ["iad1"],
+  "github": {
+    "enabled": true,
+    "autoAlias": true
+  }
 }
