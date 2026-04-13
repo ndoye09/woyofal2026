@@ -50,7 +50,13 @@ const parseBody = (req) => {
 };
 
 const respond = (res, statusCode, data) => {
-  res.writeHead(statusCode, { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' });
+  res.writeHead(statusCode, {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS, DELETE, PUT',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Requested-With',
+    'Access-Control-Max-Age': '86400'
+  });
   res.end(JSON.stringify(data));
 };
 
@@ -58,31 +64,34 @@ const simulateRecharge = (montant, typeCompteur = 'DPP', cumulActuel = 0, avecRe
   const tarifs = TARIFS[typeCompteur];
   const redevance = avecRedevance ? 429 : 0;
   const taxe = Math.round(montant * 0.025); // 2.5% tax
-  const montantNet = montant - redevance - taxe;
+  let montantReste = montant - redevance - taxe;
   
   let cumul = cumulActuel;
   let kwhTotal = 0;
   let detailTranches = {};
   
-  // Distribuer montantNet selon les tranches
+  // Distribuer montantReste selon les tranches
   for (let t = 1; t <= 3; t++) {
+    if (montantReste <= 0) break;
+    
     const maxTranche = tarifs[t].max;
     const minTranche = t === 1 ? 0 : tarifs[t - 1].max;
     
     // Déterminer combien de kWh disponibles dans cette tranche
     let disponibleDansTranche;
     if (cumul < minTranche) {
-      disponibleDansTranche = maxTranche ? maxTranche - minTranche : Number.MAX_SAFE_INTEGER;
-      cumul = minTranche; // Commence à minTranche
+      // Si on n'est pas encore à la tranche, on saute
+      continue;
     } else if (cumul >= minTranche && (maxTranche === null || cumul < maxTranche)) {
       disponibleDansTranche = maxTranche ? maxTranche - cumul : Number.MAX_SAFE_INTEGER;
     } else {
-      disponibleDansTranche = 0; // Déjà passé cette tranche
+      // Déjà passé cette tranche
+      continue;
     }
     
-    if (disponibleDansTranche <= 0 || montantNet <= 0) continue;
+    if (disponibleDansTranche <= 0) continue;
     
-    const kwhDansTranche = Math.min(montantNet / tarifs[t].prix, disponibleDansTranche);
+    const kwhDansTranche = Math.min(montantReste / tarifs[t].prix, disponibleDansTranche);
     const montantTranche = kwhDansTranche * tarifs[t].prix;
     
     if (kwhDansTranche > 0) {
@@ -94,16 +103,19 @@ const simulateRecharge = (montant, typeCompteur = 'DPP', cumulActuel = 0, avecRe
       
       kwhTotal += kwhDansTranche;
       cumul += kwhDansTranche;
+      montantReste -= montantTranche;
     }
   }
   
-  const trancheFinal = cumul <= 150 ? 1 : cumul <= 400 ? 2 : 3;
+  const trancheFinal = cumul <= 150 ? 1 : cumul <= 250 ? 2 : 3;
+  
+  const montantNetInitial = montant - redevance - taxe;
   
   return {
     montant_brut: montant,
     montant_redevance: redevance,
     taxe: taxe,
-    montant_net: montantNet,
+    montant_net: montantNetInitial,
     kwh_obtenus: parseFloat(kwhTotal.toFixed(2)),
     tranche_finale: trancheFinal,
     detail_tranches: detailTranches,
@@ -354,10 +366,10 @@ const server = http.createServer(async (req, res) => {
   return respond(res, 404, { error: 'Endpoint not found', path: pathname });
 });
 
-const PORT = 5000;
-server.listen(PORT, () => {
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`\n═══════════════════════════════════════════════════════════════`);
-  console.log(`✅ Mock API Server lancé sur http://localhost:${PORT}`);
+  console.log(`✅ Mock API Server lancé sur port ${PORT}`);
   console.log(`═══════════════════════════════════════════════════════════════\n`);
   console.log(`Endpoints disponibles:`);
   console.log(`  POST   /api/auth/login`);

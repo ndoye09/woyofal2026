@@ -25,9 +25,9 @@ const TARIFS = {
 }
 
 const colorMap = {
-  green: { bg: 'bg-green-500', light: 'bg-green-50', border: 'border-green-300', text: 'text-green-700' },
-  yellow: { bg: 'bg-yellow-500', light: 'bg-yellow-50', border: 'border-yellow-300', text: 'text-yellow-700' },
-  red: { bg: 'bg-red-500', light: 'bg-red-50', border: 'border-red-300', text: 'text-red-700' }
+  green: { bg: 'bg-gray-600', light: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700' },
+  yellow: { bg: 'bg-gray-600', light: 'bg-gray-50', border: 'border-gray-300', text: 'text-gray-700' },
+  red: { bg: 'bg-red-600', light: 'bg-red-50', border: 'border-red-300', text: 'text-red-700' }
 }
 
 /* Simulateur exemple */
@@ -60,33 +60,33 @@ const ExempleCalc = ({ type }) => {
   const totalKwh = details.reduce((s, d) => s + parseFloat(d.kwh), 0)
 
   return (
-    <div className="bg-slate-50 rounded-2xl p-5 mt-4 border border-slate-100">
+    <div className="bg-slate-50 rounded-2xl p-5 mt-4 border border-gray-100">
       <div className="flex items-center gap-2 mb-3">
-        <Zap className="w-4 h-4 text-primary" />
-        <span className="text-sm font-semibold text-slate-700">Exemple de calcul (avec redevance)</span>
+        <Zap className="w-4 h-4 text-black" />
+        <span className="text-sm font-semibold text-gray-700">Exemple de calcul (avec redevance)</span>
       </div>
       <div className="flex items-center gap-3 mb-3">
         <label className="text-xs text-gray-500">Montant :</label>
         <input
           type="range" min="1000" max="50000" step="500"
           value={montant} onChange={e => setMontant(+e.target.value)}
-          className="flex-1 accent-primary"
+          className="flex-1 accent-red-600"
         />
-        <span className="text-sm font-bold text-primary w-24 text-right">{montant.toLocaleString()} F</span>
+        <span className="text-sm font-bold text-red-600 w-24 text-right">{montant.toLocaleString()} F</span>
       </div>
       <div className="text-xs text-gray-500 mb-3">
         Redevance : -{tarif.redevance} F | Taxe : -{taxe.toFixed(0)} F | Net : {Math.max(0, net).toFixed(0)} F
       </div>
       {details.map(d => (
-        <div key={d.tranche} className="flex justify-between text-xs bg-white p-2.5 rounded-xl mb-1 border border-slate-100">
+        <div key={d.tranche} className="flex justify-between text-xs bg-white p-2.5 rounded-xl mb-1 border border-gray-100">
           <span className="font-semibold">T{d.tranche} ({d.prix} F/kWh)</span>
-          <span className="text-primary font-bold">{d.kwh} kWh</span>
+          <span className="text-red-600 font-bold">{d.kwh} kWh</span>
           <span className="text-gray-500">{parseFloat(d.montant).toLocaleString()} F</span>
         </div>
       ))}
-      <div className="bg-primary/10 rounded-2xl p-4 text-center mt-3">
-        <span className="text-2xl font-bold font-display gradient-text">{totalKwh.toFixed(1)} kWh</span>
-        <span className="text-xs text-primary/70 block mt-0.5">pour {montant.toLocaleString()} FCFA</span>
+      <div className="bg-red-50 rounded-2xl p-4 text-center mt-3 border border-red-200">
+        <span className="text-2xl font-bold font-display text-red-600">{totalKwh.toFixed(1)} kWh</span>
+        <span className="text-xs text-red-600 block mt-0.5">pour {montant.toLocaleString()} FCFA</span>
       </div>
     </div>
   )
@@ -96,14 +96,14 @@ const GuideTarifs = () => {
   const [activeType, setActiveType] = useState('DPP')
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-14">
+    <div className="max-w-5xl mx-auto px-4 py-14 bg-white min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <span className="section-tag">Tarification</span>
         <h1 className="section-title">Guide des Tarifs Senelec 2026</h1>
         <p className="section-subtitle">Grille tarifaire officielle Woyofal — Décret CRSE 2026</p>
-        <div className="inline-flex items-center gap-2 bg-success/10 border border-success/30 text-success text-sm px-4 py-2 rounded-full mt-4">
-          <span className="w-2 h-2 bg-success rounded-full"></span>
+        <div className="inline-flex items-center gap-2 bg-red-50 border border-red-300 text-red-600 text-sm px-4 py-2 rounded-full mt-4">
+          <span className="w-2 h-2 bg-red-600 rounded-full"></span>
           Tarifs 2026 — Plus à jour que les autres calculateurs (2025)
         </div>
       </div>
@@ -116,8 +116,8 @@ const GuideTarifs = () => {
             onClick={() => setActiveType(type)}
             className={`px-8 py-3 rounded-xl font-semibold transition ${
               activeType === type
-                ? 'bg-primary text-white shadow-glow'
-                : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 hover:border-primary/30'
+                ? 'bg-black text-white shadow-md'
+                : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-black/30'
             }`}
           >
             {type}
@@ -126,7 +126,7 @@ const GuideTarifs = () => {
       </div>
 
       {/* Info type */}
-      <div className="card mb-8 border-l-4 border-primary bg-primary/[0.02]">
+      <div className="card mb-8 border-l-4 border-black bg-gray-50">
         <div className="font-bold text-xl mb-1">{TARIFS[activeType].label}</div>
         <div className="text-gray-600">{TARIFS[activeType].subtitle}</div>
         <div className="mt-3 text-sm text-gray-500">
@@ -165,19 +165,19 @@ const GuideTarifs = () => {
 
       {/* Comparatif DPP vs PPP */}
       <div className="card mb-8">
-        <h2 className="text-xl font-bold mb-4">📊 Comparatif DPP vs PPP</h2>
+        <h2 className="text-xl font-bold mb-4">Comparatif DPP vs PPP</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-gray-100">
                 <th className="p-3 text-left">Critère</th>
-                <th className="p-3 text-center text-blue-700">DPP</th>
-                <th className="p-3 text-center text-purple-700">PPP</th>
+                <th className="p-3 text-center text-black">DPP</th>
+                <th className="p-3 text-center text-gray-700">PPP</th>
               </tr>
             </thead>
             <tbody>
               <tr className="border-t"><td className="p-3 text-gray-700">Usage</td><td className="p-3 text-center">Ménages</td><td className="p-3 text-center">Entreprises</td></tr>
-              <tr className="border-t bg-gray-50"><td className="p-3 text-gray-700">T1 (tarif min)</td><td className="p-3 text-center font-bold text-green-700">82,00 F/kWh</td><td className="p-3 text-center font-bold text-orange-700">147,43 F/kWh</td></tr>
+              <tr className="border-t bg-gray-50"><td className="p-3 text-gray-700">T1 (tarif min)</td><td className="p-3 text-center font-bold text-black">82,00 F/kWh</td><td className="p-3 text-center font-bold text-gray-700">147,43 F/kWh</td></tr>
               <tr className="border-t"><td className="p-3 text-gray-700">Seuil T1</td><td className="p-3 text-center">0-150 kWh</td><td className="p-3 text-center">0-50 kWh</td></tr>
               <tr className="border-t bg-gray-50"><td className="p-3 text-gray-700">T2</td><td className="p-3 text-center">136,49 F/kWh</td><td className="p-3 text-center">189,84 F/kWh</td></tr>
               <tr className="border-t"><td className="p-3 text-gray-700">Seuil T2</td><td className="p-3 text-center">151-250 kWh</td><td className="p-3 text-center">51-500 kWh</td></tr>
@@ -190,52 +190,18 @@ const GuideTarifs = () => {
 
       {/* Simulateur intégré */}
       <div className="card mb-8">
-        <h2 className="text-xl font-bold mb-2">🧮 Calculateur rapide — {activeType}</h2>
+        <h2 className="text-xl font-bold mb-2">Calculateur rapide — {activeType}</h2>
         <p className="text-sm text-gray-500 mb-2">Ajustez le montant pour voir l'impact sur les kWh</p>
         <ExempleCalc type={activeType} />
       </div>
 
       {/* Explication calcul */}
-      <div className="card mb-8 bg-blue-50 border border-blue-200">
-        <h2 className="text-xl font-bold text-blue-900 mb-4">📐 Comprendre le calcul</h2>
-        <div className="space-y-3 text-sm text-blue-800">
-          <p><strong>Étape 1 — Déductions :</strong> Montant brut − Redevance (si 1ère recharge) − Taxe communale (2,5%) = Montant net</p>
-          <p><strong>Étape 2 — Conversion en kWh :</strong> Le montant net est réparti progressivement dans les tranches du plus bas au plus haut.</p>
-          <p><strong>Exemple DPP, 10 000 FCFA, avec redevance, cumul = 0 :</strong></p>
-          <div className="bg-white rounded-lg p-3 font-mono text-xs space-y-1">
-            <div>Taxe = 10 000 × 2.5% = 250 F</div>
-            <div>Redevance = 429 F</div>
-            <div>Net = 10 000 − 250 − 429 = 9 321 F</div>
-            <div>T1 (82 F/kWh, max 150 kWh = 12 300 F) → 9 321 / 82 = 113.7 kWh</div>
-            <div className="font-bold text-blue-700 border-t pt-1">Total = 113.7 kWh • Tranche finale = T1 ✓</div>
-          </div>
-        </div>
+      <div className="card mb-8 bg-gray-50 border border-gray-200">
+        <h2 className="text-lg font-bold text-black mb-3">Comment ça marche</h2>
+        <p className="text-sm text-gray-600">Montant brut − Redevance − Taxe (2.5%) = Montant net, alors redistribué par tranche. Ex: 10 000 F = ~114 kWh en T1.</p>
       </div>
 
-      {/* Liens utiles */}
-      <div className="grid md:grid-cols-3 gap-4 text-center">
-        <a href="/simulateur" className="card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-blue-400 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <Zap className="w-6 h-6 text-white" />
-          </div>
-          <div className="font-semibold font-display">Simulateur complet</div>
-          <div className="text-sm text-slate-500">FCFA ↔ kWh avec détail</div>
-        </a>
-        <a href="/faq" className="card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-violet-500 to-purple-400 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <Info className="w-6 h-6 text-white" />
-          </div>
-          <div className="font-semibold font-display">FAQ</div>
-          <div className="text-sm text-slate-500">Toutes vos questions</div>
-        </a>
-        <a href="/conseils" className="card hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group">
-          <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-accent to-yellow-300 flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-            <TrendingDown className="w-6 h-6 text-navy" />
-          </div>
-          <div className="font-semibold font-display">Conseils économies</div>
-          <div className="text-sm text-slate-500">Rester en Tranche 1</div>
-        </a>
-      </div>
+
     </div>
   )
 }

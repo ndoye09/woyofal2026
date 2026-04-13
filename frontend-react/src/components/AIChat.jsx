@@ -53,15 +53,15 @@ function renderMarkdown(text) {
             <thead>
               <tr className="bg-primary/10">
                 {headers.map((h, j) => (
-                  <th key={j} className="px-2 py-1 border border-slate-200 font-semibold text-left">{h}</th>
+                  <th key={j} className="px-2 py-1 border border-gray-200 font-semibold text-left">{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {rows.map((row, ri) => (
-                <tr key={ri} className={ri % 2 === 0 ? '' : 'bg-slate-50'}>
+                <tr key={ri} className={ri % 2 === 0 ? '' : 'bg-gray-50'}>
                   {row.map((cell, ci) => (
-                    <td key={ci} className="px-2 py-1 border border-slate-200">{formatInline(cell)}</td>
+                    <td key={ci} className="px-2 py-1 border border-gray-200">{formatInline(cell)}</td>
                   ))}
                 </tr>
               ))}
@@ -81,7 +81,7 @@ function renderMarkdown(text) {
 
     // Titre ##
     if (line.startsWith('## ')) {
-      elements.push(<p key={i} className="font-bold text-slate-900 mt-2 mb-1">{line.slice(3)}</p>)
+      elements.push(<p key={i} className="font-bold text-black mt-2 mb-1">{line.slice(3)}</p>)
       i++; continue
     }
 
@@ -142,7 +142,7 @@ function ChatBubble({ msg }) {
         className={`max-w-[82%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed ${
           isUser
             ? 'bg-primary text-white rounded-tr-sm ml-auto'
-            : 'bg-slate-100 text-slate-800 rounded-tl-sm'
+            : 'bg-gray-100 text-gray-800 rounded-tl-sm'
         }`}
       >
         {isUser ? msg.content : <div className="space-y-0.5">{renderMarkdown(msg.content)}</div>}
@@ -210,7 +210,7 @@ export default function AIChat() {
     <>
       {/* ── Panneau chat ────────────────────────────────────────── */}
       {open && (
-        <div className="fixed bottom-24 right-6 z-40 flex flex-col w-[360px] max-h-[560px] bg-white rounded-3xl shadow-card-hover border border-slate-100 overflow-hidden animate-fade-up">
+        <div className="fixed bottom-24 right-6 z-40 flex flex-col w-[360px] max-h-[560px] bg-white rounded-3xl shadow-card-hover border border-gray-100 overflow-hidden animate-fade-up">
 
           {/* Header */}
           <div className="flex items-center gap-3 px-5 py-4 bg-primary-gradient text-white shrink-0">
@@ -249,18 +249,18 @@ export default function AIChat() {
                   <div className="shrink-0 w-8 h-8 rounded-xl bg-primary-gradient flex items-center justify-center shadow-glow">
                     <Bot size={14} className="text-white" />
                   </div>
-                  <div className="bg-slate-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-slate-800">
+                  <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-2.5 text-sm text-gray-800">
                     Bonjour ! Je suis votre assistant Woyofal ⚡<br />
                     Posez-moi vos questions sur les tarifs Senelec 2026 et la gestion de votre énergie.
                   </div>
                 </div>
                 <div className="mt-3 space-y-2">
-                  <p className="text-xs text-slate-400 font-medium uppercase tracking-wide px-1">Suggestions</p>
+                  <p className="text-xs text-gray-400 font-medium uppercase tracking-wide px-1">Suggestions</p>
                   {SUGGESTIONS.map(s => (
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="w-full text-left text-xs px-3 py-2 rounded-xl border border-slate-200 text-slate-600 hover:border-primary/40 hover:bg-primary/4 hover:text-primary transition"
+                      className="w-full text-left text-xs px-3 py-2 rounded-xl border border-gray-200 text-gray-600 hover:border-black/40 hover:bg-black/4 hover:text-black transition"
                     >
                       {s}
                     </button>
@@ -275,7 +275,7 @@ export default function AIChat() {
                 <div className="shrink-0 w-8 h-8 rounded-xl bg-primary-gradient flex items-center justify-center">
                   <Bot size={14} className="text-white" />
                 </div>
-                <div className="bg-slate-100 rounded-2xl rounded-tl-sm">
+                <div className="bg-gray-100 rounded-2xl rounded-tl-sm">
                   <TypingDots />
                 </div>
               </div>
@@ -287,8 +287,8 @@ export default function AIChat() {
           </div>
 
           {/* Input */}
-          <div className="shrink-0 px-4 pb-4 pt-3 border-t border-slate-100 bg-white">
-            <div className="flex items-end gap-2 bg-slate-50 rounded-2xl border border-slate-200 focus-within:border-primary/50 focus-within:ring-2 focus-within:ring-primary/10 transition px-3 py-2">
+          <div className="shrink-0 px-4 pb-4 pt-3 border-t border-gray-100 bg-white">
+            <div className="flex items-end gap-2 bg-gray-50 rounded-2xl border border-gray-200 focus-within:border-black/50 focus-within:ring-2 focus-within:ring-black/10 transition px-3 py-2">
               <textarea
                 ref={inputRef}
                 rows={1}
@@ -297,41 +297,38 @@ export default function AIChat() {
                 onKeyDown={handleKey}
                 placeholder="Posez votre question…"
                 maxLength={1000}
-                className="flex-1 bg-transparent text-sm text-slate-800 placeholder:text-slate-400 resize-none outline-none max-h-28 overflow-y-auto"
-                style={{ fieldSizing: 'content' }}
+                className="flex-1 bg-transparent text-sm text-gray-800 placeholder:text-gray-400 resize-none outline-none max-h-28 overflow-y-auto"
               />
               <button
                 onClick={() => send()}
-                disabled={!input.trim() || loading}
-                className="shrink-0 w-8 h-8 rounded-xl bg-primary flex items-center justify-center text-white transition hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+                disabled={loading || !input.trim()}
+                className="shrink-0 p-2 rounded-lg bg-primary hover:bg-primary/90 disabled:opacity-40 text-white transition"
+                title="Envoyer (Entrée)"
               >
-                <Send size={14} />
+                <Send size={16} />
               </button>
             </div>
-            <p className="text-[10px] text-slate-400 text-center mt-1.5">
-              OpenRouter · Meta Llama 3.3 70B · 100 % gratuit
-            </p>
           </div>
         </div>
       )}
 
-      {/* ── Bouton flottant ─────────────────────────────────────── */}
+      {/* ── Bouton flottant ────────────────────────────────────────── */}
       <button
-        onClick={() => setOpen(o => !o)}
-        className={`fixed bottom-6 right-6 z-40 w-14 h-14 rounded-2xl bg-primary-gradient text-white
-          shadow-glow flex items-center justify-center transition-all duration-300
-          hover:scale-110 hover:shadow-[0_0_40px_rgba(0,87,255,0.45)]
-          ${open ? 'rotate-0' : 'rotate-0'}`}
-        aria-label="Assistant IA"
+        onClick={() => setOpen(!open)}
+        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full flex items-center justify-center font-display font-bold text-white shadow-2xl transition-all duration-300 ${ open ? 'bg-primary' : 'bg-accent hover:shadow-glow-accent' }`}
+        title="Ouvrir l'assistant Woyofal"
       >
-        {open ? <X size={22} /> : <MessageCircle size={22} />}
-        {!open && unread > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-accent text-navy text-[10px] font-bold flex items-center justify-center border-2 border-white">
-            {unread}
-          </span>
-        )}
-        {!open && (
-          <span className="absolute -top-1 -left-1 w-3 h-3 rounded-full bg-success animate-ping-slow" />
+        {open ? (
+          <X size={20} />
+        ) : (
+          <div className="flex items-center justify-center gap-1">
+            <MessageCircle size={20} />
+            {unread > 0 && (
+              <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-red-500 text-white text-xs flex items-center justify-center animate-pulse">
+                {unread}
+              </span>
+            )}
+          </div>
         )}
       </button>
     </>

@@ -28,47 +28,41 @@ const CATEGORIES = [...new Set(APPAREILS.map(a => a.categorie))]
 const CONSEILS_SECTIONS = [
   {
     titre: 'Rester en Tranche 1 (≤ 150 kWh/mois)',
-    icon: <TrendingDown className="w-6 h-6 text-green-600" />,
-    bg: 'bg-green-50 border-green-200',
+    icon: <TrendingDown className="w-6 h-6 text-gray-700" />,
+    bg: 'bg-gray-50 border-gray-200',
     items: [
-      'Utilisez le simulateur en mode inverse : entrez 150 kWh pour connaître le budget max de T1.',
-      'Rechargez en plusieurs petites tranches plutôt qu\'une seule grande. Ex: 3×5 000 FCFA au lieu de 1×15 000 FCFA.',
-      'Suivez votre cumul mensuel sur le Dashboard pour ne pas dépasser 150 kWh.',
-      'En fin de mois, si vous approchez 150 kWh, repassez en T1 le mois suivant grâce au remise à zéro.',
+      'Rechargez en plusieurs petites tranches (3×5 000 F vs 1×15 000 F).',
+      'Suivez votre cumul mensuel sur le Dashboard.',
     ]
   },
   {
     titre: 'Réduire la consommation au quotidien',
-    icon: <Lightbulb className="w-6 h-6 text-yellow-600" />,
-    bg: 'bg-yellow-50 border-yellow-200',
+    icon: <Lightbulb className="w-6 h-6 text-gray-700" />,
+    bg: 'bg-gray-50 border-gray-200',
     items: [
-      'Remplacez toutes vos ampoules par des LED 9W (vs 60W incandescent = économie de 85%).',
-      'Configurez votre climatiseur à 24-26°C — chaque degré de moins augmente la conso de 8%.',
-      'Débranchez les appareils en veille : un téléviseur en veille consomme ~15W en continu.',
-      'Repassez en une seule session hebdomadaire plutôt que quotidiennement.',
-      'Privilégiez le ventilateur à la clim pour les nuits à moins de 28°C.',
+      'LED 9W au lieu de 60W (−85% conso).',
+      'Clim à 24-26°C (−8% par degré).',
+      'Débranchez les appareils en veille.',
     ]
   },
   {
     titre: 'Optimiser les gros appareils',
-    icon: <Home className="w-6 h-6 text-blue-600" />,
-    bg: 'bg-blue-50 border-blue-200',
+    icon: <Home className="w-6 h-6 text-gray-700" />,
+    bg: 'bg-gray-50 border-gray-200',
     items: [
-      'Réfrigérateur : réglez le thermostat à +4°C (pas moins), éloignez-le des sources de chaleur.',
-      'Chauffe-eau : programmez la mise en chauffe la nuit si possible, installez un minuteur.',
-      'Machine à laver : remplissez toujours complètement, utilisez l\'eau froide (30°C).',
-      'Pompe à eau : stockez l\'eau dans un château d\'eau / grand bac pour limiter les cycles.',
+      'Frigo +4°C, loin des sources chaleur.',
+      'Machine à laver : remplissez complètement.',
+      'Pompe : stockez l\'eau (moins de cycles).',
     ]
   },
   {
     titre: 'Planifier les recharges intelligemment',
-    icon: <Calculator className="w-6 h-6 text-purple-600" />,
-    bg: 'bg-purple-50 border-purple-200',
+    icon: <Calculator className="w-6 h-6 text-gray-700" />,
+    bg: 'bg-gray-50 border-gray-200',
     items: [
-      'En début de mois (cumul = 0) : les 150 premiers kWh sont en T1 à 82 FCFA/kWh.',
-      'Calculez votre budget mensuel : 150 kWh × 82 + redevance 429 + taxe = ~13 700 FCFA.',
-      'Si vous dépassez 150 kWh, le reste passe à 136,49 FCFA/kWh (T2) — soit +66% par kWh.',
-      'Utilisez le mode inverse du simulateur pour planifier précisément chaque recharge.',
+      'T1 = 150 kWh max à 82 F/kWh.',
+      'Budget mensuel : 150×82 + 429 = ~13 700 F.',
+      'T2+ = +66% par kWh au-delà de 150 kWh.',
     ]
   },
 ]
@@ -85,13 +79,13 @@ function BudgetCalculator() {
     pompe: (heures.pompe * 370 * jours) / 1000,
   }
   const totalKwh = Object.values(conso).reduce((a, b) => a + b, 0)
-  const tranche = totalKwh <= 150 ? 'T1 ✅' : totalKwh <= 250 ? 'T2 ⚠️' : 'T3 🔴'
+  const tranche = totalKwh <= 150 ? 'T1' : totalKwh <= 250 ? 'T2' : 'T3'
   const prix = totalKwh <= 150 ? totalKwh * 82 : totalKwh <= 250 ? 150 * 82 + (totalKwh - 150) * 136.49 : 150 * 82 + 100 * 136.49 + (totalKwh - 250) * 136.49
   const montantTotal = prix * 1.025 + 429
 
   return (
     <div className="card">
-      <h3 className="text-xl font-semibold mb-4 flex items-center gap-2">
+      <h3 className="text-xl font-bold mb-4 flex items-center gap-2">
         <Calculator className="w-5 h-5 text-primary" /> Calculateur de Budget Mensuel
       </h3>
       <p className="text-sm text-gray-500 mb-6">Estimez votre consommation mensuelle selon vos habitudes (DPP)</p>
@@ -132,8 +126,8 @@ function BudgetCalculator() {
           </div>
         </div>
         {totalKwh > 150 && (
-          <div className="mt-3 bg-orange-50 border border-orange-200 rounded p-2 text-xs text-orange-700 text-center">
-            ⚠️ Vous dépassez 150 kWh — réduire la clim de {Math.max(0, heures.clim - 2)}h à {Math.max(0, heures.clim - 2)}h permettrait d'économiser ~{((heures.clim > 2 ? 2 : heures.clim) * 750 * 30 / 1000 * (136.49 - 82)).toFixed(0)} FCFA/mois
+          <div className="mt-3 bg-gray-50 border border-red-200 rounded-lg p-3 text-xs text-gray-700 text-center">
+            Vous dépassez 150 kWh — réduire la clim de {Math.max(0, heures.clim - 2)}h à {Math.max(0, heures.clim - 2)}h permettrait d'économiser ~{((heures.clim > 2 ? 2 : heures.clim) * 750 * 30 / 1000 * (136.49 - 82)).toFixed(0)} FCFA/mois
           </div>
         )}
       </div>
@@ -148,7 +142,7 @@ export default function Conseils() {
   const appareilsFiltres = catActive === 'Tous' ? APPAREILS : APPAREILS.filter(a => a.categorie === catActive)
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-14">
+    <div className="max-w-5xl mx-auto px-4 py-14 bg-white min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <span className="section-tag">Économies</span>
@@ -162,13 +156,13 @@ export default function Conseils() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
         {[
           { val: '82 F', label: 'T1 (0-150 kWh)', gradient: 'from-success/20 to-emerald-100', text: 'text-success' },
-          { val: '136 F', label: 'T2 (151-250 kWh)', gradient: 'from-accent/20 to-yellow-100', text: 'text-warning' },
-          { val: '-66%', label: 'Économie T1 vs T2', gradient: 'from-primary/10 to-blue-100', text: 'text-primary' },
-          { val: '429 F', label: 'Redevance mensuelle', gradient: 'from-violet-200/40 to-purple-100', text: 'text-violet-700' },
+          { val: '136 F', label: 'T2 (151-250 kWh)', gradient: 'bg-gray-50', text: 'text-gray-700' },
+          { val: '-66%', label: 'Économie T1 vs T2', gradient: 'bg-gray-50', text: 'text-gray-700' },
+          { val: '429 F', label: 'Redevance mensuelle', gradient: 'bg-gray-50', text: 'text-gray-700' },
         ].map(({ val, label, gradient, text }) => (
           <div key={label} className={`bg-gradient-to-br ${gradient} rounded-2xl p-5 text-center border border-white`}>
             <div className={`text-2xl font-bold font-display ${text}`}>{val}</div>
-            <div className="text-xs font-medium text-slate-600 mt-1">{label}</div>
+            <div className="text-xs font-medium text-gray-600 mt-1">{label}</div>
           </div>
         ))}
       </div>
@@ -191,7 +185,7 @@ export default function Conseils() {
                   <ul className="space-y-2">
                     {section.items.map((item, j) => (
                       <li key={j} className="flex items-start gap-2 text-sm">
-                        <CheckCircle className="w-4 h-4 mt-0.5 shrink-0 text-green-600" />
+                        <CheckCircle className="w-4 h-4 mt-0.5 shrink-0 text-red-600" />
                         <span>{item}</span>
                       </li>
                     ))}
@@ -238,11 +232,11 @@ export default function Conseils() {
               {appareilsFiltres.map((a, i) => {
                 const kwhMois = (a.puissance * 4 * 30) / 1000
                 const coutT1 = kwhMois * 82
-                const rowBg = a.type === 'eco' ? 'bg-green-50' : a.type === 'attention' ? 'bg-red-50' : ''
+                const rowBg = a.type === 'eco' ? 'bg-gray-50' : a.type === 'attention' ? 'bg-red-50' : ''
                 const badge = a.type === 'eco'
-                  ? <span className="text-green-600 text-xs font-bold">✅ ECO</span>
+                  ? <span className="text-red-600 text-xs font-bold">ECO</span>
                   : a.type === 'attention'
-                  ? <span className="text-red-600 text-xs font-bold">⚠️ ÉLEVÉ</span>
+                  ? <span className="text-red-600 text-xs font-bold">ÉLEVÉ</span>
                   : <span className="text-gray-500 text-xs">—</span>
                 return (
                   <tr key={i} className={`border-t ${rowBg}`}>
@@ -264,26 +258,26 @@ export default function Conseils() {
       </section>
 
       {/* Alerte importante */}
-      <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-5 mb-8 flex gap-4">
-        <AlertTriangle className="w-8 h-8 text-amber-600 shrink-0 mt-1" />
+      <div className="bg-gray-50 border-2 border-gray-300 rounded-xl p-5 mb-8 flex gap-4">
+        <AlertTriangle className="w-8 h-8 text-red-600 shrink-0 mt-1" />
         <div>
-          <h3 className="font-bold text-amber-800 mb-1">Important : Tarif social DPP 2026</h3>
-          <p className="text-sm text-amber-700">
+          <h3 className="font-bold text-red-800 mb-1">Important : Tarif social DPP 2026</h3>
+          <p className="text-sm text-gray-600">
             La Tranche 1 (T1) à <strong>82 FCFA/kWh</strong> s'applique aux <strong>150 premiers kWh chaque mois</strong> (compteur DPP). 
             Au-delà, le tarif passe abruptement à 136,49 FCFA/kWh (+66%). 
-            Planifiez vos recharges pour rester sous ce seuil grâce au <Link to="/simulateur" className="underline text-amber-900 font-semibold">simulateur</Link>.
+            Planifiez vos recharges pour rester sous ce seuil grâce au <Link to="/simulateur" className="underline text-red-900 font-semibold">simulateur</Link>.
           </p>
         </div>
       </div>
 
       {/* CTA */}
-      <div className="text-center rounded-3xl p-10 text-white" style={{ background: '#0057FF' }}>
+      <div className="text-center rounded-lg p-10 text-white bg-black">
         <h3 className="text-2xl font-bold font-display mb-2">Prêt à optimiser votre consommation ?</h3>
-        <p className="mb-5 text-blue-100">Utilisez notre simulateur avec le mode inverse pour budgéter vos recharges à la perfection.</p>
-        <Link to="/simulateur" className="bg-white text-primary px-8 py-3 rounded-xl font-bold hover:bg-blue-50 transition inline-flex items-center gap-2">
+        <p className="mb-5 text-gray-300">Utilisez notre simulateur avec le mode inverse pour budgéter vos recharges à la perfection.</p>
+        <Link to="/simulateur" className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition inline-flex items-center gap-2">
           Ouvrir le Simulateur
         </Link>
-      </div>
+    </div>
     </div>
   )
 }

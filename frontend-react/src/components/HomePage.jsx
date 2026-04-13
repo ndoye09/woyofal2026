@@ -168,7 +168,7 @@ const StatItem = ({ value, label }) => (
 )
 
 /* ═══════════════════════════════════════
-   PAGE PRINCIPALE
+   PAGE PRINCIPALE - DESIGN ÉNERGÉTIQUE
 ═══════════════════════════════════════ */
 export default function HomePage() {
   const [faqOpen, setFaqOpen] = useState(null)

@@ -31,7 +31,7 @@ const agregParMois = (recharges) => {
     const d = new Date(r.date)
     const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
     if (!map[key]) map[key] = { mois: key, label: moisLabel(r.date), fcfa: 0, kwh: 0, nb: 0 }
-    map[key].fcfa += r.montant_brut || 0
+    map[key].fcfa += r.montant_net || r.montant_brut || 0
     map[key].kwh  += r.kwh_obtenus || 0
     map[key].nb   += 1
   }
@@ -41,8 +41,8 @@ const agregParMois = (recharges) => {
 /* ── Badge tranche ── */
 function BadgeTranche({ t }) {
   const styles = {
-    1: 'bg-emerald-100 text-emerald-700 border-emerald-200',
-    2: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+    1: 'bg-blue-100 text-blue-700 border-blue-200',
+    2: 'bg-red-100 text-red-700 border-red-200',
     3: 'bg-red-100 text-red-700 border-red-200',
   }
   return (
@@ -102,7 +102,7 @@ export default function HistoriqueConsommation() {
   }
 
   /* Stats globales */
-  const totalFcfa = recharges.reduce((s, r) => s + (r.montant_brut || 0), 0)
+  const totalFcfa = recharges.reduce((s, r) => s + (r.montant_net || 0), 0)
   const totalKwh  = recharges.reduce((s, r) => s + (r.kwh_obtenus || 0), 0)
   const prixMoyen = totalKwh > 0 ? totalFcfa / totalKwh : 0
   const mensuel   = agregParMois(recharges)
@@ -112,7 +112,7 @@ export default function HistoriqueConsommation() {
   const tauxT1 = recharges.length > 0 ? Math.round((enT1 / recharges.length) * 100) : 0
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-10">
+    <div className="max-w-5xl mx-auto px-4 py-10 bg-white min-h-screen">
 
       {/* ── En-tête ── */}
       <div className="mb-8">
@@ -131,13 +131,13 @@ export default function HistoriqueConsommation() {
       {/* ── KPI cards ── */}
       {recharges.length > 0 && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <div className="card bg-gradient-to-br from-blue-50 to-blue-100 border-blue-200 p-4">
+          <div className="card bg-slate-50 border-slate-200 p-4">
             <p className="text-xs font-semibold text-blue-500 uppercase tracking-wide mb-1">Recharges</p>
             <p className="text-3xl font-bold font-display text-blue-900">{recharges.length}</p>
           </div>
           <div className="card bg-gradient-to-br from-emerald-50 to-emerald-100 border-emerald-200 p-4">
             <div className="flex items-center gap-1 mb-1">
-              <Zap className="w-3.5 h-3.5 text-emerald-500" />
+              <Zap className="w-3.5 h-3.5 text-blue-500" />
               <p className="text-xs font-semibold text-emerald-600 uppercase tracking-wide">kWh total</p>
             </div>
             <p className="text-3xl font-bold font-display text-emerald-900">{totalKwh.toFixed(1)}</p>
@@ -248,7 +248,7 @@ export default function HistoriqueConsommation() {
                         </div>
                         <div>
                           <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bold text-slate-900">{(r.montant_brut || 0).toLocaleString()} FCFA</span>
+                            <span className="font-bold text-slate-900">{(r.montant_net || r.montant_brut || 0).toLocaleString()} FCFA</span>
                             <span className="text-slate-400">→</span>
                             <span className="font-bold text-emerald-700">{(r.kwh_obtenus || 0).toFixed(2)} kWh</span>
                             <BadgeTranche t={r.tranche_finale || r.tranche || '?'} />
@@ -345,7 +345,7 @@ export default function HistoriqueConsommation() {
   )
 }
 
-/* ── État vide ── */
+/* --- Empty State --- */
 function EmptyState({ icon: Icon, titre, desc, lien, labelLien }) {
   return (
     <div className="text-center py-16 bg-white rounded-2xl border border-slate-200">

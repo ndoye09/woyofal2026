@@ -126,7 +126,7 @@ const FAQ = () => {
           placeholder="Rechercher une question..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full pl-12 pr-4 py-3 border border-slate-200 rounded-xl focus:ring-2 focus:ring-primary/30 focus:border-primary/40 text-slate-800 bg-white shadow-sm"
+          className="w-full pl-12 pr-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-black/30 focus:border-black/40 text-black bg-white shadow-sm"
         />
       </div>
 
@@ -139,14 +139,14 @@ const FAQ = () => {
       ) : (
         filtered.map((cat, ci) => (
           <div key={ci} className="mb-8">
-            <h2 className="text-base font-semibold font-display text-slate-500 uppercase tracking-widest mb-3 flex items-center gap-2">
+            <h2 className="text-base font-semibold font-display text-gray-500 uppercase tracking-widest mb-3 flex items-center gap-2">
               {cat.cat}
             </h2>
             <div className="space-y-2">
               {cat.questions.map((q, qi) => {
                 const key = `${ci}-${qi}`
                 return (
-                  <div key={qi} className="bg-white rounded-2xl border border-slate-100 overflow-hidden shadow-sm hover:border-primary/20 transition-colors">
+                  <div key={qi} className="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:border-black/20 transition-colors">
                     <button
                       className="w-full flex items-center justify-between p-5 text-left hover:bg-slate-50/80 transition"
                       onClick={() => toggle(ci, qi)}
@@ -158,7 +158,7 @@ const FAQ = () => {
                       }
                     </button>
                     {open[key] && (
-                      <div className="px-5 pb-5 text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-4">
+                      <div className="px-5 pb-5 text-gray-600 text-sm leading-relaxed border-t border-gray-100 pt-4">
                         {q.a}
                       </div>
                     )}

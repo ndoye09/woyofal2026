@@ -49,7 +49,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/70 backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70">
       <div className="relative w-full max-w-md bg-white rounded-3xl shadow-card-hover overflow-hidden animate-fade-up">
 
         {/* Header */}
@@ -73,7 +73,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
         </div>
 
         {/* Tabs */}
-        <div className="flex border-b border-slate-100">
+        <div className="flex border-b border-gray-100">
           {['login', 'register'].map(t => (
             <button
               key={t}
@@ -81,7 +81,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
               className={`flex-1 py-3 text-sm font-medium transition ${
                 tab === t
                   ? 'text-primary border-b-2 border-primary'
-                  : 'text-slate-500 hover:text-slate-700'
+                  : 'text-gray-500 hover:text-gray-700'
               }`}
             >
               {t === 'login' ? 'Connexion' : 'Inscription'}
@@ -106,7 +106,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
             <div>
               <label className="label">Nom complet</label>
               <div className="relative">
-                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                 <input
                   type="text"
                   required
@@ -123,7 +123,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
           <div>
             <label className="label">Email</label>
             <div className="relative">
-              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
               <input
                 type="email"
                 required
@@ -154,7 +154,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
               <button
                 type="button"
                 onClick={() => setShowPwd(v => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 tabIndex={-1}
               >
                 {showPwd ? <EyeOff size={16} /> : <Eye size={16} />}
@@ -176,7 +176,7 @@ export default function AuthModal({ onClose, pageToRedirect }) {
             )}
           </button>
 
-          <p className="text-center text-xs text-slate-500 mt-2">
+          <p className="text-center text-xs text-gray-500 mt-2">
             {tab === 'login' ? "Pas encore de compte ? " : "Déjà inscrit ? "}
             <button
               type="button"

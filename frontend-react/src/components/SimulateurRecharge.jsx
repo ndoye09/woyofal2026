@@ -8,6 +8,8 @@ const sauvegarderRecharge = (data, typeCompteur) => {
   const entree = {
     date: new Date().toISOString(),
     montant_brut: data.montant_brut,
+    montant_net: data.montant_net,
+    montant_redevance: data.montant_redevance || 0,
     kwh_obtenus: data.kwh_obtenus,
     tranche_finale: data.tranche_finale,
     detail_tranches: data.detail_tranches,
@@ -67,7 +69,8 @@ const CalculateurInverse = ({ typeCompteur }) => {
   const [kwhVoulus, setKwhVoulus] = useState(50)
   const [cumulActuel, setCumulActuel] = useState(0)
   const [avecRedevance, setAvecRedevance] = useState(false)
-  const result = calculerMontantPourKwh(parseFloat(kwhVoulus) || 0, parseFloat(cumulActuel) || 0, typeCompteur, avecRedevance)
+  const cumulPourCalcul = avecRedevance ? 0 : parseFloat(cumulActuel) || 0
+  const result = calculerMontantPourKwh(parseFloat(kwhVoulus) || 0, cumulPourCalcul, typeCompteur, avecRedevance)
 
   return (
     <div className="space-y-4">
@@ -75,10 +78,15 @@ const CalculateurInverse = ({ typeCompteur }) => {
         <label className="label">kWh souhaités</label>
         <input type="number" value={kwhVoulus} onChange={e => setKwhVoulus(e.target.value)} min="1" step="1" className="input-field" />
       </div>
+      {!avecRedevance && (
       <div>
-        <label className="label">Cumul mensuel actuel (kWh)</label>
+        <div className="flex justify-between items-baseline mb-2">
+          <label className="label">Cumul mensuel actuel (kWh)</label>
+          <span className="text-xs text-blue-600 font-semibold">À vérifier au compteur avec le code : 814</span>
+        </div>
         <input type="number" value={cumulActuel} onChange={e => setCumulActuel(e.target.value)} min="0" step="0.1" className="input-field" />
       </div>
+      )}
       <div className="flex items-center gap-2">
         <input type="checkbox" checked={avecRedevance} onChange={e => setAvecRedevance(e.target.checked)} className="w-4 h-4 accent-primary" />
         <label className="text-sm text-gray-700">Appliquer redevance (429 FCFA) — 1ère recharge du mois</label>
@@ -121,7 +129,7 @@ const SimulateurRecharge = () => {
   const [mode, setMode] = useState('direct') // 'direct' | 'inverse'
   const [formData, setFormData] = useState({
     montant_brut: 10000,
-    cumul_actuel: 120,
+    cumul_actuel: 0,
     type_compteur: 'DPP',
     avecRedevance: false
   })
@@ -159,8 +167,9 @@ const SimulateurRecharge = () => {
       const data = await simulateRecharge({
         ...formData,
         montant_brut: parseFloat(formData.montant_brut),
-        cumul_actuel: parseFloat(formData.cumul_actuel)
+        cumul_actuel: formData.avecRedevance ? 0 : parseFloat(formData.cumul_actuel)
       })
+      console.log('Simulation result:', data)
       setResult(data.data)
     } catch (err) {
       setError(err.message || 'Erreur lors de la simulation')
@@ -184,7 +193,7 @@ const SimulateurRecharge = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-14">
+    <div className="max-w-6xl mx-auto px-4 py-14 bg-white min-h-screen">
       <div className="text-center mb-10">
         <span className="section-tag">Outil</span>
         <h1 className="section-title">Simulateur de Recharge</h1>
@@ -266,10 +275,15 @@ const SimulateurRecharge = () => {
               <input type="number" name="montant_brut" value={formData.montant_brut} onChange={handleChange} min="100" step="100" className="input-field" required />
             </div>
 
+            {!formData.avecRedevance && (
             <div>
-              <label className="label">Cumul Mensuel Actuel (kWh)</label>
+              <div className="flex justify-between items-baseline mb-2">
+                <label className="label">Cumul Mensuel Actuel (kWh)</label>
+                <span className="text-xs text-blue-600 font-semibold">À vérifier au compteur avec le code : 814</span>
+              </div>
               <input type="number" name="cumul_actuel" value={formData.cumul_actuel} onChange={handleChange} min="0" step="0.1" className="input-field" required />
             </div>
+            )}
 
             <div className="flex items-center gap-2">
               <input type="checkbox" name="avecRedevance" checked={formData.avecRedevance} onChange={handleChange} className="w-4 h-4 text-primary" />
@@ -309,16 +323,16 @@ const SimulateurRecharge = () => {
               <div className="bg-gradient-to-r from-primary/10 to-blue-100 p-6 rounded-2xl border border-primary/20">
                 <div className="text-sm text-primary font-medium mb-1">kWh Obtenus</div>
                 <div className="text-4xl font-bold font-display gradient-text">{result.kwh_obtenus.toFixed(2)} kWh</div>
-                <div className="text-sm text-slate-600 mt-2">Prix moyen : {result.prix_moyen_kwh.toFixed(2)} FCFA/kWh</div>
+                <div className="text-sm text-slate-600 mt-2">Prix moyen : {(result.montant_net / result.kwh_obtenus).toFixed(2)} FCFA/kWh</div>
               </div>
 
               <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                 <div className="text-sm font-semibold text-slate-700 mb-2">Déductions</div>
                 <div className="space-y-1 text-sm">
                   <div className="flex justify-between"><span className="text-gray-600">Montant brut</span><span className="font-semibold">{result.montant_brut.toLocaleString()} FCFA</span></div>
-                  {result.deductions.redevance > 0 && (<div className="flex justify-between text-red-600"><span>- Redevance</span><span>{result.deductions.redevance} FCFA</span></div>)}
-                  <div className="flex justify-between text-red-600"><span>- Taxe communale (2.5%)</span><span>{result.deductions.taxe_communale.toFixed(0)} FCFA</span></div>
-                  <div className="flex justify-between font-bold text-success border-t pt-1"><span>Montant net</span><span>{result.deductions.montant_net.toLocaleString()} FCFA</span></div>
+                  {result.montant_redevance > 0 && (<div className="flex justify-between text-red-600"><span>- Redevance</span><span>{result.montant_redevance} FCFA</span></div>)}
+                  <div className="flex justify-between text-red-600"><span>- Taxe communale (2.5%)</span><span>{result.taxe.toFixed(0)} FCFA</span></div>
+                  <div className="flex justify-between font-bold text-success border-t pt-1"><span>Montant net</span><span>{result.montant_net.toLocaleString()} FCFA</span></div>
                 </div>
               </div>
 
@@ -335,7 +349,7 @@ const SimulateurRecharge = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-blue-50 p-3 rounded-xl border border-blue-100"><div className="text-xs text-blue-600 mb-1">Cumul Avant</div><div className="text-xl font-bold font-display text-blue-900">{result.cumul_avant.toFixed(1)} kWh</div></div>
+                <div className="bg-blue-50 p-3 rounded-xl border border-blue-100"><div className="text-xs text-blue-600 mb-1">Cumul Avant</div><div className="text-xl font-bold font-display text-blue-900">{result.cumul_initial.toFixed(1)} kWh</div></div>
                 <div className="bg-success/10 p-3 rounded-xl border border-success/20"><div className="text-xs text-success mb-1">Cumul Final</div><div className="text-xl font-bold font-display text-success">{result.cumul_final.toFixed(1)} kWh</div></div>
               </div>
 
@@ -345,14 +359,6 @@ const SimulateurRecharge = () => {
                 {result.tranche_finale === 1 && (<div className="text-xs mt-1">✅ Tarif social préservé</div>)}
                 {result.tranche_finale > 1 && (<div className="text-xs mt-1">⚠️ Hors tarif social</div>)}
               </div>
-
-              {result.economie_vs_t2 > 0 && (
-              <div className="bg-success/10 p-4 rounded-2xl border border-success/20">
-                <div className="text-sm text-success mb-1">Économie vs Tranche 2</div>
-                <div className="text-2xl font-bold font-display text-success">{result.economie_vs_t2.toFixed(0)} FCFA</div>
-                  <div className="text-xs text-green-600 mt-1">Grâce au tarif social T1</div>
-                </div>
-              )}
 
               {/* ── Bouton Sauvegarder ── */}
               <div className="flex items-center gap-3 pt-2">
@@ -367,7 +373,7 @@ const SimulateurRecharge = () => {
                           type_compteur:  formData.type_compteur,
                           tranche_finale: result.tranche_finale,
                           avecRedevance:  formData.avecRedevance,
-                          cumul_avant:    result.cumul_avant,
+                          cumul_avant:    result.cumul_initial,
                           cumul_final:    result.cumul_final,
                         })
                       } catch (_) { /* silencieux */ }

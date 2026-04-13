@@ -275,7 +275,7 @@ export default function LectureCompteur() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10">
+    <div className="max-w-3xl mx-auto px-4 py-10 bg-white min-h-screen">
 
       {/* ── En-tête ── */}
       <div className="mb-8">

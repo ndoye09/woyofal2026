@@ -1,0 +1,20 @@
+{
+  "name": "woyofal-data-platform",
+  "version": "1.0.0",
+  "description": "Plateforme de simulation de recharge d'électricité Woyofal",
+  "main": "api-mock-server.js",
+  "scripts": {
+    "start": "node api-mock-server.js",
+    "dev": "npm run api &",
+    "api": "node api-mock-server.js",
+    "build-frontend": "cd frontend-react && npm run build",
+    "deploy": "echo 'Déploie sur Vercel + Railway'"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": ["senegal", "electricite", "simulation", "recharge"],
+  "author": "Woyofal Team",
+  "license": "MIT"
+}

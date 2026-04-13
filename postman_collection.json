@@ -1,0 +1,247 @@
+{
+  "_postman_id": "woyofal-api-collection",
+  "info": {
+    "_postman_exported_at": "2026-04-13T00:00:00.000Z",
+    "_postman_exporter_id": "1",
+    "name": "Woyofal Senelec API",
+    "description": "Collection pour tester l'API du simulateur de recharge Senelec",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Register",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\",\n  \"email\": \"test@woyofal.sn\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/register",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "auth", "register"]
+            }
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"testuser\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/auth/login",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Simulation",
+      "item": [
+        {
+          "name": "Calculer recharge (Mode direct FCFA→kWh)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"direct\",\n  \"montant\": 10000,\n  \"type_compteur\": \"DPP\",\n  \"cumul_actuel\": 50,\n  \"avec_redevance\": true\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/simulation/recharge",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "simulation", "recharge"]
+            }
+          }
+        },
+        {
+          "name": "Calculer recharge (Mode inverse kWh→FCFA)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"inverse\",\n  \"kwh_souhaites\": 100,\n  \"type_compteur\": \"DPP\",\n  \"cumul_actuel\": 50,\n  \"avec_redevance\": false\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/simulation/recharge",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "simulation", "recharge"]
+            }
+          }
+        },
+        {
+          "name": "Tarifs DPP",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/simulation/tarifs?type=DPP",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "simulation", "tarifs"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "DPP"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Tarifs PPP",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/simulation/tarifs?type=PPP",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "simulation", "tarifs"],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "PPP"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Recommandation (Mode direct)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"direct\",\n  \"montant\": 5000,\n  \"type_compteur\": \"DPP\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/simulation/recommandation",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "simulation", "recommandation"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Consommation",
+      "item": [
+        {
+          "name": "KPIs",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/consommation/kpis",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consommation", "kpis"]
+            }
+          }
+        },
+        {
+          "name": "Evolution (Graphiques)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:5000/api/consommation/evolution",
+              "protocol": "http",
+              "host": ["localhost"],
+              "port": "5000",
+              "path": ["api", "consommation", "evolution"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Chat IA",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"message\": \"Comment réduire ma consommation électrique?\",\n  \"type_compteur\": \"DPP\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/ai/chat",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "ai", "chat"]
+        }
+      }
+    },
+    {
+      "name": "Health Check",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:5000/api/health",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "5000",
+          "path": ["api", "health"]
+        }
+      }
+    }
+  ]
+}

@@ -164,6 +164,33 @@ pytest tests/integration/ -v       # Intégration
 
 ---
 
+## 🚀 DÉPLOIEMENT PRODUCTION
+
+### Frontend React (Vercel)
+```bash
+cd frontend-react
+npm install
+npm run build
+# Deploy via Vercel Dashboard
+```
+
+### Backend Mock API (Railway)
+```bash
+node api-mock-server.js
+# Deploy via Railway Dashboard
+```
+
+### Guide Complet
+| Document | Utilité |
+|----------|---------|
+| [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) | Guide détaillé 3 phases |
+| [QUICK_START.md](QUICK_START.md) | Démarrage rapide |
+| [DEPLOYMENT_CHECKLIST.md](DEPLOYMENT_CHECKLIST.md) | Checklist 10 phases |
+
+**Status:** ✅ Production-ready avec test report [TEST_REPORT.md](TEST_REPORT.md)
+
+---
+
 ## 🎯 Cas d'Usage
 
 ### Optimiser Recharge Fin de Mois
