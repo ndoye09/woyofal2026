@@ -279,7 +279,7 @@ const SimulateurRecharge = () => {
             <div>
               <div className="flex justify-between items-baseline mb-2">
                 <label className="label">Cumul Mensuel Actuel (kWh)</label>
-                <span className="text-xs text-blue-600 font-semibold">À vérifier au compteur avec le code : 814</span>
+                <span className="text-xs text-primary font-semibold">À vérifier au compteur avec le code : 814</span>
               </div>
               <input type="number" name="cumul_actuel" value={formData.cumul_actuel} onChange={handleChange} min="0" step="0.1" className="input-field" required />
             </div>
@@ -349,7 +349,7 @@ const SimulateurRecharge = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-blue-50 p-3 rounded-xl border border-blue-100"><div className="text-xs text-blue-600 mb-1">Cumul Avant</div><div className="text-xl font-bold font-display text-blue-900">{result.cumul_initial.toFixed(1)} kWh</div></div>
+                <div className="bg-red-50 p-3 rounded-xl border border-red-100"><div className="text-xs text-primary mb-1">Cumul Avant</div><div className="text-xl font-bold font-display text-navy">{result.cumul_initial.toFixed(1)} kWh</div></div>
                 <div className="bg-success/10 p-3 rounded-xl border border-success/20"><div className="text-xs text-success mb-1">Cumul Final</div><div className="text-xl font-bold font-display text-success">{result.cumul_final.toFixed(1)} kWh</div></div>
               </div>
 

@@ -70,9 +70,9 @@ const colorMap = {
     tag: 'text-emerald-800',
   },
   blue: {
-    bg: 'bg-blue-50', border: 'border-blue-200', badge: 'bg-blue-100 text-blue-700',
-    btn: 'bg-blue-500 hover:bg-blue-600', icon: 'text-blue-600', ring: 'ring-blue-300',
-    tag: 'text-blue-800',
+    bg: 'bg-red-50', border: 'border-red-200', badge: 'bg-red-100 text-primary',
+    btn: 'bg-primary hover:bg-red-700', icon: 'text-primary', ring: 'ring-red-300',
+    tag: 'text-navy',
   },
   violet: {
     bg: 'bg-violet-50', border: 'border-violet-200', badge: 'bg-violet-100 text-violet-700',
@@ -168,7 +168,7 @@ const levelStyles = {
   danger: 'bg-red-50 border-red-300 text-red-800',
   warning: 'bg-amber-50 border-amber-300 text-amber-800',
   success: 'bg-emerald-50 border-emerald-300 text-emerald-700',
-  info: 'bg-blue-50 border-blue-200 text-blue-700',
+  info: 'bg-red-50 border-red-200 text-primary',
 }
 
 /* ── Carte d'un code ── */

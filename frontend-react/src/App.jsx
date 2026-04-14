@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
 import { Home, Calculator, Zap, BookOpen, HelpCircle, Lightbulb, Menu, X, LogIn, LogOut, User, Cpu, History } from 'lucide-react'
 import SimulateurRecharge from './components/SimulateurRecharge'
-import HomePageSimplified from './components/HomePageSimplified'
+import HomePage from './components/HomePage'
 import FAQ from './components/FAQ'
 import GuideTarifs from './components/GuideTarifs'
 import Conseils from './components/Conseils'
@@ -65,7 +65,7 @@ function NavBar() {
                   className={`relative flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                     active
                       ? 'text-red-600 bg-red-50 font-semibold'
-                      : 'text-gray-600 hover:text-black hover:bg-gray-100'
+                      : 'text-gray-600 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -181,7 +181,7 @@ function AuthButton() {
       <div className="relative">
         <button
           onClick={() => setShowMenu(m => !m)}
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-primary/40 hover:bg-primary/4 text-sm font-medium text-slate-700 transition"
+          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-red-300 hover:bg-red-50 text-sm font-medium text-slate-700 transition"
         >
           <div className="w-6 h-6 rounded-lg bg-primary-gradient flex items-center justify-center">
             <User size={12} className="text-white" />
@@ -209,7 +209,7 @@ function AuthButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-black/40 hover:bg-black/4 text-sm font-medium text-gray-700 transition"
+        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-red-300 hover:bg-red-50 text-sm font-medium text-gray-700 transition"
       >
         <LogIn size={14} /> Connexion
       </button>
@@ -252,7 +252,7 @@ function App() {
           <main className="flex-1">
             <Routes>
               {/* ── Routes publiques ── */}
-              <Route path="/" element={<HomePageSimplified />} />
+              <Route path="/" element={<HomePage />} />
               <Route path="/simulateur" element={<SimulateurRecharge />} />
               <Route path="/tarifs" element={<GuideTarifs />} />
               <Route path="/conseils" element={<Conseils />} />

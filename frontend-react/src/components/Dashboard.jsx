@@ -123,7 +123,7 @@ const Dashboard = () => {
             label="kWh moyen"
             value={fmtKwh(simulations.reduce((sum, s) => sum + parseFloat(s.kwh_obtenus), 0) / simulations.length)}
             sub="Par recharge"
-            color="text-blue-600"
+            color="text-primary"
           />
           <KpiCard
             icon={BarChart3}
@@ -196,7 +196,7 @@ const Dashboard = () => {
                       <td className="py-3 text-right font-semibold text-black">{fmt(s.montant_brut)} F</td>
                       <td className="py-3 text-right text-black font-medium">{fmtKwh(s.kwh_obtenus)}</td>
                       <td className="py-3 text-center">
-                        <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-200">
+                        <span className="px-3 py-1 rounded-full bg-red-100 text-primary text-xs font-semibold border border-red-200">
                           {s.type_compteur}
                         </span>
                       </td>
