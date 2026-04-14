@@ -400,21 +400,8 @@ const SimulateurRecharge = () => {
               {/* ── Bouton Sauvegarder ── */}
               <div className="flex items-center gap-3 pt-2">
                 <button
-                  onClick={async () => {
+                  onClick={() => {
                     sauvegarderRecharge(result, formData.type_compteur)
-                    if (isAuth) {
-                      try {
-                        await saveSimulation({
-                          montant_brut:   result.montant_brut,
-                          kwh_obtenus:    result.kwh_obtenus,
-                          type_compteur:  formData.type_compteur,
-                          tranche_finale: result.tranche_finale,
-                          avecRedevance:  formData.avecRedevance,
-                          cumul_avant:    result.cumul_initial,
-                          cumul_final:    result.cumul_final,
-                        })
-                      } catch (_) { /* silencieux */ }
-                    }
                     setSavedMsg(true)
                     setTimeout(() => setSavedMsg(false), 3000)
                   }}
