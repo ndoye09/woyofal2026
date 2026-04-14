@@ -425,23 +425,6 @@ const SimulateurRecharge = () => {
         </div>
       </div>
       )}
-
-      {tarifs && (
-        <div className="card mt-6">
-          <h3 className="text-lg font-semibold font-display mb-4">Grille Tarifaire {formData.type_compteur} — 2026</h3>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead><tr className="bg-slate-100"><th className="p-3 text-left text-slate-600">Tranche</th><th className="p-3 text-left text-slate-600">Seuil (kWh)</th><th className="p-3 text-right text-slate-600">Prix (FCFA/kWh)</th></tr></thead>
-              <tbody>
-                {Object.entries(tarifs.tarifs[formData.type_compteur]).map(([num, tarif]) => (
-                  <tr key={num} className="border-t"><td className="p-3 font-semibold">T{num}</td><td className="p-3">{tarif.seuil_min} - {tarif.seuil_max || '∞'}</td><td className="p-3 text-right font-bold text-primary">{tarif.prix.toFixed(2)} F</td></tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="mt-3 text-xs text-gray-600">Redevance : {tarifs.redevance} FCFA | Taxe communale : {tarifs.taxe_communale_pct}%</div>
-        </div>
-      )}
     </div>
   )
 }
