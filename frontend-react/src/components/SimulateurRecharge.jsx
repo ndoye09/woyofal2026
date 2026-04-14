@@ -1,7 +1,59 @@
 import React, { useState, useEffect } from 'react'
 import { Calculator, AlertCircle, TrendingUp, Zap, ArrowLeftRight, Save, CheckCircle } from 'lucide-react'
-import { simulateRecharge, getTarifs, saveSimulation } from '../services/api'
 import { useAuth } from '../context/AuthContext'
+
+/* ── Calcul local (offline) — miroir de api-mock-server ── */
+const TARIFS_SIM = {
+  DPP: { 1: { prix: 82.00, max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
+  PPP: { 1: { prix: 147.43, max: 50 },  2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } }
+}
+
+const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, avecRedevance = true) => {
+  const tarifs = TARIFS_SIM[typeCompteur]
+  const redevance = avecRedevance ? 429 : 0
+  const taxe = Math.round(montant * 0.025)
+  let montantReste = montant - redevance - taxe
+  let cumul = cumulActuel
+  let kwhTotal = 0
+  const detailTranches = {}
+
+  for (let t = 1; t <= 3; t++) {
+    if (montantReste <= 0) break
+    const maxTranche = tarifs[t].max
+    const minTranche = t === 1 ? 0 : tarifs[t - 1].max
+    if (cumul < minTranche) continue
+    if (maxTranche !== null && cumul >= maxTranche) continue
+    const disponible = maxTranche ? maxTranche - cumul : Number.MAX_SAFE_INTEGER
+    if (disponible <= 0) continue
+    const kwhDansTranche = Math.min(montantReste / tarifs[t].prix, disponible)
+    const montantTranche = kwhDansTranche * tarifs[t].prix
+    if (kwhDansTranche > 0) {
+      detailTranches[`T${t}`] = {
+        kwh: parseFloat(kwhDansTranche.toFixed(2)),
+        prix_unitaire: tarifs[t].prix,
+        montant: Math.round(montantTranche)
+      }
+      kwhTotal += kwhDansTranche
+      cumul += kwhDansTranche
+      montantReste -= montantTranche
+    }
+  }
+
+  const trancheFinal = cumul <= 150 ? 1 : cumul <= 250 ? 2 : 3
+  return {
+    montant_brut: montant,
+    montant_redevance: redevance,
+    taxe,
+    montant_net: montant - redevance - taxe,
+    kwh_obtenus: parseFloat(kwhTotal.toFixed(2)),
+    tranche_finale: trancheFinal,
+    detail_tranches: detailTranches,
+    type_compteur: typeCompteur,
+    cumul_initial: cumulActuel,
+    cumul_final: parseFloat(cumul.toFixed(2)),
+    timestamp: new Date().toISOString()
+  }
+}
 
 /* ── Sauvegarder une recharge dans localStorage ── */
 const sauvegarderRecharge = (data, typeCompteur) => {
@@ -137,43 +189,28 @@ const SimulateurRecharge = () => {
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
-  const [tarifs, setTarifs] = useState(null)
   const [savedMsg, setSavedMsg] = useState(false)
-
-  useEffect(() => {
-    loadTarifs()
-  }, [formData.type_compteur])
-
-  const loadTarifs = async () => {
-    try {
-      const data = await getTarifs(formData.type_compteur)
-      setTarifs(data.data)
-    } catch (err) {
-      console.error('Erreur chargement tarifs:', err)
-    }
-  }
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target
     setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault()
     setLoading(true)
     setError(null)
-
     try {
-      const data = await simulateRecharge({
-        ...formData,
-        montant_brut: parseFloat(formData.montant_brut),
-        cumul_actuel: formData.avecRedevance ? 0 : parseFloat(formData.cumul_actuel)
-      })
-      console.log('Simulation result:', data)
-      setResult(data.data)
+      const data = simulerRechargeLocal(
+        parseFloat(formData.montant_brut),
+        formData.type_compteur,
+        formData.avecRedevance ? 0 : parseFloat(formData.cumul_actuel) || 0,
+        formData.avecRedevance
+      )
+      setResult(data)
+      sauvegarderRecharge(data, formData.type_compteur)
     } catch (err) {
       setError(err.message || 'Erreur lors de la simulation')
-      console.error('Erreur simulation:', err)
     } finally {
       setLoading(false)
     }
