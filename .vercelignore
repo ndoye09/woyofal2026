@@ -1,43 +1,17 @@
-# Python files
-*.py
-venv/
-__pycache__/
-*.pyc
-.pytest_cache/
-
-# Data files
+﻿*.pdf
+*.tex
+*.zip
+*.docx
+*.exe
 data/
 notebooks/
-reports/
-
-# Backend
-api/
-apps/
-dags/
-dashboards/
-scripts/
-
-# Development
 logs/
-.env
-.env.local
-.DS_Store
-
-# API files
-api-mock-server.js
-Procfile
-requirements.txt
-pyproject.toml
-
-# DBT
+models/
+reports/
+scripts/
+dags/
 woyofal_dbt/
-
-# Tests
-tests/
-TEST_CHECKLIST.md
-TEST_REPORT.md
-
-# Docs
 docs/
-*.md
-!
+sql/
+tests/
+apps/
