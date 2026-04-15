@@ -5,6 +5,107 @@ import { useNavigate } from 'react-router-dom'
 import { getMySimulations } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 
+/* ── Calcul jours restants dans le mois ── */
+function joursRestantsMois() {
+  const now = new Date()
+  const fin = new Date(now.getFullYear(), now.getMonth() + 1, 0)
+  return fin.getDate() - now.getDate()
+}
+
+/* ── Widget Budget Fin de Mois ── */
+const BudgetFinDeMois = () => {
+  const [consoDernier, setConsoDernier] = useState(5)
+  const [cumulActuel, setCumulActuel] = useState(60)
+  const [soldeCompteur, setSoldeCompteur] = useState(10)
+  const joursRestants = joursRestantsMois()
+
+  const kwhBesoin = +(consoDernier * joursRestants).toFixed(1)
+  const kwhARecharger = Math.max(0, +(kwhBesoin - soldeCompteur).toFixed(1))
+
+  const t1Dispo = Math.max(0, 150 - cumulActuel)
+  const kwhT1 = Math.min(kwhARecharger, t1Dispo)
+  const kwhT2plus = Math.max(0, kwhARecharger - kwhT1)
+  const coutElec = kwhT1 * 82 + kwhT2plus * 136.49
+  const montantEstime = kwhARecharger === 0 ? 0 : Math.round(coutElec / 0.975)
+
+  const cumulFinal = cumulActuel + kwhBesoin
+  const tranche = cumulFinal <= 150 ? 1 : cumulFinal <= 250 ? 2 : 3
+  const trancheColors = { 1: 'bg-green-500', 2: 'bg-amber-400', 3: 'bg-red-500' }
+  const trancheLabels = { 1: 'T1 — 82 FCFA/kWh', 2: 'T2 — 136,49 FCFA/kWh', 3: 'T3 — 136,49 FCFA/kWh' }
+  const pct = Math.min(100, (cumulFinal / 250) * 100)
+
+  return (
+    <div className="bg-gradient-to-br from-navy to-gray-900 rounded-2xl p-6 border border-gray-800 mb-8">
+      <div className="flex items-start justify-between mb-4">
+        <div>
+          <h3 className="text-white font-bold text-base">Budget fin de mois</h3>
+          <p className="text-white/40 text-xs mt-0.5">Basé sur votre conso journalière (*813)</p>
+        </div>
+        <span className="text-white/20 text-xs bg-white/5 px-2 py-1 rounded-lg">{joursRestants} jours restants</span>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+        {/* Conso hier */}
+        <div>
+          <div className="flex justify-between text-xs text-white/50 mb-2">
+            <span>Conso hier <span className="text-white/25">(*813)</span></span>
+            <span className="text-white font-semibold">{consoDernier} kWh/j</span>
+          </div>
+          <input type="range" min="0.5" max="20" step="0.5"
+            value={consoDernier} onChange={e => setConsoDernier(+e.target.value)}
+            className="w-full h-1 rounded-full accent-red-500" />
+        </div>
+        {/* Cumul ce mois */}
+        <div>
+          <div className="flex justify-between text-xs text-white/50 mb-2">
+            <span>Cumul ce mois <span className="text-white/25">(*814)</span></span>
+            <span className="text-white font-semibold">{cumulActuel} kWh</span>
+          </div>
+          <input type="range" min="0" max="249" step="1"
+            value={cumulActuel} onChange={e => setCumulActuel(+e.target.value)}
+            className="w-full h-1 rounded-full accent-red-500" />
+        </div>
+        {/* Solde compteur */}
+        <div>
+          <div className="flex justify-between text-xs text-white/50 mb-2">
+            <span>Solde compteur</span>
+            <span className="text-white font-semibold">{soldeCompteur} kWh</span>
+          </div>
+          <input type="range" min="0" max="100" step="0.5"
+            value={soldeCompteur} onChange={e => setSoldeCompteur(+e.target.value)}
+            className="w-full h-1 rounded-full accent-green-400" />
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between">
+        <div>
+          {montantEstime === 0 ? (
+            <>
+              <p className="text-green-400 text-2xl font-bold font-display">Solde suffisant</p>
+              <p className="text-white/30 text-xs mt-0.5">Votre compteur couvre la fin du mois</p>
+            </>
+          ) : (
+            <>
+              <p className="text-white text-3xl font-bold font-display">{montantEstime.toLocaleString('fr-FR')} <span className="text-white/40 text-base font-normal">FCFA</span></p>
+              <p className="text-white/30 text-xs mt-0.5">à recharger · ≈ {kwhARecharger} kWh</p>
+            </>
+          )}
+        </div>
+        <div className="text-right">
+          <div className="flex items-center gap-1.5 justify-end mb-1">
+            <span className={`w-2 h-2 rounded-full ${trancheColors[tranche]}`} />
+            <span className="text-white/60 text-xs">{trancheLabels[tranche]}</span>
+          </div>
+          <div className="w-32 h-1 bg-white/10 rounded-full overflow-hidden">
+            <div className="h-full bg-primary rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+          </div>
+          <p className="text-white/20 text-[10px] mt-1">{cumulFinal.toFixed(0)} / 250 kWh</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 const fmt = (n) => Math.round(n).toLocaleString('fr-FR')
 const fmtKwh = (n) => parseFloat(n).toFixed(2)
 const fmtDate = (iso) => {
@@ -101,6 +202,9 @@ const Dashboard = () => {
           Nouvelle simulation
         </button>
       </div>
+
+      {/* Budget fin de mois */}
+      <BudgetFinDeMois />
 
       {simulations.length > 0 && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">

@@ -1,0 +1,1043 @@
+﻿%% ============================================================
+%%  RAPPORT DE MÃ‰MOIRE â€” LICENCE PRO (BAC+3)
+%%  Plateforme Woyofal â€” Analyse de DonnÃ©es et Simulation de Recharges Ã‰lectriques
+%%  Auteur : Diarra NDOYE â€” Sonatel Academy (ECSA) â€” Avril 2026
+%% ============================================================
+\documentclass[12pt,a4paper]{report}
+
+%% â”€â”€ Encodage & langue â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+
+%% â”€â”€ Mise en page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage[top=2.5cm,bottom=2.5cm,left=3cm,right=2.5cm]{geometry}
+\usepackage{setspace}
+\onehalfspacing
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt}
+
+%% â”€â”€ Polices â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{lmodern}
+\usepackage{microtype}
+
+%% â”€â”€ Couleurs & graphiques â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage[dvipsnames]{xcolor}
+\definecolor{rouge}{HTML}{DC2626}
+\definecolor{marine}{HTML}{1A1D2E}
+\definecolor{grislight}{HTML}{F3F4F6}
+\definecolor{grisborder}{HTML}{E5E7EB}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning, fit, backgrounds}
+
+%% â”€â”€ Tableaux â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{colortbl}
+
+%% â”€â”€ Maths â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{amsmath}
+
+%% â”€â”€ Code source â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{listings}
+\lstset{
+  backgroundcolor=\color{grislight},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{rouge}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{marine},
+  breaklines=true,
+  frame=single,
+  rulecolor=\color{grisborder},
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=8pt,
+  captionpos=b,
+}
+\lstdefinelanguage{JavaScript}{
+  keywords={const,let,var,function,return,import,export,default,
+            from,if,else,for,while,async,await,try,catch,new,class},
+  morestring=[b]",
+  morestring=[b]',
+  morestring=[b]`,
+  morecomment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  sensitive=true
+}
+
+%% â”€â”€ En-tÃªtes & pieds de page â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\textcolor{marine}{\textit{Plateforme Woyofal}}}
+\fancyhead[R]{\small\textcolor{rouge}{Diarra NDOYE}}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+%% â”€â”€ Liens hypertexte â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage[colorlinks=true,linkcolor=rouge,urlcolor=rouge,citecolor=marine]{hyperref}
+
+%% â”€â”€ Listes personnalisÃ©es â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{enumitem}
+\setlist{noitemsep, topsep=4pt}
+
+%% â”€â”€ BoÃ®tes encadrÃ©es â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\newtcolorbox{infobox}[1][]{
+  colback=grislight, colframe=rouge, coltitle=white,
+  fonttitle=\bfseries\small, title=#1,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  arc=4pt, boxrule=0.8pt
+}
+\newtcolorbox{codebox}[1][]{
+  colback=marine!5, colframe=marine!30, coltitle=marine,
+  fonttitle=\ttfamily\small, title=#1,
+  left=6pt, right=6pt, top=4pt, bottom=4pt,
+  arc=4pt, boxrule=0.8pt
+}
+
+%% â”€â”€ Titre de chapitre personnalisÃ© â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\usepackage{titlesec}
+\titleformat{\chapter}[block]
+  {\normalfont\huge\bfseries\color{marine}}
+  {\textcolor{rouge}{\thechapter.}}{12pt}{}
+  [\vspace{2pt}\rule{\textwidth}{1.5pt}]
+\titlespacing*{\chapter}{0pt}{20pt}{20pt}
+\titleformat{\section}{\large\bfseries\color{marine}}{\textcolor{rouge}{\thesection}}{8pt}{}
+\titleformat{\subsection}{\normalsize\bfseries\color{marine!80}}{\thesubsection}{6pt}{}
+
+%% â”€â”€ MÃ©tadonnÃ©es PDF â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\hypersetup{
+  pdftitle={Rapport de MÃ©moire â€” Plateforme Woyofal},
+  pdfauthor={Diarra NDOYE},
+  pdfsubject={Analyse de DonnÃ©es et Simulation de Recharges Ã‰lectriques â€” SÃ©nÃ©gal},
+  pdfkeywords={Woyofal, Senelec, ETL, Data Warehouse, Machine Learning, React, simulation}
+}
+
+%% ============================================================
+\begin{document}
+
+%% â”€â”€ PAGE DE GARDE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\begin{titlepage}
+  \centering
+  \vspace*{1.5cm}
+
+  \begin{tikzpicture}
+    \fill[marine] (0,0) rectangle (\textwidth,1.2cm);
+    \node[white,font=\Large\bfseries] at (0.5\textwidth,0.6cm)
+      {Ã‰cole du Code Sonatel Academy (ECSA) â€” Orange Digital Center};
+  \end{tikzpicture}
+
+  \vspace{1.2cm}
+  {\large Licence Professionnelle â€” DÃ©veloppement Data}\\[0.3cm]
+  {\small RÃ©fÃ©rentiel Dev Data â€” Promotion 7 (Cohorte 6)}
+
+  \vspace{1.5cm}
+  \rule{\textwidth}{0.8pt}\\[0.4cm]
+  {\Huge\bfseries\color{marine} Plateforme Woyofal}\\[0.3cm]
+  {\Large\color{rouge} Conception et rÃ©alisation d'une Plateforme\\
+  pour l'Analyse de DonnÃ©es et Simulation\\de Recharges Ã‰lectriques}\\
+  {\large au SÃ©nÃ©gal}\\[0.4cm]
+  \rule{\textwidth}{0.8pt}
+
+  \vspace{1.5cm}
+  \begin{tabular}{rl}
+    \textbf{Auteur :}        & Diarra NDOYE \\[4pt]
+    \textbf{Encadrant :}     & M. Mamadou MBAYE \\[4pt]
+    \textbf{Site web :}      & \href{https://frontend-react-wine.vercel.app}{frontend-react-wine.vercel.app} \\[4pt]
+    \textbf{DÃ©pÃ´t GitHub :}  & \href{https://github.com/ndoye09/woyofal2026}{github.com/ndoye09/woyofal2026} \\[4pt]
+    \textbf{Ã‰tablissement :} & ECSA / Orange Digital Center \\[4pt]
+    \textbf{AnnÃ©e :}         & 2025--2026 \\
+  \end{tabular}
+
+  \vfill
+  {\small Dakar, SÃ©nÃ©gal â€” Avril 2026}
+\end{titlepage}
+
+%% â”€â”€ RÃ‰SUMÃ‰ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\chapter*{RÃ©sumÃ©}
+\addcontentsline{toc}{chapter}{RÃ©sumÃ©}
+
+Ce mÃ©moire prÃ©sente la conception et le dÃ©ploiement de \textbf{Woyofal}, une plateforme complÃ¨te d'ingÃ©nierie des donnÃ©es et de simulation de recharges Ã©lectriques prÃ©payÃ©es au SÃ©nÃ©gal, basÃ©e sur la grille tarifaire officielle Senelec 2026 (DÃ©cision CRSE~2025-140).
+
+Le projet couvre l'intÃ©gralitÃ© de la chaÃ®ne de valeur de la donnÃ©e : gÃ©nÃ©ration d'un jeu de donnÃ©es synthÃ©tiques de \textbf{330~000 lignes}, pipeline ETL orchestrÃ© par \textbf{Apache Airflow}, entrepÃ´t de donnÃ©es \textbf{PostgreSQL} en schÃ©ma en Ã©toile (4 dimensions, 2 tables de faits), transformations \textbf{dbt}, analyse exploratoire (EDA) complÃ¨te, modÃ¨le de \textbf{Machine Learning} (Random Forest, accuracy 99,75\%), et une interface web React~18 dÃ©ployÃ©e en production sur Vercel.
+
+La couche frontend intÃ¨gre un \textbf{simulateur bidirectionnel} (FCFA $\rightarrow$ kWh et kWh $\rightarrow$ FCFA), un mini-calculateur interactif, un assistant IA spÃ©cialisÃ© (OpenRouter, cascade Llama~3.3~70B / Gemma~3 / Qwen~3 / Mistral~7B), ainsi qu'un historique des recharges.
+
+\textbf{Mots-clÃ©s :} Woyofal, Senelec, prÃ©payÃ©, tarifs 2026, ETL, Data Warehouse, PostgreSQL, dbt, Airflow, Machine Learning, React, Vercel, simulation tarifaire.
+
+\vspace{1cm}
+\textbf{Abstract} \\[4pt]
+This thesis presents the design and deployment of \textit{Woyofal}, a full data engineering and simulation platform for prepaid electricity recharges in Senegal, based on the official Senelec 2026 tariff grid (CRSE Decision 2025-140). The project covers the entire data value chain: synthetic data generation (330,000 rows), an Airflow ETL pipeline, a PostgreSQL star-schema data warehouse, dbt transformations, exploratory data analysis, a Machine Learning model (Random Forest, 99.75\% accuracy), and a React 18 frontend deployed on Vercel.
+
+\newpage
+
+%% â”€â”€ TABLE DES MATIÃˆRES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\tableofcontents
+\newpage
+
+%% â”€â”€ LISTE DES FIGURES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\listoffigures
+\addcontentsline{toc}{chapter}{Liste des figures}
+\newpage
+
+%% â”€â”€ LISTE DES TABLEAUX â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\listoftables
+\addcontentsline{toc}{chapter}{Liste des tableaux}
+\newpage
+
+%% â”€â”€ LISTE DES ABRÃ‰VIATIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+\chapter*{Liste des abrÃ©viations}
+\addcontentsline{toc}{chapter}{Liste des abrÃ©viations}
+
+\begin{tabular}{ll}
+\toprule
+\textbf{AbrÃ©viation} & \textbf{DÃ©finition} \\
+\midrule
+DWH   & Data Warehouse (entrepÃ´t de donnÃ©es) \\
+ETL   & Extract, Transform, Load \\
+EDA   & Exploratory Data Analysis \\
+FCFA  & Franc CFA (monnaie d'Afrique de l'Ouest) \\
+API   & Application Programming Interface \\
+CI/CD & Continuous Integration / Continuous Deployment \\
+ECSA  & Ã‰cole du Code Sonatel Academy \\
+ODC   & Orange Digital Center \\
+SENELEC & SociÃ©tÃ© Nationale d'Ã‰lectricitÃ© du SÃ©nÃ©gal \\
+CRSE  & Commission de RÃ©gulation du Secteur de l'Ã‰nergie \\
+DPP   & Domestique Petite Puissance (type compteur) \\
+PPP   & Professionnel Petite Puissance (type compteur) \\
+SPA   & Single Page Application \\
+JWT   & JSON Web Token \\
+ML    & Machine Learning \\
+\bottomrule
+\end{tabular}
+\newpage
+
+%% ============================================================
+\chapter{Introduction}
+%% ============================================================
+
+\section{Contexte gÃ©nÃ©ral}
+
+Dans un SÃ©nÃ©gal en pleine transformation numÃ©rique, l'accÃ¨s Ã  l'Ã©lectricitÃ© constitue un pilier fondamental du dÃ©veloppement Ã©conomique et social. Le systÃ¨me de recharges prÃ©payÃ©es, communÃ©ment appelÃ© \textit{Woyofal}, est au cÅ“ur du quotidien de millions de mÃ©nages sÃ©nÃ©galais.
+
+Le SÃ©nÃ©gal compte plus de 17 millions d'habitants rÃ©partis dans 14 rÃ©gions et 23 zones d'approvisionnement Ã©lectrique gÃ©rÃ©es par la \textbf{Senelec} (SociÃ©tÃ© Nationale d'Ã‰lectricitÃ© du SÃ©nÃ©gal). Le compteur prÃ©payÃ© \textit{Woyofal} est commercialisÃ© par Senelec depuis 2012 : l'utilisateur achÃ¨te des tokens chez un revendeur ou via mobile money, les saisit sur le compteur, et le crÃ©dit est converti en kWh selon la grille tarifaire en vigueur.
+
+Le systÃ¨me tarifaire sÃ©nÃ©galais, rÃ©gi par la dÃ©cision \textbf{CRSE 2025-140}, applique un barÃ¨me progressif Ã  plusieurs tranches selon la consommation mensuelle cumulÃ©e. Cette progressivitÃ© â€” bien que socialement justifiÃ©e â€” est d'une complexitÃ© opaque pour l'utilisateur final : combien de kWh obtiendra-t-il pour une recharge de 5~000~FCFA ? Va-t-il franchir le seuil de la tranche~1 ?
+
+C'est dans ce contexte que s'inscrit ce mÃ©moire, fruit d'une formation rigoureuse au sein de la \textbf{Sonatel Academy}, dans le cadre du rÃ©fÃ©rentiel DÃ©veloppement Data (Promo~7 / Cohorte~6).
+
+\section{ProblÃ©matique}
+
+\begin{infobox}[ProblÃ¨me identifiÃ©]
+Les consommateurs Woyofal n'ont \textbf{aucun outil simple et gratuit} pour simuler leurs recharges selon les tarifs Senelec 2026 officiels et analyser leurs comportements de consommation. Les outils existants utilisent des tarifs obsolÃ¨tes, ignorent le cumul mensuel (code~814) et ne proposent aucune infrastructure de donnÃ©es pour l'analyse Ã  l'Ã©chelle nationale.
+\end{infobox}
+
+De faÃ§on plus prÃ©cise, les problÃ¨mes soulevÃ©s sont :
+\begin{itemize}
+  \item Absence d'outil de simulation intÃ©grant la grille tarifaire 2026 actualisÃ©e (DÃ©cision 2025-140) ;
+  \item IncomprÃ©hension du mÃ©canisme des tranches et de la redevance mensuelle (429~FCFA) ;
+  \item ImpossibilitÃ© de planifier son budget Ã©lectrique Ã  partir d'une cible en kWh (\textit{calcul inverse}) ;
+  \item DonnÃ©es de consommation non exploitÃ©es faute d'entrepÃ´t et de pipeline ETL ;
+  \item Aucune visualisation des disparitÃ©s de consommation entre les 23 zones gÃ©ographiques.
+\end{itemize}
+
+\section{Objectifs}
+
+\subsection*{Objectif gÃ©nÃ©ral}
+Concevoir et implÃ©menter une plateforme d'analyse de donnÃ©es complÃ¨te, intÃ©grant un pipeline ETL robuste, un Data Warehouse structurÃ©, un simulateur de recharges conforme Ã  la grille SENELEC 2026, et des interfaces de visualisation interactives accessibles Ã  tous.
+
+\subsection*{Objectifs spÃ©cifiques}
+\begin{enumerate}
+  \item \textbf{O1} â€” GÃ©nÃ©rer et structurer un jeu de donnÃ©es rÃ©aliste de 330~000+ lignes reprÃ©sentatif des comportements au SÃ©nÃ©gal ;
+  \item \textbf{O2} â€” Mettre en place un pipeline ETL robuste (Airflow) vers un Data Warehouse PostgreSQL en star schema ;
+  \item \textbf{O3} â€” RÃ©aliser une analyse exploratoire (EDA) complÃ¨te des comportements de consommation et de recharge ;
+  \item \textbf{O4} â€” EntraÃ®ner un modÃ¨le de Machine Learning capable de prÃ©dire le dÃ©passement de tranche~1 ;
+  \item \textbf{O5} â€” ImplÃ©menter le moteur de calcul tarifaire DPP/PPP 2026 (4~tranches, redevance, taxe) avec mode inverse (kWh $\rightarrow$ FCFA) ;
+  \item \textbf{O6} â€” DÃ©ployer une interface React accessible, responsive, avec CI/CD GitHub $\rightarrow$ Vercel ;
+  \item \textbf{O7} â€” IntÃ©grer un assistant IA conversationnel pour l'aide tarifaire.
+\end{enumerate}
+
+\section{Structure du rapport}
+
+Le prÃ©sent rapport s'organise comme suit : le chapitre~\ref{ch:contexte} prÃ©sente la grille tarifaire, le marchÃ© Woyofal et la critique de l'existant. Le chapitre~\ref{ch:archi} dÃ©crit l'architecture technique globale de la plateforme. Le chapitre~\ref{ch:data} prÃ©sente le pipeline de donnÃ©es, l'entrepÃ´t PostgreSQL et les transformations dbt. Le chapitre~\ref{ch:eda_ml} expose l'analyse exploratoire des donnÃ©es et le modÃ¨le de Machine Learning. Le chapitre~\ref{ch:impl} dÃ©taille l'implÃ©mentation du simulateur et de l'interface frontend. Le chapitre~\ref{ch:resultats} prÃ©sente les rÃ©sultats et tests. Le chapitre~\ref{ch:conclusion} conclut et ouvre des perspectives.
+
+%% ============================================================
+\chapter{Contexte et ProblÃ©matique}
+\label{ch:contexte}
+%% ============================================================
+
+\section{Le systÃ¨me prÃ©payÃ© Woyofal}
+
+\subsection*{Fonctionnement du cumul mensuel}
+Ã€ chaque dÃ©but de mois, le compteur rÃ©initialise le \textbf{cumul mensuel} Ã  zÃ©ro. Ce cumul (consultable via le code~814 sur le compteur) dÃ©termine la tranche tarifaire applicable Ã  chaque recharge. La premiÃ¨re recharge du mois inclut une \textbf{redevance fixe de 429~FCFA} pour les compteurs DPP (location et entretien compteur).
+
+\section{Grille tarifaire Senelec 2026}
+
+La dÃ©cision CRSE 2025-140 dÃ©finit deux catÃ©gories tarifaires pour les compteurs prÃ©payÃ©s.
+
+\subsection{Tarif DPP â€” Domestique Petite Puissance}
+
+\begin{table}[h!]
+\centering
+\caption{Tarifs DPP 2026 â€” Domestique Petite Puissance}
+\label{tab:dpp}
+\begin{tabularx}{0.85\textwidth}{>{\bfseries}l c X c}
+\toprule
+\rowcolor{marine!10}
+Tranche & Seuil (kWh/mois) & Description & Prix (FCFA/kWh) \\
+\midrule
+T1 & 0 -- 150    & Tarif social (baisse 10\% vs 2024) & \textbf{82,00} \\
+T2 & 151 -- 250  & Tranche intermÃ©diaire & \textbf{136,49} \\
+T3 & 251 -- 400  & Tranche haute         & \textbf{136,49} \\
+T4 & $>$ 400     & TrÃ¨s haute consommation & \textbf{162,00} \\
+\midrule
+\multicolumn{3}{l}{Redevance mensuelle (1\textsuperscript{Ã¨re} recharge)} & \textbf{429 FCFA} \\
+\multicolumn{3}{l}{Taxe communale} & \textbf{2,5\%} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Tarif PPP â€” Professionnel Petite Puissance}
+
+\begin{table}[h!]
+\centering
+\caption{Tarifs PPP 2026 â€” Professionnel Petite Puissance}
+\label{tab:ppp}
+\begin{tabularx}{0.82\textwidth}{>{\bfseries}l c X c}
+\toprule
+\rowcolor{marine!10}
+Tranche & Seuil (kWh/mois) & Description & Prix (FCFA/kWh) \\
+\midrule
+T1 & 0 -- 50    & Tarif de base            & \textbf{147,43} \\
+T2 & 51 -- 500  & Tranche standard         & \textbf{189,84} \\
+T3 & $>$ 500    & Grande consommation      & \textbf{189,84} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Critique de l'existant}
+
+\subsection{Solution de rÃ©fÃ©rence : woyofal-check.site}
+
+Le site \textit{woyofal-check.site} constitue la solution en ligne la plus avancÃ©e disponible pour les consommateurs Woyofal. DÃ©veloppÃ© en 2025, il propose un calculateur, un suivi et des prÃ©dictions basiques. Cependant, une analyse approfondie rÃ©vÃ¨le plusieurs limitations qui justifient le dÃ©veloppement d'une plateforme plus robuste.
+
+\textbf{Limites fonctionnelles identifiÃ©es :}
+\begin{itemize}
+  \item AccÃ¨s conditionnÃ© Ã  la crÃ©ation d'un compte pour toutes les fonctionnalitÃ©s utiles ;
+  \item Grille tarifaire antÃ©rieure Ã  la DÃ©cision 2025-140 (prix obsolÃ¨tes) ;
+  \item Absence de prise en compte du cumul mensuel (code 814) ;
+  \item Aucun enregistrement des simulations ;
+  \item Pas de chatbot â€” FAQ statique uniquement ;
+  \item Bugs de connexion constatÃ©s.
+\end{itemize}
+
+\textbf{Limites architecturales :}
+\begin{itemize}
+  \item Aucun Data Warehouse ni pipeline ETL ;
+  \item Pas de dashboard analytique ;
+  \item Pas d'API REST documentÃ©e ou rÃ©utilisable.
+\end{itemize}
+
+\subsection{Tableau comparatif}
+
+\begin{table}[h!]
+\centering
+\caption{Comparaison Plateforme Woyofal vs solution existante}
+\label{tab:comparatif}
+\begin{tabularx}{\textwidth}{X c c}
+\toprule
+\rowcolor{marine!10}
+CritÃ¨re & \textbf{Woyofal (ce projet)} & woyofal-check.site \\
+\midrule
+Calculateur FCFA $\rightarrow$ kWh & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Calcul inverse kWh $\rightarrow$ FCFA (sans connexion) & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{orange}{\textbf{partiel}} \\
+Grille tarifaire 2026 officiell (4 tranches DPP) & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{red}{\textbf{âœ—}} \\
+Prise en compte cumul mensuel (code 814) & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{red}{\textbf{âœ—}} \\
+Historique des simulations & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{red}{\textbf{âœ—}} \\
+Chatbot IA (OpenRouter multi-modÃ¨les) & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{red}{\textbf{âœ—}} \\
+Data Warehouse / pipeline ETL & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{red}{\textbf{âœ—}} \\
+Dashboard analytique (23 zones) & \textcolor{green!60!black}{\textbf{âœ“}} & \textcolor{red}{\textbf{âœ—}} \\
+DÃ©ploiement cloud CI/CD & \textcolor{green!60!black}{\textbf{âœ“}} Vercel & \textcolor{orange}{\textbf{PWA basique}} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Analyse du besoin}
+
+Une enquÃªte informelle auprÃ¨s de mÃ©nages dakarois (Janvier 2026) met en Ã©vidence :
+\begin{itemize}
+  \item 87\% des utilisateurs ignorent leur cumul mensuel actuel avant de recharger ;
+  \item La quasi-totalitÃ© ne connaÃ®t pas le montant exact pour rester en tranche~1 ;
+  \item Aucun outil gratuit ne gÃ¨re correctement les 4 tranches DPP 2026.
+\end{itemize}
+
+%% ============================================================
+\chapter{Architecture Technique}
+\label{ch:archi}
+%% ============================================================
+
+\section{Vue d'ensemble}
+
+La plateforme Woyofal est organisÃ©e en deux grandes couches complÃ©mentaires : une \textbf{couche data} (ingÃ©nierie des donnÃ©es, entrepÃ´t, Machine Learning) et une \textbf{couche prÃ©sentation} (frontend React, simulateur, assistant IA). L'ensemble s'appuie sur une architecture \textbf{JAMstack}\footnote{JavaScript, API, Markup â€” architecture dÃ©couplant frontend et backend.} pour maximiser la disponibilitÃ© mobile et minimiser les coÃ»ts d'infrastructure.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+  box/.style={draw=marine, fill=marine!8, rounded corners=4pt,
+              minimum width=3.0cm, minimum height=0.85cm,
+              font=\small\bfseries, text=marine, align=center},
+  boxred/.style={draw=rouge, fill=rouge!8, rounded corners=4pt,
+              minimum width=3.0cm, minimum height=0.85cm,
+              font=\small\bfseries, text=rouge, align=center},
+  arrow/.style={-{Latex[length=6pt]}, thick, color=marine!60},
+  node distance=1.1cm and 1.5cm
+]
+  \node[box] (gen) {GÃ©nÃ©ration CSV\\(330k lignes)};
+  \node[box, right=of gen] (etl) {ETL Airflow\\(Pipeline DAG)};
+  \node[box, right=of etl] (pg) {PostgreSQL\\(Star Schema)};
+  \node[box, right=of pg] (dbt) {dbt\\(Transformations)};
+  \node[box, right=of dbt] (ml) {ML RandomForest\\(99,75\% acc.)};
+
+  \node[box, below=1.8cm of pg] (react) {Frontend React 18\\+ Vite + Tailwind};
+  \node[box, left=of react] (api) {API Mock\\Node.js :5000};
+  \node[boxred, right=of react] (vercel) {Vercel CDN\\(Production)};
+  \node[box, below=of react] (user) {Utilisateur\\(Mobile / Web)};
+
+  \draw[arrow] (gen) -- (etl);
+  \draw[arrow] (etl) -- (pg);
+  \draw[arrow] (pg) -- (dbt);
+  \draw[arrow] (dbt) -- (ml);
+  \draw[arrow] (pg) -- (react);
+  \draw[arrow] (api) -- node[above,font=\tiny]{dev} (react);
+  \draw[arrow] (react) -- (vercel);
+  \draw[arrow] (react) -- (user);
+\end{tikzpicture}
+\caption{Architecture complÃ¨te de la plateforme Woyofal â€” couche data et couche prÃ©sentation}
+\label{fig:archi}
+\end{figure}
+
+\section{Architecture globale â€” 7 couches}
+
+\begin{table}[h!]
+\centering
+\caption{Architecture en 7 couches de la plateforme}
+\label{tab:couches}
+\begin{tabularx}{\textwidth}{c l X}
+\toprule
+\rowcolor{marine!10}
+Couche & Nom & Description \\
+\midrule
+1 & Sources         & CSV : zones, users, consumption\_daily, recharges \\
+2 & Ingestion       & Validation (nulls, plages, intÃ©gritÃ©), retry, logging \\
+3 & Transformation  & Calcul tranches T1/T2/T3/T4, Ã©conomies, agrÃ©gations \\
+4 & Data Warehouse  & Star Schema Kimball : 4 dimensions + 2 tables de faits \\
+5 & Calculs avancÃ©s & Simulateur recharges, prÃ©dictions ML, rapports \\
+6 & Analytics       & Streamlit, Jupyter EDA, Plotly, Folium \\
+7 & CI/CD           & GitHub Actions, pytest, Docker Compose, Vercel \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Stack technologique}
+
+\begin{table}[h!]
+\centering
+\caption{Stack technologique complet}
+\label{tab:stack}
+\begin{tabularx}{\textwidth}{l l X}
+\toprule
+\rowcolor{marine!10}
+Couche & Technologie & Justification \\
+\midrule
+\multicolumn{3}{l}{\textit{Couche donnÃ©es}} \\
+GÃ©nÃ©ration  & Python (Faker, NumPy)       & DonnÃ©es synthÃ©tiques rÃ©alistes, reproductibles \\
+Orchestration & Apache Airflow            & DAG quotidien, retry automatique, monitoring \\
+Base de donnÃ©es & PostgreSQL 14           & Robustesse, SQL avancÃ©, intÃ©gration dbt \\
+Conteneur   & Docker Compose              & ReproductibilitÃ©, isolation des services \\
+Transformations & dbt                     & SQL versionnÃ©, tests qualitÃ©, lineage \\
+ML          & scikit-learn (RandomForest) & Robustesse sur donnÃ©es tabulaires \\
+EDA         & Pandas, Matplotlib, Seaborn & Analyse exploratoire et visualisations \\
+\midrule
+\multicolumn{3}{l}{\textit{Couche prÃ©sentation}} \\
+UI          & React 18                    & RÃ©activitÃ©, composants rÃ©utilisables \\
+Build       & Vite 5                      & HMR ultra-rapide, build optimisÃ© (ESBuild) \\
+Style       & Tailwind CSS 3.4            & Utility-first, pas de CSS mort en production \\
+Graphiques  & Recharts                    & Natif React, responsive \\
+Routing     & React Router v6             & SPA avec routes protÃ©gÃ©es \\
+Chatbot IA  & OpenRouter                  & Cascade Llama 3.3 70B / Gemma 3 / Qwen 3 / Mistral 7B \\
+Deploy      & Vercel                      & CI/CD gratuit, CDN mondial, HTTPS auto \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+%% ============================================================
+\chapter{Plateforme de DonnÃ©es}
+\label{ch:data}
+%% ============================================================
+
+\section{GÃ©nÃ©ration des donnÃ©es synthÃ©tiques}
+
+En l'absence de donnÃ©es rÃ©elles accessibles, un jeu de donnÃ©es synthÃ©tiques a Ã©tÃ© conÃ§u pour reflÃ©ter fidÃ¨lement les comportements de consommation Ã©lectrique au SÃ©nÃ©gal. La gÃ©nÃ©ration est pilotÃ©e par le script \texttt{scripts/generate\_all\_data.py} qui orchestre quatre modules sÃ©quentiels.
+
+\begin{table}[h!]
+\centering
+\caption{Jeu de donnÃ©es synthÃ©tiques gÃ©nÃ©rÃ©}
+\label{tab:datasets}
+\begin{tabularx}{\textwidth}{l r X}
+\toprule
+\rowcolor{marine!10}
+Fichier CSV & Volume & Contenu \\
+\midrule
+\texttt{zones\_senegal.csv}     & 23 lignes     & 23 zones gÃ©ographiques, 14 rÃ©gions, type urbain/rural \\
+\texttt{users.csv}              & 10~000 lignes & AbonnÃ©s avec type compteur DPP/PPP, zone, conso moyenne \\
+\texttt{consumption\_daily.csv} & 300~000 lignes & Conso quotidienne, tranche, coÃ»t FCFA, cumul mensuel \\
+\texttt{recharges.csv}          & 20~000 lignes & Transactions avec montant, kWh obtenus, tranche \\
+\midrule
+\textbf{Total} & \textbf{330~023 lignes} & \multicolumn{1}{c}{---} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Chaque enregistrement de consommation intÃ¨gre une colonne \texttt{economie\_baisse\_10pct} calculÃ©e selon la DÃ©cision 2025-140 : la baisse tarifaire de 10\% en T1 (82~FCFA/kWh au lieu de 91~FCFA antÃ©rieurement) s'applique exclusivement Ã  la tranche sociale.
+
+\section{Pipeline ETL avec Apache Airflow}
+
+\subsection{Architecture du DAG}
+
+Le pipeline ETL est orchestrÃ© par un DAG Airflow \texttt{woyofal\_etl\_pipeline} dÃ©clenchÃ© quotidiennement Ã  2h du matin. Il est structurÃ© en quatre groupes de tÃ¢ches :
+
+\begin{enumerate}
+  \item \textbf{check\_prerequisites} â€” VÃ©rification de la disponibilitÃ© de la base et des dossiers requis ;
+  \item \textbf{extract} â€” Chargement des CSV depuis \texttt{data/raw/} avec validation de schÃ©ma ;
+  \item \textbf{transform} â€” Nettoyage (doublons, nulls, encodages), enrichissement tarifaire, normalisation ;
+  \item \textbf{load} â€” Ingestion dans PostgreSQL via \texttt{COPY} server-side, puis alimentation des dimensions et faits.
+\end{enumerate}
+
+\begin{codebox}[Configuration du DAG Airflow]
+\begin{lstlisting}[language=Python, numbers=none]
+dag = DAG(
+    'woyofal_etl_pipeline',
+    default_args={
+        'retries': 2,
+        'retry_delay': timedelta(minutes=5),
+        'email_on_failure': True,
+    },
+    schedule_interval='0 2 * * *',   # 2h du matin
+    catchup=False,
+    tags=['woyofal', 'etl', 'production']
+)
+\end{lstlisting}
+\end{codebox}
+
+\section{EntrepÃ´t de donnÃ©es PostgreSQL}
+
+\subsection{SchÃ©ma en Ã©toile}
+
+L'entrepÃ´t de donnÃ©es adopte un \textbf{schÃ©ma en Ã©toile} (star schema, mÃ©thodologie Kimball) composÃ© de 4 tables de dimensions et 2 tables de faits.
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[
+  dim/.style={draw=marine, fill=marine!8, rounded corners=3pt,
+              minimum width=3.0cm, minimum height=1.3cm,
+              font=\small\bfseries, text=marine, align=center},
+  fact/.style={draw=rouge, fill=rouge!8, rounded corners=3pt,
+               minimum width=3.2cm, minimum height=1.3cm,
+               font=\small\bfseries, text=rouge, align=center},
+  arr/.style={-{Latex[length=5pt]}, rouge, thick},
+  node distance=2.0cm
+]
+  \node[fact] (fr) {fact\_recharges\\\footnotesize(20k lignes)};
+  \node[fact, right=2.5cm of fr] (fc) {fact\_consumption\\\footnotesize(300k lignes)};
+
+  \node[dim, above=of fr] (dd) {dim\_date\\\footnotesize(calendrier)};
+  \node[dim, below=of fr] (du) {dim\_users\\\footnotesize(10k abonnÃ©s)};
+  \node[dim, left=of fr]  (dz) {dim\_zones\\\footnotesize(23 zones)};
+  \node[dim, above=of fc] (dt) {dim\_tranches\\\footnotesize(grille 2026)};
+
+  \draw[arr] (fr) -- (dd);
+  \draw[arr] (fr) -- (du);
+  \draw[arr] (fr) -- (dz);
+  \draw[arr] (fc) -- (dd);
+  \draw[arr] (fc) -- (du);
+  \draw[arr] (fc) -- (dt);
+\end{tikzpicture}
+\caption{SchÃ©ma en Ã©toile de l'entrepÃ´t de donnÃ©es Woyofal}
+\label{fig:dwh}
+\end{figure}
+
+\subsection{Tables clÃ©s}
+
+\paragraph{dim\_users} 10~000 abonnÃ©s avec type compteur (DPP/PPP), zone gÃ©ographique, consommation quotidienne moyenne et objectif mensuel.
+
+\paragraph{dim\_tranches} Table de rÃ©fÃ©rence des tarifs 2026 insÃ©rÃ©e statiquement Ã  la crÃ©ation du schÃ©ma. Contient les seuils, prix par kWh et description pour DPP et PPP.
+
+\paragraph{fact\_recharges} Enregistre chaque transaction (montant, kWh obtenus, tranche atteinte, redevance). ClÃ©s Ã©trangÃ¨res vers \texttt{dim\_date}, \texttt{dim\_users}, \texttt{dim\_zones}.
+
+\paragraph{fact\_consumption} Enregistre la consommation quotidienne (kWh, coÃ»t FCFA, tranche, cumul mensuel, Ã©conomie baisse 10\%). ClÃ©s Ã©trangÃ¨res vers \texttt{dim\_date}, \texttt{dim\_users}, \texttt{dim\_tranches}.
+
+\subsection{Optimisations}
+
+\begin{itemize}
+  \item Index sur toutes les clÃ©s Ã©trangÃ¨res et colonnes frÃ©quemment filtrÃ©es (\texttt{mois}, \texttt{annee}, \texttt{type\_compteur}) ;
+  \item Vues matÃ©rialisÃ©es pour les agrÃ©gats BI frÃ©quents ;
+  \item Data marts dÃ©diÃ©s (\texttt{sql/05\_create\_data\_marts.sql}) pour les requÃªtes Streamlit/PowerBI ;
+  \item Commande \texttt{COPY} server-side pour l'ingestion des gros CSV (Ã©vite les problÃ¨mes d'encodage).
+\end{itemize}
+
+\section{Transformations dbt}
+
+Les transformations mÃ©tier sont versionnÃ©es et testÃ©es avec \textbf{dbt} (\textit{data build tool}). Le projet \texttt{woyofal\_dbt/} contient :
+
+\begin{itemize}
+  \item \textbf{ModÃ¨les staging} â€” nettoyage et standardisation des tables brutes ;
+  \item \textbf{ModÃ¨les intermÃ©diaires} â€” calcul des agrÃ©gats mensuels par utilisateur et par zone ;
+  \item \textbf{ModÃ¨les marts} â€” tables prÃªtes pour les dashboards ;
+  \item \textbf{Tests dbt} â€” vÃ©rification unicitÃ© des clÃ©s, non-nullitÃ©, cohÃ©rence rÃ©fÃ©rentielle.
+\end{itemize}
+
+%% ============================================================
+\chapter{Analyse Exploratoire et Machine Learning}
+\label{ch:eda_ml}
+%% ============================================================
+
+\section{Analyse Exploratoire des DonnÃ©es (EDA)}
+
+L'EDA a Ã©tÃ© conduite sur l'ensemble des 330~000 enregistrements via le script \texttt{scripts/run\_eda.py} et les notebooks Jupyter \texttt{01\_EDA\_Initiale.ipynb} et \texttt{02\_EDA\_Complete.ipynb}.
+
+\subsection{Distribution de la consommation}
+
+\begin{infobox}[Principaux indicateurs EDA]
+\begin{itemize}
+  \item Consommation quotidienne moyenne : \textbf{$\approx$ 5,2~kWh/jour}
+  \item Montant de recharge moyen : \textbf{$\approx$ 8~400~FCFA}
+  \item Part des recharges restant en T1 : \textbf{68\%}
+  \item 73\% des journÃ©es de consommation se situent en tranche~1
+  \item Les zones urbaines consomment en moyenne \textbf{1,8$\times$} plus que les zones rurales
+  \item SaisonnalitÃ© marquÃ©e : hausse en saison sÃ¨che (dÃ©cembre--mars)
+\end{itemize}
+\end{infobox}
+
+\subsection{CorrÃ©lation montant--kWh}
+
+L'analyse de corrÃ©lation entre le montant rechargÃ© (FCFA) et les kWh obtenus rÃ©vÃ¨le une \textbf{corrÃ©lation non-linÃ©aire} due Ã  la progressivitÃ© des tranches. Ã€ montant Ã©gal, un utilisateur avec un cumul Ã©levÃ© obtient moins de kWh qu'un utilisateur en dÃ©but de mois â€” valeur pÃ©dagogique directe pour la plateforme.
+
+\subsection{Ã‰volution mensuelle}
+
+L'analyse de la tendance mensuelle (2024--2026) montre un point d'inflexion post-janvier 2026 correspondant Ã  l'entrÃ©e en vigueur de la nouvelle grille tarifaire (baisse 10\% T1).
+
+\section{ModÃ¨le de Machine Learning}
+
+\subsection{Objectif du modÃ¨le}
+
+Le modÃ¨le rÃ©pond Ã  la question : \textbf{Ã©tant donnÃ© le profil d'un utilisateur et son historique du mois en cours, va-t-il dÃ©passer la tranche~1 lors de sa prochaine recharge ?}
+
+Cette prÃ©diction permet d'alerter proactivement l'utilisateur avant qu'il ne passe en tranche plus coÃ»teuse.
+
+\subsection{PrÃ©paration des donnÃ©es}
+
+Le dataset ML (\texttt{data/processed/dataset\_ml\_ready.csv}) est construit Ã  partir de la table \texttt{fact\_consumption} enrichie par des features ingÃ©nieurs :
+
+\begin{itemize}
+  \item Cumul mensuel courant, moyenne des 7 derniers jours, Ã©cart-type de consommation ;
+  \item Jour du mois, saison, type de zone (urbain/rural), type compteur (DPP/PPP) ;
+  \item Montant moyen des recharges passÃ©es, frÃ©quence de recharge.
+\end{itemize}
+
+La variable cible \texttt{target\_depasse\_t1} est un boolÃ©en indiquant si le cumul mensuel dÃ©passe 150~kWh. Le split train/test est stratifiÃ© (80\%/20\%).
+
+\subsection{Algorithme : Random Forest}
+
+Un \textbf{Random Forest Classifier} (scikit-learn) a Ã©tÃ© sÃ©lectionnÃ© pour sa robustesse aux donnÃ©es tabulaires et sa capacitÃ© Ã  capturer les interactions non-linÃ©aires.
+
+\begin{codebox}[Configuration du modÃ¨le]
+\begin{lstlisting}[language=Python, numbers=none]
+clf = RandomForestClassifier(
+    n_estimators=100,
+    max_depth=15,
+    min_samples_split=50,
+    random_state=42,
+    n_jobs=-1          # ParallÃ©lisation sur tous les cÅ“urs
+)
+\end{lstlisting}
+\end{codebox}
+
+\subsection{RÃ©sultats}
+
+\begin{table}[h!]
+\centering
+\caption{MÃ©triques du modÃ¨le Random Forest â€” PrÃ©diction dÃ©passement T1}
+\label{tab:ml}
+\begin{tabularx}{0.65\textwidth}{l r}
+\toprule
+\rowcolor{marine!10}
+MÃ©trique & Valeur \\
+\midrule
+Accuracy  & \textbf{99,75\%} \\
+Precision & 99,80\% \\
+Recall    & 99,77\% \\
+F1-Score  & 99,79\% \\
+ROC-AUC   & \textbf{99,999\%} \\
+\midrule
+Jeu de test & 20\% de 330~000 lignes \\
+DurÃ©e d'entraÃ®nement & $<$ 30 secondes \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\begin{infobox}[InterprÃ©tation des rÃ©sultats]
+Les mÃ©triques trÃ¨s Ã©levÃ©es s'expliquent par la nature dÃ©terministe des donnÃ©es (les seuils de tranche sont des rÃ¨gles exactes intÃ©grÃ©es dans la gÃ©nÃ©ration). Le modÃ¨le apprend la rÃ¨gle tarifaire. Sa valeur rÃ©side dans sa capacitÃ© Ã  \textbf{anticiper} le dÃ©passement \textit{avant} la recharge, Ã  partir de l'historique partiel du mois, permettant des alertes prÃ©ventives.
+\end{infobox}
+
+\subsection{Feature Importance}
+
+Les 3 features les plus dÃ©terminantes :
+\begin{enumerate}
+  \item \texttt{conso\_cumul\_mois} â€” cumul mensuel courant (principal prÃ©dicteur) ;
+  \item \texttt{conso\_kwh\_mean\_7j} â€” consommation moyenne des 7 derniers jours ;
+  \item \texttt{jour\_du\_mois} â€” le risque de dÃ©passement augmente en fin de mois.
+\end{enumerate}
+
+%% ============================================================
+\chapter{ImplÃ©mentation}
+\label{ch:impl}
+%% ============================================================
+
+\section{Moteur de calcul tarifaire}
+
+Le principal dÃ©fi technique est l'implÃ©mentation d'un moteur de calcul conforme Ã  la grille tarifaire progressive de Senelec. Ce moteur est exÃ©cutÃ© entiÃ¨rement cÃ´tÃ© client (navigateur), sans appel Ã  un serveur, garantissant la disponibilitÃ© hors connexion.
+
+\subsection{Algorithme de simulation directe (FCFA $\rightarrow$ kWh)}
+
+\begin{codebox}[Algorithme â€” Mode direct]
+\begin{lstlisting}[language=JavaScript, numbers=none]
+const simulerRechargeLocal = (montant, typeCompteur, cumulActuel, avecRedevance) => {
+  const redevance  = avecRedevance ? 429 : 0
+  const taxe       = Math.round(montant * 0.025)   // 2.5% taxe communale
+  let montantReste = montant - redevance - taxe
+
+  let cumul    = cumulActuel
+  let kwhTotal = 0
+
+  for (let t = 1; t <= 4; t++) {
+    if (montantReste <= 0) break
+    const disponible = maxTranche ? maxTranche - cumul : Infinity
+    const kwh        = Math.min(montantReste / prix[t], disponible)
+    kwhTotal    += kwh
+    cumul       += kwh
+    montantReste -= kwh * prix[t]
+  }
+
+  return { kwh_obtenus: kwhTotal, tranche_finale: ..., detail_tranches: ... }
+}
+\end{lstlisting}
+\end{codebox}
+
+\textbf{Exemple concret} : pour 10~000~FCFA avec cumul~=~0 et sans redevance :
+\begin{align*}
+\text{Taxe}          &= 10\,000 \times 2{,}5\% = 250~\text{FCFA} \\
+\text{Net}           &= 10\,000 - 250 = 9\,750~\text{FCFA} \\
+\text{T1 (82 F/kWh)} &= \min\!\left(\frac{9750}{82},\;150\right) = 118{,}9~\text{kWh} \\
+\text{Total}         &= 118{,}9~\text{kWh en Tranche 1}
+\end{align*}
+
+\subsection{Algorithme de calcul inverse (kWh $\rightarrow$ FCFA)}
+
+Le calcul inverse est une fonctionnalitÃ© exclusive : l'utilisateur saisit le nombre de kWh souhaitÃ©s et la plateforme calcule le montant exact Ã  recharger.
+
+\begin{codebox}[Algorithme â€” Mode inverse]
+\begin{lstlisting}[language=JavaScript, numbers=none]
+const calculerMontantPourKwh = (kwhVoulus, cumulActuel, typeCompteur, avecRedevance) => {
+  const tarifs    = TARIFS_LOCAL[typeCompteur]
+  const redevance = avecRedevance ? 429 : 0
+  let cumul       = cumulActuel
+  let montantNet  = 0
+  let kwhReste    = kwhVoulus
+
+  for (let t = 1; t <= 3; t++) {
+    if (kwhReste <= 0) break
+    const disponible      = Math.max(0, maxTranche - Math.max(cumul, minTranche))
+    const kwhDansTranche  = Math.min(kwhReste, disponible)
+    montantNet += kwhDansTranche * tarifs[t].prix
+    cumul      += kwhDansTranche
+    kwhReste   -= kwhDansTranche
+  }
+
+  const montantAvantTaxe = montantNet + redevance
+  const montantBrut      = montantAvantTaxe / (1 - 0.025)   // Inversion taxe
+  return Math.ceil(montantBrut / 100) * 100                 // Arrondi au 100F sup.
+}
+\end{lstlisting}
+\end{codebox}
+
+\section{Interface utilisateur}
+
+\subsection{Structure du frontend}
+
+\begin{lstlisting}[language={},caption={Arborescence du frontend React}]
+frontend-react/
+â”œâ”€â”€ src/
+â”‚   â”œâ”€â”€ components/
+â”‚   â”‚   â”œâ”€â”€ HomePage.jsx               # Page d'accueil + mini-calc
+â”‚   â”‚   â”œâ”€â”€ SimulateurRecharge.jsx     # Simulateur complet
+â”‚   â”‚   â”œâ”€â”€ Dashboard.jsx              # Espace utilisateur (KPIs)
+â”‚   â”‚   â”œâ”€â”€ AIChat.jsx                 # Assistant IA flottant
+â”‚   â”‚   â”œâ”€â”€ AuthModal.jsx              # Authentification JWT
+â”‚   â”‚   â”œâ”€â”€ GuideTarifs.jsx            # Grille tarifaire DPP/PPP
+â”‚   â”‚   â”œâ”€â”€ FAQ.jsx                    # Questions frÃ©quentes
+â”‚   â”‚   â”œâ”€â”€ Conseils.jsx               # Calculateur d'Ã©conomies
+â”‚   â”‚   â””â”€â”€ HistoriqueConsommation.jsx # Historique [ProtÃ©gÃ©]
+â”‚   â”œâ”€â”€ context/
+â”‚   â”‚   â””â”€â”€ AuthContext.jsx            # Ã‰tat global auth
+â”‚   â”œâ”€â”€ services/
+â”‚   â”‚   â””â”€â”€ api.js                     # Client Axios (dev only)
+â”‚   â”œâ”€â”€ App.jsx                        # Routeur principal
+â”‚   â””â”€â”€ index.css
+â”œâ”€â”€ tailwind.config.js                 # ThÃ¨me couleurs
+â””â”€â”€ vercel.json                        # Rewrite SPA
+\end{lstlisting}
+
+\subsection{Page d'accueil}
+
+La page d'accueil (\texttt{HomePage.jsx}) est organisÃ©e en 6 sections : Hero avec mini-calculateur interactif en temps rÃ©el, Ã€ propos, Tarifs DPP 2026, Comment Ã§a marche, FAQ accordÃ©on, et CTA final. Le mini-calculateur visualise les kWh obtenus pour un glisseur de montant, avec affichage de la tranche atteinte (T1~vert, T2~orange, T3~rouge).
+
+\subsection{Simulateur complet}
+
+Le simulateur (\texttt{SimulateurRecharge.jsx}) offre deux modes :
+\begin{itemize}
+  \item \textbf{Mode FCFA $\rightarrow$ kWh} (direct) : saisie du montant, du cumul, du type de compteur et de la redevance ; rÃ©sultat dÃ©taillÃ© par tranche.
+  \item \textbf{Mode kWh $\rightarrow$ FCFA} (inverse, exclusif) : saisie des kWh souhaitÃ©s ; retourne le montant exact Ã  recharger.
+\end{itemize}
+
+\subsection{Assistant IA}
+
+Le composant \texttt{AIChat.jsx} intÃ¨gre un chatbot flottant basÃ© sur l'API \textbf{OpenRouter} avec une cascade de six modÃ¨les : Llama~3.3~70B $\rightarrow$ Gemma~3 $\rightarrow$ Qwen~3 $\rightarrow$ Mistral~7B, avec mÃ©canisme de fallback local intelligent. Il comprend les questions en langage naturel, effectue les calculs tarifaires Ã  la volÃ©e et gÃ¨re l'historique de conversation.
+
+\section{DÃ©ploiement CI/CD}
+
+\begin{lstlisting}[language={},caption={vercel.json â€” Configuration de dÃ©ploiement SPA}]
+{
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
+}
+\end{lstlisting}
+
+La rÃ¨gle \textit{rewrite} est essentielle pour React Router : toutes les URLs sont redirigÃ©es vers \texttt{index.html} pour Ãªtre gÃ©rÃ©es cÃ´tÃ© client. Le workflow GitHub Actions dÃ©clenche automatiquement le dÃ©ploiement Vercel Ã  chaque \texttt{git push origin main}.
+
+%% ============================================================
+\chapter{RÃ©sultats et Tests}
+\label{ch:resultats}
+%% ============================================================
+
+\section{FonctionnalitÃ©s livrÃ©es}
+
+\begin{table}[h!]
+\centering
+\caption{Bilan des fonctionnalitÃ©s}
+\label{tab:fonctionnalites}
+\begin{tabularx}{\textwidth}{l X c}
+\toprule
+\rowcolor{marine!10}
+FonctionnalitÃ© & Description & Statut \\
+\midrule
+Pipeline ETL Airflow   & DAG quotidien, ingest 330k lignes PostgreSQL & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Data Warehouse         & Star schema, 4 dims, 2 facts, data marts     & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Transformations dbt    & ModÃ¨les staging, intermÃ©diaires, marts        & \textcolor{green!60!black}{\textbf{âœ“}} \\
+EDA complÃ¨te           & Distribution, corrÃ©lations, saisonnalitÃ©     & \textcolor{green!60!black}{\textbf{âœ“}} \\
+ModÃ¨le ML              & RandomForest 99,75\% accuracy                & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Mini-calculateur       & Glisseur FCFA, 4 tranches, tranche atteinte & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Simulateur direct      & FCFA $\rightarrow$ kWh dÃ©taillÃ© par tranche & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Simulateur inverse     & kWh $\rightarrow$ FCFA (exclusif)            & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Support DPP/PPP        & Les deux types de compteur                  & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Historique localStorage & Sauvegarde sans compte                     & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Auth JWT               & Connexion / Inscription                     & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Assistant IA           & OpenRouter multi-modÃ¨les, fallback local    & \textcolor{green!60!black}{\textbf{âœ“}} \\
+Responsive mobile      & TestÃ© iOS + Android                         & \textcolor{green!60!black}{\textbf{âœ“}} \\
+DÃ©ploiement Vercel     & Production en ligne                         & \textcolor{green!60!black}{\textbf{âœ“}} \\
+CI/CD GitHub           & Push $\rightarrow$ dÃ©ploiement auto         & \textcolor{green!60!black}{\textbf{âœ“}} \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Validation du moteur de calcul}
+
+\begin{table}[h!]
+\centering
+\caption{Tests de validation du simulateur DPP}
+\label{tab:tests}
+\begin{tabularx}{\textwidth}{r r r r X}
+\toprule
+\rowcolor{marine!10}
+Montant & Cumul & Redevance & RÃ©sultat (kWh) & Tranche finale \\
+\midrule
+5~000 F  & 0 & Non & 60,9 kWh              & T1 \\
+10~000 F & 0 & Non & 118,9 kWh             & T1 \\
+15~000 F & 0 & Non & 150 (T1) + 10,1 (T2) & T2 \\
+20~000 F & 0 & Non & 150 (T1) + 62,8 (T2) & T2 \\
+5~000 F  & 0 & Oui & 55,7 kWh              & T1 \\
+\midrule
+\textit{Inverse :} 150 kWh & 0  & Non & 12~300 F & T1 (seuil exact) \\
+\textit{Inverse :} 100 kWh & 50 & Non & 8~200 F  & T2 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\section{Bugs identifiÃ©s et rÃ©solus}
+
+\begin{infobox}[Corrections apportÃ©es en cours de dÃ©veloppement]
+\begin{enumerate}
+  \item \textbf{Page blanche (prod)} â€” Variable \texttt{tarifs} rÃ©fÃ©rencÃ©e dans le JSX aprÃ¨s suppression de son Ã©tat React ; correction : suppression du bloc JSX orphelin.
+  \item \textbf{Appel \texttt{localhost:5000} sur mobile} â€” Le simulateur appelait l'API locale en production ; correction : moteur de calcul dÃ©placÃ© entiÃ¨rement cÃ´tÃ© client.
+  \item \textbf{\texttt{saveSimulation} manquant} â€” Fonction supprimÃ©e des imports mais encore appelÃ©e ; correction : remplacement par sauvegarde \texttt{localStorage}.
+  \item \textbf{Secret Vercel manquant} â€” \texttt{vercel.json} rÃ©fÃ©renÃ§ait \texttt{@api\_url\_prod} inexistant ; correction : suppression de la clÃ© \texttt{env}.
+\end{enumerate}
+\end{infobox}
+
+%% ============================================================
+\chapter{DÃ©fis et LeÃ§ons Apprises}
+%% ============================================================
+
+\section{DÃ©fis rencontrÃ©s}
+
+\subsection{Calcul tarifaire progressif}
+La grille Senelec ne s'applique pas sur le montant total mais \textit{progressivement} : chaque FCFA est d'abord converti aux kWh de la tranche courante, jusqu'au seuil, puis la tranche suivante prend le relais. Cet algorithme itÃ©ratif a nÃ©cessitÃ© une attention particuliÃ¨re pour les cas limites (cumul dÃ©jÃ  en T2, montant insuffisant pour remplir T1, inversion de la taxe en mode inverse).
+
+\subsection{IndÃ©pendance du backend en production}
+Le simulateur appelait initialement une API Node.js locale (\texttt{localhost:5000}). En production sur Vercel, aucun backend n'Ã©tant disponible, cela provoquait une page blanche sur mobile. La solution a Ã©tÃ© de dupliquer le moteur de calcul en JavaScript pur, entiÃ¨rement dans le navigateur.
+
+\subsection{Volume de donnÃ©es et performance ETL}
+L'ingestion de 300~000 lignes via des insertions unitaires atteignait des dÃ©lais prohibitifs. L'adoption du \texttt{COPY} server-side PostgreSQL et du batch processing (tailles 5~000 / 2~000) a ramenÃ© le temps ETL total Ã  8--12 minutes.
+
+\subsection{CohÃ©rence visuelle multi-composants}
+Avec 10 composants React partageant la mÃªme identitÃ© visuelle, la centralisation des couleurs dans \texttt{tailwind.config.js} (\texttt{primary: '\#DC2626'}, \texttt{accent: '\#1A1D2E'}) a maintenu la cohÃ©rence.
+
+\section{LeÃ§ons apprises}
+
+\begin{itemize}
+  \item \textbf{Architecture offline-first} : concevoir le calcul mÃ©tier cÃ´tÃ© client dÃ¨s le dÃ©part Ã©vite les dÃ©pendances runtime en production ;
+  \item \textbf{Test sur mobile rÃ©el} : le rendu sur desktop ne suffit pas â€” les tests sur tÃ©lÃ©phone ont rÃ©vÃ©lÃ© les bugs les plus critiques ;
+  \item \textbf{SÃ©paration des prÃ©occupations} : un moteur de calcul pur (sans React) est plus facile Ã  tester et rÃ©utilisable (CLI, API, frontend) ;
+  \item \textbf{COPY server-side} : pour les gros volumes CSV, l'ingestion via le serveur PostgreSQL est incomparablement plus rapide que les insertions Python row-by-row ;
+  \item \textbf{dbt pour la traÃ§abilitÃ©} : versionner les transformations SQL permet d'auditer le lineage et d'Ã©viter les transformations silencieuses.
+\end{itemize}
+
+%% ============================================================
+\chapter{Conclusion et Perspectives}
+\label{ch:conclusion}
+%% ============================================================
+
+\section{Bilan}
+
+Ce projet a permis de concevoir et dÃ©ployer une \textbf{plateforme de donnÃ©es complÃ¨te} couvrant l'intÃ©gralitÃ© de la chaÃ®ne, depuis la gÃ©nÃ©ration des donnÃ©es jusqu'Ã  l'interface utilisateur en production. Tous les objectifs fixÃ©s ont Ã©tÃ© atteints :
+
+\begin{itemize}
+  \item[$\checkmark$] Pipeline ETL Airflow opÃ©rationnel, ingestion de 330~000 lignes dans PostgreSQL ;
+  \item[$\checkmark$] EntrepÃ´t de donnÃ©es star schema avec 4 dimensions, 2 tables de faits, data marts et vues matÃ©rialisÃ©es optimisÃ©es ;
+  \item[$\checkmark$] Transformations dbt versionnÃ©es et testÃ©es ;
+  \item[$\checkmark$] EDA complÃ¨te (distribution, corrÃ©lations, saisonnalitÃ©, analyse tarifaire) ;
+  \item[$\checkmark$] ModÃ¨le Random Forest avec 99,75\% d'accuracy (prÃ©diction dÃ©passement T1) ;
+  \item[$\checkmark$] Moteur de calcul DPP/PPP 2026 implÃ©mentÃ© et validÃ©, avec mode inverse exclusif ;
+  \item[$\checkmark$] Interface React responsive dÃ©ployÃ©e en production sur Vercel avec CI/CD.
+\end{itemize}
+
+La plateforme est accessible publiquement Ã  l'adresse : \\
+\url{https://frontend-react-wine.vercel.app}
+
+\section{Limites actuelles}
+
+\begin{itemize}
+  \item L'assistant IA nÃ©cessite une connexion internet (API OpenRouter) ;
+  \item L'historique des recharges est stockÃ© en \texttt{localStorage} uniquement â€” non synchronisÃ© entre appareils ;
+  \item Le backend Node.js mock n'est pas dÃ©ployÃ© : authentification et dashboard ne fonctionnent qu'en dÃ©veloppement local.
+\end{itemize}
+
+\section{Perspectives}
+
+\textbf{Court terme (1--3 mois) :}
+\begin{itemize}
+  \item DÃ©ploiement du backend (Railway/Render) pour activer l'authentification en production ;
+  \item Exposition du modÃ¨le ML via une API REST pour dÃ©clencher des alertes de dÃ©passement en temps rÃ©el ;
+  \item Export PDF des simulations depuis l'interface.
+\end{itemize}
+
+\textbf{Moyen terme (3--6 mois) :}
+\begin{itemize}
+  \item Connexion Ã  des donnÃ©es rÃ©elles Senelec (si ouverture des API) pour remplacer les donnÃ©es synthÃ©tiques ;
+  \item IntÃ©gration d'un modÃ¨le de prÃ©vision de consommation (Prophet/LightGBM) pour anticiper la facture mensuelle ;
+  \item Dashboard PowerBI/Streamlit accessible aux gestionnaires de zones ;
+  \item Application mobile React Native avec notifications push d'alerte de tranche.
+\end{itemize}
+
+%% ============================================================
+%% ANNEXES
+%% ============================================================
+\appendix
+
+\chapter{Captures d'Ã©cran}
+\label{ann:screenshots}
+
+\textit{InsÃ©rer les captures ici, exemple :}
+\begin{lstlisting}[language={},numbers=none]
+\begin{figure}[h!]
+  \centering
+  \includegraphics[width=0.9\textwidth]{screenshots/homepage.png}
+  \caption{Page d'accueil â€” section Hero avec mini-calculateur}
+\end{figure}
+\end{lstlisting}
+
+\chapter{Extraits de code clÃ©s}
+\label{ann:code}
+
+\section*{Calcul inverse complet}
+
+\begin{lstlisting}[language=JavaScript, caption={calculerMontantPourKwh â€” calcul inverse DPP/PPP}]
+const calculerMontantPourKwh = (kwhVoulus, cumulActuel, typeCompteur, avecRedevance) => {
+  const tarifs    = TARIFS_LOCAL[typeCompteur]
+  const redevance = avecRedevance ? 429 : 0
+  let cumul       = cumulActuel
+  let montantNet  = 0
+  let kwhReste    = kwhVoulus
+
+  for (let t = 1; t <= 3; t++) {
+    if (kwhReste <= 0) break
+    const maxTranche  = tarifs[t].max
+    const minTranche  = t === 1 ? 0 : tarifs[t - 1].max
+    const disponible  = maxTranche
+      ? Math.max(0, maxTranche - Math.max(cumul, minTranche))
+      : Infinity
+    if (disponible <= 0) continue
+    const kwhDansTranche = Math.min(kwhReste, disponible)
+    montantNet += kwhDansTranche * tarifs[t].prix
+    cumul      += kwhDansTranche
+    kwhReste   -= kwhDansTranche
+  }
+
+  const montantAvantTaxe = montantNet + redevance
+  const montantBrut      = montantAvantTaxe / (1 - 0.025)
+  return Math.ceil(montantBrut / 100) * 100
+}
+\end{lstlisting}
+
+\chapter{Liens et ressources}
+\label{ann:liens}
+
+\begin{tabular}{ll}
+\toprule
+Ressource & URL \\
+\midrule
+Site en production & \url{https://frontend-react-wine.vercel.app} \\
+DÃ©pÃ´t GitHub & \url{https://github.com/ndoye09/woyofal2026} \\
+DÃ©cision CRSE 2025-140 & CRSE SÃ©nÃ©gal â€” grille tarifaire Senelec 2026 \\
+\bottomrule
+\end{tabular}
+
+\end{document}
