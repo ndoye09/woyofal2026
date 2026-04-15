@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "buildCommand": "cd frontend-react && npm install && npm run build",
+  "buildCommand": "npm run build",
   "outputDirectory": "frontend-react/dist",
   "public": false,
   "rewrites": [
