@@ -181,7 +181,7 @@ function AuthButton() {
       <div className="relative">
         <button
           onClick={() => setShowMenu(m => !m)}
-          className="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-red-300 hover:bg-red-50 text-sm font-medium text-slate-700 transition"
+          className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-slate-200 hover:border-red-300 hover:bg-red-50 text-sm font-medium text-slate-700 transition"
         >
           <div className="w-6 h-6 rounded-lg bg-primary-gradient flex items-center justify-center">
             <User size={12} className="text-white" />
@@ -209,9 +209,9 @@ function AuthButton() {
     <>
       <button
         onClick={() => setShowModal(true)}
-        className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-red-300 hover:bg-red-50 text-sm font-medium text-gray-700 transition"
+        className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-gray-200 hover:border-red-300 hover:bg-red-50 text-sm font-medium text-gray-700 transition"
       >
-        <LogIn size={14} /> Connexion
+        <LogIn size={14} /> <span className="hidden xs:inline">Connexion</span>
       </button>
       {showModal && <AuthModal onClose={() => setShowModal(false)} />}
     </>

@@ -129,7 +129,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="hidden lg:flex justify-end">
+          <div className="flex justify-center lg:justify-end">
             <HeroCard />
           </div>
         </div>
