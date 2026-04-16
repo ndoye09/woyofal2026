@@ -2,7 +2,36 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { X, Mail, Lock, User, LogIn, UserPlus, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import api from '../services/api'
+
+/* ── Auth client-side (pas de backend requis) ── */
+const USERS_KEY = 'woyofal_users_db'
+const genToken  = () => Math.random().toString(36).slice(2) + Date.now().toString(36)
+
+const getUsers = () => {
+  try { return JSON.parse(localStorage.getItem(USERS_KEY) || '{}') } catch { return {} }
+}
+const saveUsers = (db) => localStorage.setItem(USERS_KEY, JSON.stringify(db))
+
+const mockLogin = (email, password) => {
+  const db = getUsers()
+  // Compte démo par défaut
+  const defaults = {
+    'demo@woyofal.sn': { id: '1', name: 'Utilisateur Démo', email: 'demo@woyofal.sn', password: 'woyofal2026' },
+    'test@woyofal.sn': { id: '2', name: 'Test User', email: 'test@woyofal.sn', password: 'password123' },
+  }
+  const user = db[email] || defaults[email]
+  if (!user || user.password !== password) return null
+  return { user: { id: user.id, name: user.name, email: user.email }, token: genToken(), refresh: genToken() }
+}
+
+const mockRegister = (email, password, name) => {
+  const db = getUsers()
+  if (db[email]) return { error: 'Cet email est déjà utilisé.' }
+  const newUser = { id: String(Date.now()), name, email, password }
+  db[email] = newUser
+  saveUsers(db)
+  return { user: { id: newUser.id, name: newUser.name, email: newUser.email }, token: genToken(), refresh: genToken() }
+}
 
 export default function AuthModal({ onClose, pageToRedirect }) {
   const { login } = useAuth()
@@ -27,22 +56,26 @@ export default function AuthModal({ onClose, pageToRedirect }) {
     e.preventDefault()
     setError(null); setLoading(true)
     try {
-      const endpoint = tab === 'login' ? '/auth/login' : '/auth/register'
-      const body     = tab === 'login'
-        ? { email: form.email.trim().toLowerCase(), password: form.password }
-        : { email: form.email.trim().toLowerCase(), password: form.password, name: form.name.trim() }
+      const email = form.email.trim().toLowerCase()
+      let result
 
-      const { data } = await api.post(endpoint, body)
-      login(data.user, data.access_token, data.refresh_token)
-      setSuccess(tab === 'login' ? `Bienvenue ${data.user.name} !` : 'Compte créé — bienvenue !')
+      if (tab === 'login') {
+        result = mockLogin(email, form.password)
+        if (!result) { setError('Email ou mot de passe incorrect.'); setLoading(false); return }
+      } else {
+        if (!form.name.trim()) { setError('Veuillez entrer votre nom.'); setLoading(false); return }
+        result = mockRegister(email, form.password, form.name.trim())
+        if (result.error) { setError(result.error); setLoading(false); return }
+      }
+
+      login(result.user, result.token, result.refresh)
+      setSuccess(tab === 'login' ? `Bienvenue ${result.user.name} !` : 'Compte créé — bienvenue !')
       setTimeout(() => {
         onClose()
         if (pageToRedirect) navigate(pageToRedirect, { replace: true })
       }, 900)
-    } catch (err) {
-      const errData = err.response?.data
-      if (errData?.errors) setError(errData.errors.join(' '))
-      else setError(errData?.error || 'Une erreur est survenue.')
+    } catch {
+      setError('Une erreur est survenue.')
     } finally {
       setLoading(false)
     }

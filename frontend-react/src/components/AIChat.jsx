@@ -1,8 +1,68 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Trash2, Bot, Zap, ChevronDown } from 'lucide-react'
-import api from '../services/api'
 
-/** Woyofal AI Chat — assistant flottant OpenRouter + Llama 3.3 70B */
+/** Woyofal AI Chat — appel direct OpenRouter (pas de backend requis) */
+
+const OPENROUTER_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || ''
+
+const SYSTEM_PROMPT = `Tu es l'assistant Woyofal, expert en tarifs électriques Senelec 2026 au Sénégal.
+Grille tarifaire DPP (Décision CRSE 2025-140) :
+- T1 : 0–150 kWh/mois → 82,00 FCFA/kWh (tarif social, −10% vs 2024)
+- T2 : 151–250 kWh/mois → 136,49 FCFA/kWh
+- T3 : 251–400 kWh/mois → 136,49 FCFA/kWh
+- T4 : >400 kWh/mois → 162,00 FCFA/kWh
+- Redevance mensuelle (1ère recharge du mois) : 429 FCFA
+- Taxe communale : 2,5% du montant brut
+
+Grille PPP (Professionnel Petite Puissance) :
+- T1 : 0–50 kWh → 147,43 FCFA/kWh
+- T2 : 51–500 kWh → 189,84 FCFA/kWh
+
+Algorithme de calcul : déduire redevance + taxe du montant brut, puis distribuer le reste selon les tranches en tenant compte du cumul mensuel (code 814 sur compteur).
+
+Réponds en français, de façon concise et pratique. Si on te demande un calcul, montre les étapes.`
+
+/* Fallback FAQ offline (si pas de clé API) */
+const faqFallback = (msg) => {
+  const m = msg.toLowerCase()
+  if (/(\d[\s]?000|5000|10000|20000).*fcfa|fcfa.*(5000|10000)/.test(m) || /kwh.*fcfa|fcfa.*kwh/.test(m))
+    return 'Utilisez le simulateur ⚡ pour un calcul exact. Formule rapide : pour 5 000 FCFA (sans redevance, cumul=0) → taxe 125 F → net 4 875 F → 4 875 / 82 = **59,5 kWh** (T1).'
+  if (/redevance/.test(m)) return 'La redevance est un frais fixe de **429 FCFA** prélevé sur la première recharge de chaque mois (compteur DPP). Les recharges suivantes dans le même mois en sont dispensées.'
+  if (/dpp|ppp|diff/.test(m)) return '**DPP** (Domestique Petite Puissance) : T1 = 82 FCFA/kWh (seuil 150 kWh). **PPP** (Professionnel) : T1 = 147,43 FCFA/kWh (seuil 50 kWh). Vérifiez votre type sur votre compteur.'
+  if (/cumul|814|code/.test(m)) return 'Le cumul mensuel se consulte en tapant **814** sur votre compteur. Il repart à 0 chaque début de mois et détermine votre tranche tarifaire.'
+  if (/tarif|2025|2026|nouveau|changement/.test(m)) return 'La nouvelle grille **CRSE 2025-140** est entrée en vigueur le 1er janvier 2026. Principal changement : T1 passe de ~91 à **82 FCFA/kWh** (baisse de 10% pour le tarif social).'
+  if (/inverse|kwh.*franc|kilo/.test(m)) return 'Le **mode inverse** du simulateur calcule exactement le montant à recharger pour obtenir un nombre de kWh cible. Allez sur Simulateur → choisissez "kWh → FCFA".'
+  if (/recharger|où|agent|mobile money/.test(m)) return 'Vous pouvez recharger : chez un **agent Senelec**, via **Orange Money / Wave / Free Money**, ou dans les agences Senelec. Pour les montants, utilisez notre simulateur.'
+  return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋\n\nQuestions fréquentes : redevance, tranches T1/T2, cumul mensuel (code 814), différence DPP/PPP.`
+}
+
+const callOpenRouter = async (messages) => {
+  const models = [
+    'meta-llama/llama-3.3-70b-instruct:free',
+    'google/gemma-3-27b-it:free',
+    'qwen/qwen3-8b:free',
+    'mistralai/mistral-7b-instruct:free',
+  ]
+  for (const model of models) {
+    try {
+      const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': window.location.origin,
+          'X-Title': 'Woyofal Assistant',
+        },
+        body: JSON.stringify({ model, messages, max_tokens: 600, temperature: 0.5 }),
+      })
+      if (!res.ok) continue
+      const json = await res.json()
+      const reply = json.choices?.[0]?.message?.content
+      if (reply) return reply
+    } catch { continue }
+  }
+  return null
+}
 
 const SUGGESTIONS = [
   'Combien de kWh pour 5 000 FCFA ?',
@@ -185,14 +245,25 @@ export default function AIChat() {
     setLoading(true)
 
     try {
-      const history = messages.map(m => ({ role: m.role, content: m.content }))
-      const { data } = await api.post('/ai/chat', { message: msg, history })
-      const botMsg = { role: 'assistant', content: data.reply }
+      let reply = null
+
+      if (OPENROUTER_KEY) {
+        const history = messages.map(m => ({ role: m.role, content: m.content }))
+        const apiMessages = [
+          { role: 'system', content: SYSTEM_PROMPT },
+          ...history,
+          { role: 'user', content: msg },
+        ]
+        reply = await callOpenRouter(apiMessages)
+      }
+
+      if (!reply) reply = faqFallback(msg)
+
+      const botMsg = { role: 'assistant', content: reply }
       setMessages(prev => [...prev, botMsg])
       if (!open) setUnread(n => n + 1)
-    } catch (err) {
-      const errText = err.response?.data?.error || 'Erreur — réessayez dans un moment.'
-      setError(errText)
+    } catch {
+      setError('Erreur — réessayez dans un moment.')
     } finally {
       setLoading(false)
     }
