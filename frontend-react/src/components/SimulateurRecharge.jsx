@@ -230,7 +230,7 @@ const SimulateurRecharge = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-14 bg-white min-h-screen">
+    <div className="max-w-6xl mx-auto px-4 py-8 sm:py-14 bg-white min-h-screen">
       <div className="text-center mb-10">
         <span className="section-tag">Outil</span>
         <h1 className="section-title">Simulateur de Recharge</h1>
@@ -242,13 +242,13 @@ const SimulateurRecharge = () => {
         <div className="bg-slate-100 rounded-2xl p-1 inline-flex gap-1">
           <button
             onClick={() => setMode('direct')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
+            className={`flex items-center gap-2 px-3 sm:px-6 py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
           >
             <Zap className="w-4 h-4" /> FCFA → kWh
           </button>
           <button
             onClick={() => setMode('inverse')}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-violet-600 text-white shadow-[0_0_24px_rgba(139,92,246,0.4)]' : 'text-slate-600 hover:bg-slate-200'}`}
+            className={`flex items-center gap-2 px-3 sm:px-6 py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-violet-600 text-white shadow-[0_0_24px_rgba(139,92,246,0.4)]' : 'text-slate-600 hover:bg-slate-200'}`}
           >
             <ArrowLeftRight className="w-4 h-4" /> kWh → FCFA
             <span className="bg-accent text-navy text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Exclusif</span>

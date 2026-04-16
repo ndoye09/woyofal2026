@@ -110,7 +110,7 @@ const FAQ = () => {
   })).filter(cat => cat.questions.length > 0)
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-14">
+    <div className="max-w-4xl mx-auto px-4 py-8 sm:py-14">
       {/* Header */}
       <div className="text-center mb-12">
         <span className="section-tag">FAQ</span>
@@ -171,7 +171,7 @@ const FAQ = () => {
       )}
 
       {/* CTA bas */}
-      <div className="mt-12 rounded-3xl p-10 text-white text-center" style={{ background: '#020C1B' }}>
+      <div className="mt-12 rounded-3xl p-6 sm:p-10 text-white text-center" style={{ background: '#020C1B' }}>
         <h3 className="text-2xl font-bold font-display mb-3">Votre question n'est pas là ?</h3>
         <p className="text-white/55 mb-6">Utilisez directement notre simulateur pour tester différents scénarios.</p>
         <a href="/simulateur" className="btn-accent inline-flex items-center gap-2">

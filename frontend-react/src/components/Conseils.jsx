@@ -111,17 +111,17 @@ function BudgetCalculator() {
         ))}
       </div>
       <div className="mt-6 p-4 rounded-lg bg-gray-50 border">
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4 text-center">
           <div>
-            <div className="text-2xl font-bold text-primary">{totalKwh.toFixed(0)} kWh</div>
+            <div className="text-xl sm:text-2xl font-bold text-primary">{totalKwh.toFixed(0)} kWh</div>
             <div className="text-xs text-gray-500">Conso estimée</div>
           </div>
           <div>
-            <div className="text-2xl font-bold">{tranche}</div>
+            <div className="text-xl sm:text-2xl font-bold">{tranche}</div>
             <div className="text-xs text-gray-500">Tranche finale</div>
           </div>
           <div>
-            <div className="text-2xl font-bold text-success">{montantTotal.toFixed(0)} F</div>
+            <div className="text-xl sm:text-2xl font-bold text-success">{montantTotal.toFixed(0)} F</div>
             <div className="text-xs text-gray-500">Budget mensuel</div>
           </div>
         </div>
@@ -142,7 +142,7 @@ export default function Conseils() {
   const appareilsFiltres = catActive === 'Tous' ? APPAREILS : APPAREILS.filter(a => a.categorie === catActive)
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-14 bg-white min-h-screen">
+    <div className="max-w-5xl mx-auto px-4 py-8 sm:py-14 bg-white min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <span className="section-tag">Économies</span>
@@ -271,7 +271,7 @@ export default function Conseils() {
       </div>
 
       {/* CTA */}
-      <div className="text-center rounded-lg p-10 text-white bg-black">
+      <div className="text-center rounded-lg p-6 sm:p-10 text-white bg-black">
         <h3 className="text-2xl font-bold font-display mb-2">Prêt à optimiser votre consommation ?</h3>
         <p className="mb-5 text-gray-300">Utilisez notre simulateur avec le mode inverse pour budgéter vos recharges à la perfection.</p>
         <Link to="/simulateur" className="bg-red-600 text-white px-8 py-3 rounded-xl font-bold hover:bg-red-700 transition inline-flex items-center gap-2">

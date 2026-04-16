@@ -96,7 +96,7 @@ const GuideTarifs = () => {
   const [activeType, setActiveType] = useState('DPP')
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-14 bg-white min-h-screen">
+    <div className="max-w-5xl mx-auto px-4 py-8 sm:py-14 bg-white min-h-screen">
       {/* Header */}
       <div className="text-center mb-12">
         <span className="section-tag">Tarification</span>
@@ -114,7 +114,7 @@ const GuideTarifs = () => {
           <button
             key={type}
             onClick={() => setActiveType(type)}
-            className={`px-8 py-3 rounded-xl font-semibold transition ${
+            className={`px-5 sm:px-8 py-3 rounded-xl font-semibold transition ${
               activeType === type
                 ? 'bg-black text-white shadow-md'
                 : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-black/30'
@@ -146,7 +146,7 @@ const GuideTarifs = () => {
                   {t.badge}
                 </div>
                 <div className="text-xs mb-1 opacity-80">Tranche {t.num}</div>
-                <div className="text-5xl font-bold mb-1">{t.prix.toFixed(2)}</div>
+                <div className="text-3xl sm:text-5xl font-bold mb-1">{t.prix.toFixed(2)}</div>
                 <div className="text-sm opacity-90">FCFA / kWh</div>
               </div>
               <div className={`p-4 ${c.light}`}>

@@ -13,7 +13,7 @@ const HeroCard = () => (
         <thead>
           <tr>
             {['Catégories', 'Tranche 1', 'Tranche 2', 'Tranche 3', 'Note'].map((h) => (
-              <th key={h} className="text-white/40 uppercase tracking-wide font-medium text-left px-2 py-1.5 border-b border-white/10">
+              <th key={h} className={`text-white/40 uppercase tracking-wide font-medium text-left px-2 py-1.5 border-b border-white/10${h === 'Note' ? ' hidden sm:table-cell' : ''}`}>
                 {h}
               </th>
             ))}
@@ -26,7 +26,7 @@ const HeroCard = () => (
             <td className="text-white font-medium px-2 py-2 text-center">0 à 150</td>
             <td className="text-white font-medium px-2 py-2 text-center">151 à 250</td>
             <td className="text-white font-medium px-2 py-2 text-center">Plus de 250</td>
-            <td className="text-white/30 px-2 py-2 italic">—</td>
+            <td className="hidden sm:table-cell text-white/30 px-2 py-2 italic">—</td>
           </tr>
           {/* Prix du kWh */}
           <tr className="border-b border-white/5 bg-white/5">
@@ -34,19 +34,19 @@ const HeroCard = () => (
             <td className="text-green-400 font-bold px-2 py-2 text-center">82 F</td>
             <td className="text-amber-400 font-bold px-2 py-2 text-center">136,49 F</td>
             <td className="text-primary font-bold px-2 py-2 text-center">136,49 F</td>
-            <td className="text-white/30 px-2 py-2 italic">—</td>
+            <td className="hidden sm:table-cell text-white/30 px-2 py-2 italic">—</td>
           </tr>
           {/* Redevance */}
           <tr className="border-b border-white/5">
             <td className="text-white/50 px-2 py-2 whitespace-nowrap">Redevance (FCFA)</td>
             <td colSpan={3} className="text-white font-semibold px-2 py-2 text-center">429</td>
-            <td className="text-yellow-300/80 px-2 py-2 text-[10px] leading-tight">Déduit à la 1ère recharge du mois</td>
+            <td className="hidden sm:table-cell text-yellow-300/80 px-2 py-2 text-[10px] leading-tight">Déduit à la 1ère recharge du mois</td>
           </tr>
           {/* Taxe communale */}
           <tr className="border-b border-white/5 bg-white/5">
             <td className="text-white/50 px-2 py-2 whitespace-nowrap">Taxe communale</td>
             <td colSpan={3} className="text-white font-semibold px-2 py-2 text-center">2,5 %</td>
-            <td className="text-yellow-300/80 px-2 py-2 text-[10px] leading-tight">Déduite à chaque achat</td>
+            <td className="hidden sm:table-cell text-yellow-300/80 px-2 py-2 text-[10px] leading-tight">Déduite à chaque achat</td>
           </tr>
           {/* TVA */}
           <tr>
@@ -54,7 +54,7 @@ const HeroCard = () => (
             <td className="px-2 py-2 text-center text-white/20">—</td>
             <td className="px-2 py-2 text-center text-white/20">—</td>
             <td className="text-white font-semibold px-2 py-2 text-center">18 %</td>
-            <td className="text-yellow-300/80 px-2 py-2 text-[10px] leading-tight">Applicable à partir de 250 kWh</td>
+            <td className="hidden sm:table-cell text-yellow-300/80 px-2 py-2 text-[10px] leading-tight">Applicable à partir de 250 kWh</td>
           </tr>
         </tbody>
       </table>
@@ -107,7 +107,7 @@ export default function HomePage() {
 
       {/* HERO */}
       <section className="bg-navy text-white">
-        <div className="max-w-6xl mx-auto px-6 py-20 lg:py-28 grid lg:grid-cols-2 gap-16 items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-20 lg:py-28 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div>
             <div className="inline-flex items-center gap-2 text-xs text-white/50 uppercase tracking-widest mb-8 border border-white/10 rounded-full px-4 py-2">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
@@ -136,7 +136,7 @@ export default function HomePage() {
       </section>
 
       {/* A PROPOS */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-10 sm:py-20 px-4 sm:px-6 bg-white">
         <div className="max-w-3xl mx-auto text-center">
           <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-4">Woyofal</p>
           <h2 className="text-3xl font-bold font-display text-navy mb-5">
@@ -150,7 +150,7 @@ export default function HomePage() {
       </section>
 
       {/* AVANTAGES WOYOFAL */}
-      <section className="py-16 px-6 bg-gray-50">
+      <section className="py-10 sm:py-16 px-4 sm:px-6 bg-gray-50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-3">Pourquoi Woyofal ?</p>
@@ -199,7 +199,7 @@ export default function HomePage() {
       </section>
 
       {/* COMMENT CA MARCHE */}
-      <section className="py-20 px-6 bg-white">
+      <section className="py-10 sm:py-20 px-4 sm:px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-12">
             <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-3">Guide</p>
@@ -224,7 +224,7 @@ export default function HomePage() {
       </section>
 
       {/* CODES CLAVIER */}
-      <section className="py-16 px-6 bg-navy text-white">
+      <section className="py-10 sm:py-16 px-4 sm:px-6 bg-navy text-white">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-widest text-white/40 font-semibold mb-3">Codes clavier</p>
@@ -258,7 +258,7 @@ export default function HomePage() {
       </section>
 
       {/* PARTENAIRES RECHARGEMENT */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-10 sm:py-16 px-4 sm:px-6 bg-white">
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-3">Ou recharger ?</p>
@@ -285,7 +285,7 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-16 px-6 bg-gray-50">
+      <section className="py-10 sm:py-16 px-4 sm:px-6 bg-gray-50">
         <div className="max-w-2xl mx-auto">
           <div className="text-center mb-10">
             <p className="text-xs uppercase tracking-widest text-primary font-semibold mb-3">FAQ</p>
@@ -315,7 +315,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA FINAL */}
-      <section className="bg-navy py-20 px-6 text-center text-white">
+      <section className="bg-navy py-12 sm:py-20 px-4 sm:px-6 text-center text-white">
         <div className="max-w-lg mx-auto">
           <h2 className="text-3xl font-bold font-display mb-4">Pret a simuler ?</h2>
           <p className="text-white/40 mb-8 text-sm">100% gratuit · Sans inscription · Resultat instantane</p>
