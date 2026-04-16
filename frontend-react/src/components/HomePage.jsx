@@ -109,15 +109,15 @@ export default function HomePage() {
       <section className="bg-navy text-white">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-10 sm:py-20 lg:py-28 grid lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           <div>
-            <div className="inline-flex items-center gap-2 text-xs text-white/50 uppercase tracking-widest mb-8 border border-white/10 rounded-full px-4 py-2">
+            <div className="inline-flex items-center gap-2 text-xs text-white/50 uppercase tracking-widest mb-4 sm:mb-8 border border-white/10 rounded-full px-4 py-2">
               <span className="w-1.5 h-1.5 rounded-full bg-green-400 inline-block" />
               Tarifs Senelec 2026 officiels
             </div>
-            <h1 className="text-4xl lg:text-5xl font-bold font-display leading-tight mb-6">
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-display leading-tight mb-4 sm:mb-6">
               Simulez votre recharge<br />
               <span className="text-primary">Woyofal</span> en 2 secondes
             </h1>
-            <p className="text-white/50 text-base leading-relaxed mb-10 max-w-md">
+            <p className="text-white/50 text-sm sm:text-base leading-relaxed mb-6 sm:mb-10 max-w-md">
               Calculez les kWh obtenus, comprenez vos tranches et optimisez vos depenses electriques avec les tarifs Senelec 2026.
             </p>
             <div className="flex flex-wrap gap-3">
@@ -129,7 +129,7 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-          <div className="flex justify-center lg:justify-end">
+          <div className="hidden lg:flex justify-end">
             <HeroCard />
           </div>
         </div>

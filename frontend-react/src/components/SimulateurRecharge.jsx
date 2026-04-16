@@ -238,17 +238,17 @@ const SimulateurRecharge = () => {
       </div>
 
       {/* ─── Sélecteur de mode ─── */}
-      <div className="flex justify-center mb-8">
-        <div className="bg-slate-100 rounded-2xl p-1 inline-flex gap-1">
+      <div className="mb-8 px-0">
+        <div className="bg-slate-100 rounded-2xl p-1 flex flex-col sm:flex-row gap-1 w-full sm:w-auto sm:max-w-fit sm:mx-auto">
           <button
             onClick={() => setMode('direct')}
-            className={`flex items-center gap-2 px-3 sm:px-6 py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
+            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
           >
             <Zap className="w-4 h-4" /> FCFA → kWh
           </button>
           <button
             onClick={() => setMode('inverse')}
-            className={`flex items-center gap-2 px-3 sm:px-6 py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-violet-600 text-white shadow-[0_0_24px_rgba(139,92,246,0.4)]' : 'text-slate-600 hover:bg-slate-200'}`}
+            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-violet-600 text-white shadow-[0_0_24px_rgba(139,92,246,0.4)]' : 'text-slate-600 hover:bg-slate-200'}`}
           >
             <ArrowLeftRight className="w-4 h-4" /> kWh → FCFA
             <span className="bg-accent text-navy text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Exclusif</span>
@@ -386,8 +386,8 @@ const SimulateurRecharge = () => {
               </div>
 
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-red-50 p-3 rounded-xl border border-red-100"><div className="text-xs text-primary mb-1">Cumul Avant</div><div className="text-xl font-bold font-display text-navy">{result.cumul_initial.toFixed(1)} kWh</div></div>
-                <div className="bg-success/10 p-3 rounded-xl border border-success/20"><div className="text-xs text-success mb-1">Cumul Final</div><div className="text-xl font-bold font-display text-success">{result.cumul_final.toFixed(1)} kWh</div></div>
+                <div className="bg-red-50 p-3 rounded-xl border border-red-100"><div className="text-xs text-primary mb-1">Cumul Avant</div><div className="text-lg sm:text-xl font-bold font-display text-navy">{result.cumul_initial.toFixed(1)} kWh</div></div>
+                <div className="bg-success/10 p-3 rounded-xl border border-success/20"><div className="text-xs text-success mb-1">Cumul Final</div><div className="text-lg sm:text-xl font-bold font-display text-success">{result.cumul_final.toFixed(1)} kWh</div></div>
               </div>
 
               <div className={`p-4 rounded-2xl border-2 text-center ${getTrancheColor(result.tranche_finale)}`}>
@@ -398,7 +398,7 @@ const SimulateurRecharge = () => {
               </div>
 
               {/* ── Bouton Sauvegarder ── */}
-              <div className="flex items-center gap-3 pt-2">
+              <div className="flex flex-wrap items-center gap-3 pt-2">
                 <button
                   onClick={() => {
                     sauvegarderRecharge(result, formData.type_compteur)

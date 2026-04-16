@@ -98,9 +98,9 @@ function BudgetCalculator() {
           { key: 'pompe', label: 'Pompe à eau 0,5CV (heures/jour)', icon: '💧', max: 8 },
         ].map(({ key, label, icon, max }) => (
           <div key={key}>
-            <div className="flex justify-between text-sm mb-1">
-              <span>{icon} {label}</span>
-              <span className="font-semibold text-primary">{heures[key]}h → {conso[key].toFixed(1)} kWh/mois</span>
+            <div className="flex flex-col xs:flex-row justify-between text-xs sm:text-sm mb-1">
+              <span className="truncate pr-2">{icon} {label}</span>
+              <span className="font-semibold text-primary shrink-0">{heures[key]}h → {conso[key].toFixed(1)} kWh/mois</span>
             </div>
             <input
               type="range" min="0" max={max} value={heures[key]}
@@ -223,9 +223,9 @@ export default function Conseils() {
               <tr>
                 <th className="p-3 text-left text-slate-700">Appareil</th>
                 <th className="p-3 text-right text-slate-700">Puissance</th>
-                <th className="p-3 text-right text-slate-700">Conso 4h/jour (mois)</th>
+                <th className="hidden sm:table-cell p-3 text-right text-slate-700">Conso 4h/j (mois)</th>
                 <th className="p-3 text-right text-slate-700">Coût T1/mois</th>
-                <th className="p-3 text-left text-slate-700">Conseil</th>
+                <th className="hidden md:table-cell p-3 text-left text-slate-700">Conseil</th>
               </tr>
             </thead>
             <tbody>
@@ -245,9 +245,9 @@ export default function Conseils() {
                       <div className="text-xs text-gray-400">{a.categorie} {badge}</div>
                     </td>
                     <td className="p-3 text-right font-semibold">{a.puissance} W</td>
-                    <td className="p-3 text-right">{kwhMois.toFixed(1)} kWh</td>
+                    <td className="hidden sm:table-cell p-3 text-right">{kwhMois.toFixed(1)} kWh</td>
                     <td className="p-3 text-right font-bold text-primary">{coutT1.toFixed(0)} F</td>
-                    <td className="p-3 text-xs text-gray-600 max-w-xs">{a.conseil}</td>
+                    <td className="hidden md:table-cell p-3 text-xs text-gray-600 max-w-xs">{a.conseil}</td>
                   </tr>
                 )
               })}
