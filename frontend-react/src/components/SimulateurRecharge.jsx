@@ -319,6 +319,25 @@ const SimulateurRecharge = () => {
                 <span className="text-xs text-primary font-semibold">À vérifier au compteur avec le code : 814</span>
               </div>
               <input type="number" name="cumul_actuel" value={formData.cumul_actuel} onChange={handleChange} min="0" step="0.1" className="input-field" required />
+              {/* Info cumul */}
+              <div className="mt-2 bg-amber-50 border border-amber-200 rounded-xl p-3">
+                <p className="text-xs font-semibold text-amber-800 mb-1">💡 Pourquoi ce champ est important ?</p>
+                <p className="text-xs text-amber-700 leading-relaxed">
+                  Deux recharges du même montant donnent des kWh différents selon votre cumul.
+                </p>
+                <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
+                  <div className="bg-white rounded-lg p-2 border border-amber-100">
+                    <span className="font-bold text-green-700">Cumul = 0</span><br />
+                    <span className="text-gray-600">10 000 F → ~104 kWh</span><br />
+                    <span className="text-green-600 font-medium">T1 à 82 F/kWh</span>
+                  </div>
+                  <div className="bg-white rounded-lg p-2 border border-amber-100">
+                    <span className="font-bold text-orange-700">Cumul = 200</span><br />
+                    <span className="text-gray-600">10 000 F → ~73 kWh</span><br />
+                    <span className="text-orange-600 font-medium">T2 à 136,49 F/kWh</span>
+                  </div>
+                </div>
+              </div>
             </div>
             )}
 
