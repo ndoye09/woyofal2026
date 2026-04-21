@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react'
 import { MessageCircle, X, Send, Trash2, Bot, Zap, ChevronDown } from 'lucide-react'
+import { faqs } from './FAQ'
 
 /** Woyofal AI Chat — appel direct OpenRouter (pas de backend requis) */
 
@@ -22,17 +23,28 @@ Algorithme de calcul : déduire redevance + taxe du montant brut, puis distribue
 
 Réponds en français, de façon concise et pratique. Si on te demande un calcul, montre les étapes.`
 
-/* Fallback FAQ offline (si pas de clé API) */
+/* Fallback FAQ offline (si pas de clé API) — recherche dans toutes les Q&A de la FAQ */
+const _norm = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+
 const faqFallback = (msg) => {
-  const m = msg.toLowerCase()
-  if (/(\d[\s]?000|5000|10000|20000).*fcfa|fcfa.*(5000|10000)/.test(m) || /kwh.*fcfa|fcfa.*kwh/.test(m))
-    return 'Utilisez le simulateur ⚡ pour un calcul exact. Formule rapide : pour 5 000 FCFA (sans redevance, cumul=0) → taxe 125 F → net 4 875 F → 4 875 / 82 = **59,5 kWh** (T1).'
-  if (/redevance/.test(m)) return 'La redevance est un frais fixe de **429 FCFA** prélevé sur la première recharge de chaque mois (compteur DPP). Les recharges suivantes dans le même mois en sont dispensées.'
-  if (/dpp|ppp|diff/.test(m)) return '**DPP** (Domestique Petite Puissance) : T1 = 82 FCFA/kWh (seuil 150 kWh). **PPP** (Professionnel) : T1 = 147,43 FCFA/kWh (seuil 50 kWh). Vérifiez votre type sur votre compteur.'
-  if (/cumul|814|code/.test(m)) return 'Le cumul mensuel se consulte en tapant **814** sur votre compteur. Il repart à 0 chaque début de mois et détermine votre tranche tarifaire.'
-  if (/tarif|2025|2026|nouveau|changement/.test(m)) return 'La nouvelle grille **CRSE 2025-140** est entrée en vigueur le 1er janvier 2026. Principal changement : T1 passe de ~91 à **82 FCFA/kWh** (baisse de 10% pour le tarif social).'
-  if (/inverse|kwh.*franc|kilo/.test(m)) return 'Le **mode inverse** du simulateur calcule exactement le montant à recharger pour obtenir un nombre de kWh cible. Allez sur Simulateur → choisissez "kWh → FCFA".'
-  if (/recharger|où|agent|mobile money/.test(m)) return 'Vous pouvez recharger : chez un **agent Senelec**, via **Orange Money / Wave / Free Money**, ou dans les agences Senelec. Pour les montants, utilisez notre simulateur.'
+  const m = _norm(msg)
+  const words = m.split(/\s+/).filter(w => w.length >= 4)
+  if (words.length === 0) return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋`
+
+  let best = null
+  let bestScore = 0
+
+  for (const cat of faqs) {
+    for (const item of cat.questions) {
+      const combined = _norm(item.q + ' ' + item.a)
+      const score = words.reduce((acc, w) => acc + (combined.includes(w) ? 1 : 0), 0)
+      if (score > bestScore) { bestScore = score; best = item.a }
+    }
+  }
+
+  const hasLongWord = words.some(w => w.length >= 7)
+  if (best && (bestScore >= 2 || (bestScore >= 1 && hasLongWord))) return best
+
   return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋\n\nQuestions fréquentes : redevance, tranches T1/T2, cumul mensuel (code 814), différence DPP/PPP.`
 }
 
@@ -64,16 +76,8 @@ const callOpenRouter = async (messages) => {
   return null
 }
 
-const SUGGESTIONS = [
-  'Combien de kWh pour 5 000 FCFA ?',
-  'C\'est quoi la redevance mensuelle ?',
-  'Différence DPP et PPP ?',
-  'C\'est quoi le cumul mensuel actuel ?',
-  'Tarifs 2025 vs 2026, quelle différence ?',
-  'Comment utiliser le calcul inverse ?',
-  'Où recharger son compteur Woyofal ?',
-  'Recharge non créditée, que faire ?',
-]
+// Suggestions tirées directement des questions FAQ (1ère question de chaque catégorie + quelques autres)
+const SUGGESTIONS = faqs.flatMap(cat => cat.questions.slice(0, 1).map(q => q.q)).slice(0, 8)
 
 function TypingDots() {
   return (

@@ -208,7 +208,7 @@ const SimulateurRecharge = () => {
         formData.avecRedevance
       )
       setResult(data)
-      sauvegarderRecharge(data, formData.type_compteur)
+      if (isAuth) sauvegarderRecharge(data, formData.type_compteur)
     } catch (err) {
       setError(err.message || 'Erreur lors de la simulation')
     } finally {
@@ -418,16 +418,24 @@ const SimulateurRecharge = () => {
 
               {/* ── Bouton Sauvegarder ── */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                <button
-                  onClick={() => {
-                    sauvegarderRecharge(result, formData.type_compteur)
-                    setSavedMsg(true)
-                    setTimeout(() => setSavedMsg(false), 3000)
-                  }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-primary/30 bg-primary/5 text-primary text-sm font-semibold hover:bg-primary/10 transition"
-                >
-                  <Save className="w-4 h-4" /> Sauvegarder dans l’historique
-                </button>
+                {isAuth ? (
+                  <button
+                    onClick={() => {
+                      sauvegarderRecharge(result, formData.type_compteur)
+                      setSavedMsg(true)
+                      setTimeout(() => setSavedMsg(false), 3000)
+                    }}
+                    className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-primary/30 bg-primary/5 text-primary text-sm font-semibold hover:bg-primary/10 transition"
+                  >
+                    <Save className="w-4 h-4" /> Sauvegarder dans l'historique
+                  </button>
+                ) : (
+                  <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-slate-200 bg-slate-50 text-slate-400 text-sm cursor-not-allowed" title="Connectez-vous pour sauvegarder">
+                    <Save className="w-4 h-4" />
+                    <span>Sauvegarder dans l'historique</span>
+                    <span className="ml-1 text-xs bg-slate-200 text-slate-500 px-2 py-0.5 rounded-full font-medium">Connexion requise</span>
+                  </div>
+                )}
                 {savedMsg && (
                   <span className="text-emerald-600 text-sm font-semibold flex items-center gap-1">
                     <CheckCircle className="w-4 h-4" /> Enregistré !

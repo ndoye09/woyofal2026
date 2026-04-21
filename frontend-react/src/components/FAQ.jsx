@@ -1,21 +1,21 @@
 import React, { useState } from 'react'
 import { ChevronDown, ChevronUp, Search } from 'lucide-react'
 
-const faqs = [
+export const faqs = [
   {
     cat: '💰 Calcul & Tarifs',
     questions: [
       {
         q: 'Combien de kWh pour 5 000 FCFA Woyofal ?',
-        a: 'Avec 5 000 FCFA sans redevance (cumul = 0) : environ 60.9 kWh. Calcul détaillé : taxe 2,5% = 125 F → net = 4 875 F → T1 : 4 875 / 82 = 59.4 kWh. Utilisez notre simulateur pour un résultat exact selon votre cumul actuel.'
+        a: 'Avec 5 000 FCFA (première recharge du mois, cumul = 0) : environ 54,2 kWh. Calcul détaillé : redevance 429 F + taxe 2,5% (125 F) = 554 F déduits → net = 4 446 F → T1 : 4 446 / 82 ≈ 54,2 kWh. Sans redevance (recharge suivante du même mois) : net = 4 875 F → 59,4 kWh. Utilisez notre simulateur pour un résultat exact selon votre cumul actuel.'
       },
       {
         q: 'Combien de kWh pour 10 000 FCFA Woyofal ?',
-        a: 'Sans redevance, cumul à 0 : environ 104 kWh. T1 : 150 kWh max, mais le montant net (9 750 F) suffit pour ~104 kWh en T1 (9 750 / 82 ≈ 118.9 kWh). Résultat variable selon votre cumul du mois.'
+        a: 'Avec 10 000 FCFA (première recharge du mois, cumul = 0) : environ 113,7 kWh. Calcul : redevance 429 F + taxe 250 F = 679 F déduits → net = 9 321 F → T1 : 9 321 / 82 ≈ 113,7 kWh. Sans redevance : net = 9 750 F → 118,9 kWh. Résultat variable selon votre cumul du mois.'
       },
       {
         q: 'Combien de kWh pour 20 000 FCFA Woyofal ?',
-        a: 'Sans redevance, départ de 0 : environ 183 kWh. T1 (12 300 F / 82 = 150 kWh) + T2 (7 200 F / 136.49 ≈ 52.8 kWh). Vous passez en Tranche 2 après 150 kWh.'
+        a: 'Avec 20 000 FCFA (première recharge du mois, cumul = 0) : environ 199,6 kWh. Calcul : redevance 429 F + taxe 500 F = 929 F déduits → net = 19 071 F → T1 : 150 kWh (12 300 F) + T2 : 6 771 F / 136,49 ≈ 49,6 kWh = 199,6 kWh au total. Sans redevance : net = 19 500 F → ≈204,6 kWh. Vous passez en Tranche 2 après 150 kWh.'
       },
       {
         q: 'Quelle est la différence entre les tarifs 2025 et 2026 ?',
@@ -64,10 +64,6 @@ const faqs = [
   {
     cat: '📊 Dashboard & Analytics',
     questions: [
-      {
-        q: 'D\'où viennent les données du Dashboard ?',
-        a: "Le Dashboard est votre espace personnel : il affiche l'historique de vos simulations, vos statistiques de recharge (total FCFA, kWh moyen) et l'évolution de votre consommation dans le temps."
-      },
       {
         q: 'Les prédictions ML sont-elles fiables ?',
         a: 'Nos modèles de machine learning (Random Forest, XGBoost) sont entraînés sur des données historiques de consommation. La précision varie selon la saison et la région. Les prédictions sont des estimations pour vous aider à planifier, pas des certitudes.'

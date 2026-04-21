@@ -16,8 +16,9 @@ const mockLogin = (email, password) => {
   const db = getUsers()
   // Compte démo par défaut
   const defaults = {
-    'demo@woyofal.sn': { id: '1', name: 'Utilisateur Démo', email: 'demo@woyofal.sn', password: 'woyofal2026' },
-    'test@woyofal.sn': { id: '2', name: 'Test User', email: 'test@woyofal.sn', password: 'password123' },
+    'demo@woyofal.sn':  { id: '1', name: 'Utilisateur Démo', email: 'demo@woyofal.sn',  password: 'woyofal2026' },
+    'test@woyofal.sn':  { id: '2', name: 'Test User',        email: 'test@woyofal.sn',  password: 'password123' },
+    'admin@woyofal.sn': { id: '0', name: 'Administrateur',   email: 'admin@woyofal.sn', password: 'admin2026!!' },
   }
   const user = db[email] || defaults[email]
   if (!user || user.password !== password) return null
@@ -33,10 +34,10 @@ const mockRegister = (email, password, name) => {
   return { user: { id: newUser.id, name: newUser.name, email: newUser.email }, token: genToken(), refresh: genToken() }
 }
 
-export default function AuthModal({ onClose, pageToRedirect }) {
+export default function AuthModal({ onClose, pageToRedirect, defaultTab = 'login' }) {
   const { login } = useAuth()
   const navigate  = useNavigate()
-  const [tab, setTab]       = useState('login')   // 'login' | 'register'
+  const [tab, setTab]       = useState(defaultTab)   // 'login' | 'register'
   const [loading, setLoading] = useState(false)
   const [showPwd, setShowPwd] = useState(false)
   const [error, setError]   = useState(null)
@@ -62,18 +63,22 @@ export default function AuthModal({ onClose, pageToRedirect }) {
       if (tab === 'login') {
         result = mockLogin(email, form.password)
         if (!result) { setError('Email ou mot de passe incorrect.'); setLoading(false); return }
+        login(result.user, result.token, result.refresh)
+        setSuccess(`Bienvenue ${result.user.name} !`)
+        setTimeout(() => {
+          onClose()
+          if (pageToRedirect) navigate(pageToRedirect, { replace: true })
+        }, 900)
       } else {
         if (!form.name.trim()) { setError('Veuillez entrer votre nom.'); setLoading(false); return }
         result = mockRegister(email, form.password, form.name.trim())
         if (result.error) { setError(result.error); setLoading(false); return }
+        setSuccess('Compte créé avec succès ! Connectez-vous pour accéder à votre espace.')
+        setTimeout(() => {
+          reset()
+          setTab('login')
+        }, 1800)
       }
-
-      login(result.user, result.token, result.refresh)
-      setSuccess(tab === 'login' ? `Bienvenue ${result.user.name} !` : 'Compte créé — bienvenue !')
-      setTimeout(() => {
-        onClose()
-        if (pageToRedirect) navigate(pageToRedirect, { replace: true })
-      }, 900)
     } catch {
       setError('Une erreur est survenue.')
     } finally {

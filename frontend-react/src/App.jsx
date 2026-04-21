@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom'
-import { Home, Calculator, Zap, BookOpen, HelpCircle, Lightbulb, Menu, X, LogIn, LogOut, User, Cpu, History } from 'lucide-react'
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom'
+import { Home, Calculator, Zap, BookOpen, HelpCircle, Lightbulb, Menu, X, LogIn, LogOut, User, Cpu, History, ShieldCheck } from 'lucide-react'
 import SimulateurRecharge from './components/SimulateurRecharge'
 import HomePage from './components/HomePage'
 import FAQ from './components/FAQ'
@@ -11,6 +11,7 @@ import AuthModal from './components/AuthModal'
 import LectureCompteur from './components/LectureCompteur'
 import HistoriqueConsommation from './components/HistoriqueConsommation'
 import ProtectedRoute from './components/ProtectedRoute'
+import AdminPanel from './components/AdminPanel'
 import LoginRequired from './components/LoginRequired'
 import { AuthProvider, useAuth } from './context/AuthContext'
 
@@ -173,6 +174,7 @@ function NavBar() {
 
 function AuthButton() {
   const { user, isAuth, logout } = useAuth()
+  const navigate    = useNavigate()
   const [showModal, setShowModal] = useState(false)
   const [showMenu, setShowMenu]   = useState(false)
 
@@ -200,6 +202,16 @@ function AuthButton() {
             >
               <LogOut size={14} /> Déconnexion
             </button>
+            {user.email === 'admin@woyofal.sn' && (
+              <div className="border-t border-slate-100 mt-1 pt-1">
+                <button
+                  onClick={() => { setShowMenu(false); navigate('/admin') }}
+                  className="flex items-center gap-2 w-full px-4 py-2 text-sm text-violet-600 hover:bg-violet-50 transition font-medium"
+                >
+                  <ShieldCheck size={14} /> Panneau Admin
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -260,6 +272,11 @@ function App() {
 
               {/* ── Page d'accès refusé ── */}
               <Route path="/connexion-requise" element={<LoginRequired />} />
+
+              {/* ── Panneau admin ── */}
+              <Route path="/admin" element={
+                <ProtectedRoute><AdminPanel /></ProtectedRoute>
+              } />
 
               {/* ── Routes protégées (connexion requise) ── */}
               <Route path="/compteur" element={

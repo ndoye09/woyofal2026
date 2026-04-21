@@ -15,6 +15,9 @@ export default function LoginRequired() {
   const navigate  = useNavigate()
   const { isAuth } = useAuth()
   const [showModal, setShowModal] = useState(false)
+  const [modalTab, setModalTab]   = useState('login')
+
+  const openModal = (tab) => { setModalTab(tab); setShowModal(true) }
 
   const from    = location.state?.from || '/'
   const pageName = LABELS[from] || 'cette page'
@@ -47,14 +50,14 @@ export default function LoginRequired() {
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => openModal('login')}
             className="btn-primary flex items-center justify-center gap-2 py-3 px-6"
           >
             <LogIn className="w-4 h-4" />
             Se connecter
           </button>
           <button
-            onClick={() => setShowModal(true)}
+            onClick={() => openModal('register')}
             className="flex items-center justify-center gap-2 py-3 px-6 rounded-2xl border-2 border-primary text-primary font-semibold hover:bg-primary/5 transition"
           >
             <UserPlus className="w-4 h-4" />
@@ -86,7 +89,7 @@ export default function LoginRequired() {
         </div>
       </div>
 
-      {showModal && <AuthModal onClose={() => setShowModal(false)} pageToRedirect={from} />}
+      {showModal && <AuthModal onClose={() => setShowModal(false)} pageToRedirect={from} defaultTab={modalTab} />}
     </div>
   )
 }
