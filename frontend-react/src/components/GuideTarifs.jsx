@@ -41,18 +41,21 @@ const ExempleCalc = ({ type }) => {
 
   let reste = Math.max(0, net)
   let details = []
+  let kwhCumule = 0
 
   for (const tr of t) {
     if (reste <= 0) break
-    const max_kwh = tr.max ? tr.max - (details.reduce((s, d) => s + d.kwh, 0)) : Infinity
+    const max_kwh = tr.max ? tr.max - kwhCumule : Infinity
+    if (max_kwh <= 0) continue
     const max_montant = max_kwh * tr.prix
     if (reste <= max_montant) {
       const kwh = reste / tr.prix
       details.push({ tranche: tr.num, kwh: kwh.toFixed(2), montant: reste.toFixed(0), prix: tr.prix })
+      kwhCumule += kwh
       reste = 0
     } else {
-      const kwh = max_kwh
-      details.push({ tranche: tr.num, kwh: kwh.toFixed(2), montant: max_montant.toFixed(0), prix: tr.prix })
+      details.push({ tranche: tr.num, kwh: max_kwh.toFixed(2), montant: max_montant.toFixed(0), prix: tr.prix })
+      kwhCumule += max_kwh
       reste -= max_montant
     }
   }

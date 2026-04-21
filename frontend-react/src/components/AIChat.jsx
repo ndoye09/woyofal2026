@@ -26,9 +26,17 @@ Réponds en français, de façon concise et pratique. Si on te demande un calcul
 /* Fallback FAQ offline (si pas de clé API) — recherche dans toutes les Q&A de la FAQ */
 const _norm = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
+// Mots interrogatifs/communs à ignorer dans la recherche
+const STOPWORDS = new Set(['cest', 'quoi', 'comment', 'quel', 'quelle', 'quels', 'quelles',
+  'est', 'sont', 'avoir', 'faire', 'pour', 'dans', 'avec', 'mais', 'donc', 'tres',
+  'plus', 'bien', 'tout', 'cette', 'cette', 'peut', 'doit', 'faut'])
+
 const faqFallback = (msg) => {
   const m = _norm(msg)
-  const words = m.split(/\s+/).filter(w => w.length >= 4)
+  const words = m.split(/\s+/)
+    .map(w => w.replace(/[^a-z0-9]/g, ''))
+    .filter(w => w.length >= 4 && !STOPWORDS.has(w))
+
   if (words.length === 0) return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋`
 
   let best = null
@@ -36,13 +44,19 @@ const faqFallback = (msg) => {
 
   for (const cat of faqs) {
     for (const item of cat.questions) {
-      const combined = _norm(item.q + ' ' + item.a)
-      const score = words.reduce((acc, w) => acc + (combined.includes(w) ? 1 : 0), 0)
+      const qNorm = _norm(item.q)
+      const aNorm = _norm(item.a)
+      // Les mots dans la question valent 2, dans la réponse valent 1
+      const score = words.reduce((acc, w) => {
+        if (qNorm.includes(w)) return acc + 2
+        if (aNorm.includes(w)) return acc + 1
+        return acc
+      }, 0)
       if (score > bestScore) { bestScore = score; best = item.a }
     }
   }
 
-  const hasLongWord = words.some(w => w.length >= 7)
+  const hasLongWord = words.some(w => w.length >= 6)
   if (best && (bestScore >= 2 || (bestScore >= 1 && hasLongWord))) return best
 
   return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋\n\nQuestions fréquentes : redevance, tranches T1/T2, cumul mensuel (code 814), différence DPP/PPP.`
