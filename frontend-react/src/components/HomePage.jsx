@@ -61,7 +61,7 @@ const HeroCard = () => (
     </div>
     <div className="mt-3">
       <Link to="/tarifs" className="inline-flex items-center justify-center gap-2 w-full bg-white/15 hover:bg-white/25 text-white text-xs font-semibold py-2 rounded-xl border border-white/20 transition">
-        Voir DPP + PPP <ArrowRight className="w-3.5 h-3.5" />
+        Voir tous les tarifs <ArrowRight className="w-3.5 h-3.5" />
       </Link>
     </div>
   </div>

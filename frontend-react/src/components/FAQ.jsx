@@ -6,12 +6,16 @@ export const faqs = [
     cat: '💰 Calcul & Tarifs',
     questions: [
       {
+        q: 'C\'est quoi Woyofal ?',
+        a: 'Woyofal est le système de compteur prépayé intelligent (compteur à crédit) de la SENELEC (Société Nationale d\'Électricité du Sénégal). Avec un compteur Woyofal, vous achetez de l\'électricité à l\'avance : le montant rechargé est converti en kWh après déduction de la redevance mensuelle et de la taxe communale de 2,5%. Cette plateforme couvre 4 types de compteurs : DPP (Domestique Prépayé), PPP (Professionnel Prépayé), DMP et PMP (Moyennes Puissances).'
+      },
+      {
         q: 'Combien de kWh pour 5 000 FCFA Woyofal ?',
-        a: 'Avec 5 000 FCFA (première recharge du mois, cumul = 0) : environ 54,2 kWh. Calcul détaillé : redevance 429 F + taxe 2,5% (125 F) = 554 F déduits → net = 4 446 F → T1 : 4 446 / 82 ≈ 54,2 kWh. Sans redevance (recharge suivante du même mois) : net = 4 875 F → 59,4 kWh. Utilisez notre simulateur pour un résultat exact selon votre cumul actuel.'
+        a: 'Avec 5 000 FCFA (première recharge du mois, cumul = 0, compteur monophasé DPP) : environ 54,2 kWh. Calcul détaillé : redevance 429 F + taxe 2,5% (125 F) = 554 F déduits → net = 4 446 F → T1 : 4 446 / 82 ≈ 54,2 kWh. Sans redevance (recharge suivante du même mois) : net = 4 875 F → 59,4 kWh. Note : les dettes présentes sur le compteur ne sont pas prises en compte dans cette simulation.'
       },
       {
         q: 'Combien de kWh pour 10 000 FCFA Woyofal ?',
-        a: 'Avec 10 000 FCFA (première recharge du mois, cumul = 0) : environ 113,7 kWh. Calcul : redevance 429 F + taxe 250 F = 679 F déduits → net = 9 321 F → T1 : 9 321 / 82 ≈ 113,7 kWh. Sans redevance : net = 9 750 F → 118,9 kWh. Résultat variable selon votre cumul du mois.'
+        a: 'Avec 10 000 FCFA (première recharge du mois, cumul = 0, compteur monophasé DPP) : environ 113,7 kWh. Calcul : redevance 429 F + taxe 250 F = 679 F déduits → net = 9 321 F → T1 : 9 321 / 82 ≈ 113,7 kWh. Sans redevance : net = 9 750 F → 118,9 kWh. Note : les dettes ne sont pas incluses dans la simulation.'
       },
       {
         q: 'Combien de kWh pour 20 000 FCFA Woyofal ?',
@@ -32,7 +36,11 @@ export const faqs = [
     questions: [
       {
         q: 'C\'est quoi la redevance mensuelle Woyofal ?',
-        a: 'La redevance est un frais fixe prélevé lors de votre première recharge du mois. Pour DPP : 429 FCFA. Elle couvre les frais de location du compteur et d\'entretien du réseau électrique. Les recharges suivantes dans le même mois ne sont pas soumises à la redevance.'
+        a: 'La redevance est un frais fixe lié au compteur. Son montant varie selon le type de branchement : 429 FCFA pour un compteur monophasé (DPP, PPP), 1 427 FCFA pour un compteur triphasé (DMP, PMP). Attention : si vous n\'avez pas rechargé depuis plusieurs mois, la redevance est multipliée par le nombre de mois écoulés (ex. : 3 mois → redevance × 3).'
+      },
+      {
+        q: 'La redevance est-elle la même pour tous les compteurs ?',
+        a: 'Non. La redevance mensuelle dépend du type de branchement : monophasé = 429 FCFA, triphasé = 1 427 FCFA. De plus, si vous n\'avez pas rechargé depuis N mois, la redevance due est : redevance_base × N. Dans le simulateur, sélectionnez « Première recharge du mois » puis indiquez depuis combien de mois vous n\'avez pas rechargé.'
       },
       {
         q: 'Comment fonctionne la taxe communale de 2,5% ?',
@@ -40,20 +48,40 @@ export const faqs = [
       },
       {
         q: 'Dans quel ordre sont prélevées les déductions ?',
-        a: 'L\'ordre est : 1) Redevance mensuelle (si première recharge du mois) → 2) Taxe communale 2,5% → 3) Le reste est converti en kWh selon les tranches. Notre simulateur applique exactement cet ordre.'
+        a: 'L\'ordre est : 1) Redevance mensuelle (selon phase et mois écoulés) → 2) Taxe communale 2,5% → 3) Le reste est converti en kWh selon les tranches. Notre simulateur applique exactement cet ordre.'
+      },
+      {
+        q: 'Le simulateur prend-il en compte les dettes sur le compteur ?',
+        a: 'Non. Ce simulateur ne prend pas en compte les éventuelles dettes présentes sur votre compteur. Les kWh calculés représentent uniquement ce que vous obtiendrez après déduction de la redevance et de la taxe communale. Si vous avez une dette, une partie du crédit rechargé sera affectée au remboursement avant que les kWh soient disponibles.'
       }
     ]
   },
   {
-    cat: '⚡ DPP vs PPP',
+    cat: '⚡ DPP vs PPP vs DMP vs PMP',
     questions: [
       {
         q: 'Quelle différence entre DPP et PPP ?',
-        a: 'DPP (Domestique Prépayé) : pour les ménages, appartements, villas. T1: 82 F/kWh (0-150 kWh), T2: 136.49 F/kWh (151-250 kWh). PPP (Professionnel Prépayé) : pour les entreprises, commerces, bureaux. T1: 147.43 F/kWh (0-50 kWh), T2: 189.84 F/kWh (51-500 kWh). Notre simulateur gère les deux types de compteurs.'
+        a: 'DPP (Domestique Prépayé) : pour les ménages, appartements, villas. T1: 82 F/kWh (0-150 kWh), T2: 136.49 F/kWh (151-250 kWh). PPP (Professionnel Prépayé) : pour les entreprises, commerces, bureaux. T1: 147.43 F/kWh (0-50 kWh), T2: 189.84 F/kWh (51-500 kWh). Notre simulateur gère les quatre types de compteurs.'
+      },
+      {
+        q: 'C\'est quoi le DMP (Domestique Moyenne Puissance) ?',
+        a: 'Le DMP est destiné aux ménages avec une consommation plus élevée (branchements 7-36 kVA). Grille Woyofal 2026 : T1 : 0-150 kWh → 111,23 FCFA/kWh | T2 : 151-400 kWh → 143,54 FCFA/kWh | T3 : >400 kWh → 143,54 FCFA/kWh (même tarif que T2 en prépayé). La redevance est de 429 FCFA pour un monophasé ou 1 427 FCFA pour un triphasé, multipliée par le nombre de mois sans recharge.'
+      },
+      {
+        q: 'C\'est quoi le PMP (Professionnel Moyenne Puissance) ?',
+        a: 'Le PMP est le tarif des professionnels à forte consommation (branchements triphasés 7-36 kVA). Grille Woyofal 2026 : T1 : 0-100 kWh → 165,01 FCFA/kWh | T2 : 101-500 kWh → 191,01 FCFA/kWh | T3 : >500 kWh → 191,01 FCFA/kWh (même tarif que T2 en prépayé). Redevance triphasée : 1 427 FCFA par mois écoulé depuis la dernière recharge.'
+      },
+      {
+        q: 'Woyofal prépayé est-il moins cher que l\'abonnement classique (postpayé) ?',
+        a: 'Oui, pour les gros consommateurs ! En Woyofal prépayé, la 3e tranche (T3) est facturée au même prix que la T2, ce qui n\'est pas le cas en postpayé. Économies sur la T3 : DPP : 22,87 F/kWh de moins | DMP : 14,92 F/kWh de moins | PPP : 18,79 F/kWh de moins | PMP : 19,80 F/kWh de moins. Pour les petits consommateurs (en T1 uniquement), les tarifs sont identiques.'
       },
       {
         q: 'Comment savoir si j\'ai un compteur DPP ou PPP ?',
         a: 'Regardez la plaque de votre compteur Senelec : "DPP" ou "PPP" est indiqué. Les compteurs résidentiels sont généralement DPP. Les compteurs professionnels/industriels sont PPP. Vous pouvez aussi appeler le 33 839 33 33 (Senelec).'
+      },
+      {
+        q: 'C\'est quoi monophasé et triphasé ? Comment le savoir ?',
+        a: 'Un compteur monophasé a 2 fils (phase + neutre) et est courant pour les logements. Un compteur triphasé a 4 fils (3 phases + neutre) et est utilisé pour les grosses installations. La plaque du compteur indique "1φ" (monophasé) ou "3φ" (triphasé). La redevance est de 429 FCFA pour monophasé et 1 427 FCFA pour triphasé.'
       },
       {
         q: 'Peut-on passer de PPP à DPP ?',
@@ -76,6 +104,22 @@ export const faqs = [
       {
         q: 'Qu\'est-ce que le "cumul mensuel actuel" ?',
         a: 'C\'est le total de kWh déjà consommés depuis le début du mois en cours. Entrez 0 si vous venez de commencer le mois ou si vous ne savez pas. Cette valeur permet de déterminer dans quelle tranche s\'effectueront vos prochains kWh.'
+      },
+      {
+        q: 'C\'est quoi le cumul mensuel dans le simulateur ?',
+        a: 'C\'est le total de kWh déjà consommés depuis le début du mois en cours. Entrez 0 si vous venez de commencer le mois ou si vous ne savez pas. Cette valeur permet de déterminer dans quelle tranche s\'effectueront vos prochains kWh.'
+      },
+      {
+        q: 'C\'est la première recharge du mois, que mettre dans le cumul ?',
+        a: 'Si c\'est votre première recharge du mois, laissez le cumul à 0. Votre simulation commencera depuis la T1 (tarif le plus avantageux). Si vous avez déjà consommé des kWh ce mois-ci, consultez votre compteur avec le code 814 pour connaître votre cumul actuel.'
+      },
+      {
+        q: 'Comment lire le cumul sur mon compteur ?',
+        a: 'Tapez le code 814 sur votre compteur Woyofal. Il affiche votre consommation cumulée depuis le début du mois en kWh. C\'est cette valeur à saisir dans le champ "Cumul mensuel actuel" du simulateur. Si c\'est votre première recharge du mois, ce chiffre est 0.'
+      },
+      {
+        q: 'Comment indiquer la redevance dans le simulateur ?',
+        a: 'Le simulateur propose deux boutons : « Déjà rechargé ce mois » (redevance non déduite car déjà prélevée) ou « Première recharge du mois » (redevance déduite). Si vous choisissez « Première recharge », un curseur apparaît pour préciser depuis combien de mois vous n\'avez pas rechargé (1 = cas habituel, N = redevance × N pour rattrapage).'
       },
       {
         q: 'Comment utiliser le calcul inverse (kWh → FCFA) ?',

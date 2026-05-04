@@ -22,8 +22,25 @@ TARIFS_PPP = {
     'T3': {'prix_kwh': 189.84, 'seuil_min': 501, 'seuil_max': None}
 }
 
-# Déductions
-REDEVANCE_MENSUELLE = 429.0
+# Tarifs DMP (Domestique Moyenne Puissance)
+TARIFS_DMP = {
+    'T1': {'prix_kwh': 111.23, 'seuil_min': 0, 'seuil_max': 150},
+    'T2': {'prix_kwh': 143.54, 'seuil_min': 151, 'seuil_max': 400},
+    'T3': {'prix_kwh': 143.54, 'seuil_min': 401, 'seuil_max': None}
+}
+
+# Tarifs PMP (Professionnel Moyenne Puissance)
+TARIFS_PMP = {
+    'T1': {'prix_kwh': 165.01, 'seuil_min': 0, 'seuil_max': 100},
+    'T2': {'prix_kwh': 191.01, 'seuil_min': 101, 'seuil_max': 500},
+    'T3': {'prix_kwh': 191.01, 'seuil_min': 501, 'seuil_max': None}
+}
+
+# Redevance mensuelle selon phase du compteur (FCFA)
+REDEVANCE_MONOPHASE = 429.0   # compteur 1φ (DPP, PPP)
+REDEVANCE_TRIPHASE  = 1427.0  # compteur 3φ (DMP, PMP)
+
+REDEVANCE_MENSUELLE = REDEVANCE_MONOPHASE  # rétrocompatibilité
 TAXE_COMMUNALE_TAUX = 0.025
 
 # Économies baisse 10% (estimations)
@@ -37,10 +54,14 @@ class RechargeInput:
     cumul_actuel: float
     type_compteur: str = 'DPP'
     debut_mois: bool = False
+    phase: str = 'monophase'    # 'monophase' ou 'triphase'
+    nb_mois: int = 0            # mois écoulés depuis la dernière recharge (0 = même mois)
 
     def __post_init__(self):
-        if self.type_compteur not in ['DPP', 'PPP']:
-            raise ValueError("type_compteur doit être 'DPP' ou 'PPP'")
+        if self.type_compteur not in ['DPP', 'PPP', 'DMP', 'PMP']:
+            raise ValueError("type_compteur doit être 'DPP', 'PPP', 'DMP' ou 'PMP'")
+        if self.phase not in ['monophase', 'triphase']:
+            raise ValueError("phase doit être 'monophase' ou 'triphase'")
         if self.montant_brut <= 0:
             raise ValueError("montant_brut doit être positif")
         if self.cumul_actuel < 0:
@@ -76,9 +97,16 @@ class RechargeResult:
 
 
 class RechargeSimulator:
+    TARIFS_MAP = {
+        'DPP': TARIFS_DPP,
+        'PPP': TARIFS_PPP,
+        'DMP': TARIFS_DMP,
+        'PMP': TARIFS_PMP,
+    }
+
     def __init__(self, type_compteur: str = 'DPP'):
         self.type_compteur = type_compteur
-        self.tarifs = TARIFS_DPP if type_compteur == 'DPP' else TARIFS_PPP
+        self.tarifs = self.TARIFS_MAP[type_compteur]
         self.history: List[RechargeResult] = []
 
     def get_tranche(self, cumul: float) -> int:
@@ -89,11 +117,14 @@ class RechargeSimulator:
         else:
             return 3
 
-    def calculate_deductions(self, montant_brut: float, debut_mois: bool) -> Tuple[float, float, float]:
-        redevance = REDEVANCE_MENSUELLE if debut_mois else 0.0
+    def calculate_deductions(self, montant_brut: float, debut_mois: bool,
+                             phase: str = 'monophase', nb_mois: int = 0) -> Tuple[float, float, float]:
+        # Redevance = base × nb_mois (rétrocompat : debut_mois=True → 1 mois si nb_mois non fourni)
+        redevance_base = REDEVANCE_TRIPHASE if phase == 'triphase' else REDEVANCE_MONOPHASE
+        mois_effectifs = nb_mois if nb_mois > 0 else (1 if debut_mois else 0)
+        redevance = redevance_base * mois_effectifs
         taxe_communale = round(montant_brut * TAXE_COMMUNALE_TAUX, 2)
         montant_net = montant_brut - redevance - taxe_communale
-        # Ne pas autoriser montant net négatif
         if montant_net < 0:
             montant_net = 0.0
         return redevance, taxe_communale, montant_net
@@ -151,7 +182,12 @@ class RechargeSimulator:
         return 0.0
 
     def simulate(self, recharge_input: RechargeInput) -> RechargeResult:
-        redevance, taxe, montant_net = self.calculate_deductions(recharge_input.montant_brut, recharge_input.debut_mois)
+        redevance, taxe, montant_net = self.calculate_deductions(
+            recharge_input.montant_brut,
+            recharge_input.debut_mois,
+            recharge_input.phase,
+            recharge_input.nb_mois
+        )
         tranche_avant = self.get_tranche(recharge_input.cumul_actuel)
         kwh_total, detail_kwh = self.calculate_kwh_progressif(montant_net, recharge_input.cumul_actuel)
         cumul_apres = recharge_input.cumul_actuel + kwh_total

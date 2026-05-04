@@ -3,9 +3,10 @@ import { Info, TrendingUp, TrendingDown, Zap } from 'lucide-react'
 
 const TARIFS = {
   DPP: {
-    label: 'DPP — Domestique Prépayé',
-    subtitle: 'Pour les ménages, appartements et villas',
-    redevance: 429,
+    label: 'DPP — Domestique Petite Puissance',
+    subtitle: 'Pour les ménages, appartements et villas (monophasé)',
+    redevance_monophase: 429,
+    redevance_triphase: null,
     tranches: [
       { num: 1, min: 0, max: 150, prix: 82.00, color: 'green', badge: 'Tarif social', conseil: 'Objectif à atteindre chaque mois' },
       { num: 2, min: 151, max: 250, prix: 136.49, color: 'yellow', badge: 'Intermédiaire', conseil: '+66% vs T1. Cherchez à revenir en T1' },
@@ -13,13 +14,36 @@ const TARIFS = {
     ]
   },
   PPP: {
-    label: 'PPP — Professionnel Prépayé',
-    subtitle: 'Pour les entreprises, commerces et bureaux',
-    redevance: 429,
+    label: 'PPP — Professionnel Petite Puissance',
+    subtitle: 'Pour les entreprises, commerces et bureaux (monophasé)',
+    redevance_monophase: 429,
+    redevance_triphase: null,
     tranches: [
       { num: 1, min: 0, max: 50, prix: 147.43, color: 'green', badge: 'Tarif de base', conseil: 'Plage tarifaire limitée pour le PPP' },
       { num: 2, min: 51, max: 500, prix: 189.84, color: 'yellow', badge: 'Standard', conseil: 'Tarif principal pour la plupart des pros' },
       { num: 3, min: 501, max: null, prix: 189.84, color: 'red', badge: 'Fort consommateur', conseil: 'Envisagez du matériel économe en énergie' }
+    ]
+  },
+  DMP: {
+    label: 'DMP — Domestique Moyenne Puissance',
+    subtitle: 'Pour les ménages à forte consommation (monophasé ou triphasé)',
+    redevance_monophase: 429,
+    redevance_triphase: 1427,
+    tranches: [
+      { num: 1, min: 0, max: 150, prix: 111.23, color: 'green', badge: 'Tarif social', conseil: 'Tarif préférentiel, à préserver' },
+      { num: 2, min: 151, max: 400, prix: 143.54, color: 'yellow', badge: 'Intermédiaire', conseil: '+29% vs T1. Limitez votre consommation' },
+      { num: 3, min: 401, max: null, prix: 143.54, color: 'red', badge: 'Gros consommateur', conseil: 'Même tarif que T2 en Woyofal prépayé' }
+    ]
+  },
+  PMP: {
+    label: 'PMP — Professionnel Moyenne Puissance',
+    subtitle: 'Pour les professionnels à forte consommation (triphasé)',
+    redevance_monophase: null,
+    redevance_triphase: 1427,
+    tranches: [
+      { num: 1, min: 0, max: 100, prix: 165.01, color: 'green', badge: 'Tarif de base', conseil: 'Seuil limité, gérez bien votre cumul' },
+      { num: 2, min: 101, max: 500, prix: 191.01, color: 'yellow', badge: 'Standard', conseil: 'Tarif courant pour les professionnels MP' },
+      { num: 3, min: 501, max: null, prix: 191.01, color: 'red', badge: 'Fort consommateur', conseil: 'Même tarif que T2 en Woyofal prépayé' }
     ]
   }
 }
@@ -34,9 +58,10 @@ const colorMap = {
 const ExempleCalc = ({ type }) => {
   const [montant, setMontant] = useState(10000)
   const tarif = TARIFS[type]
+  const redevance = tarif.redevance_triphase ?? tarif.redevance_monophase ?? 429
 
   const taxe = montant * 0.025
-  const net = montant - tarif.redevance - taxe
+  const net = montant - redevance - taxe
   const t = tarif.tranches
 
   let reste = Math.max(0, net)
@@ -78,7 +103,7 @@ const ExempleCalc = ({ type }) => {
         <span className="text-sm font-bold text-red-600 w-24 text-right">{montant.toLocaleString()} F</span>
       </div>
       <div className="text-xs text-gray-500 mb-3">
-        Redevance : -{tarif.redevance} F | Taxe : -{taxe.toFixed(0)} F | Net : {Math.max(0, net).toFixed(0)} F
+        Redevance : -{redevance} F | Taxe : -{taxe.toFixed(0)} F | Net : {Math.max(0, net).toFixed(0)} F
       </div>
       {details.map(d => (
         <div key={d.tranche} className="flex justify-between text-xs bg-white p-2.5 rounded-xl mb-1 border border-gray-100">
@@ -112,8 +137,8 @@ const GuideTarifs = () => {
       </div>
 
       {/* Sélecteur Type */}
-      <div className="flex gap-3 justify-center mb-8">
-        {['DPP', 'PPP'].map(type => (
+      <div className="flex flex-wrap gap-3 justify-center mb-8">
+        {['DPP', 'PPP', 'DMP', 'PMP'].map(type => (
           <button
             key={type}
             onClick={() => setActiveType(type)}
@@ -133,8 +158,13 @@ const GuideTarifs = () => {
         <div className="font-bold text-xl mb-1">{TARIFS[activeType].label}</div>
         <div className="text-gray-600">{TARIFS[activeType].subtitle}</div>
         <div className="mt-3 text-sm text-gray-500">
-          Redevance mensuelle (1ère recharge) : <strong>{TARIFS[activeType].redevance} FCFA</strong> | 
-          Taxe communale : <strong>2,5%</strong> sur chaque recharge
+          {TARIFS[activeType].redevance_monophase && (
+            <span>Redevance monophasée (1ère recharge ou par mois écoulé) : <strong>{TARIFS[activeType].redevance_monophase} FCFA</strong></span>
+          )}
+          {TARIFS[activeType].redevance_triphase && (
+            <span className="ml-3">Redevance triphasée : <strong>{TARIFS[activeType].redevance_triphase} FCFA</strong></span>
+          )}
+          {' | '}Taxe communale : <strong>2,5%</strong> sur chaque recharge
         </div>
       </div>
 
@@ -166,9 +196,9 @@ const GuideTarifs = () => {
         })}
       </div>
 
-      {/* Comparatif DPP vs PPP */}
+      {/* Comparatif DPP vs PPP vs DMP vs PMP */}
       <div className="card mb-8">
-        <h2 className="text-xl font-bold mb-4">Comparatif DPP vs PPP</h2>
+        <h2 className="text-xl font-bold mb-4">Comparatif DPP / PPP / DMP / PMP</h2>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
@@ -176,16 +206,88 @@ const GuideTarifs = () => {
                 <th className="p-3 text-left">Critère</th>
                 <th className="p-3 text-center text-black">DPP</th>
                 <th className="p-3 text-center text-gray-700">PPP</th>
+                <th className="p-3 text-center text-blue-700">DMP</th>
+                <th className="p-3 text-center text-purple-700">PMP</th>
               </tr>
             </thead>
             <tbody>
-              <tr className="border-t"><td className="p-3 text-gray-700">Usage</td><td className="p-3 text-center">Ménages</td><td className="p-3 text-center">Entreprises</td></tr>
-              <tr className="border-t bg-gray-50"><td className="p-3 text-gray-700">T1 (tarif min)</td><td className="p-3 text-center font-bold text-black">82,00 F/kWh</td><td className="p-3 text-center font-bold text-gray-700">147,43 F/kWh</td></tr>
-              <tr className="border-t"><td className="p-3 text-gray-700">Seuil T1</td><td className="p-3 text-center">0-150 kWh</td><td className="p-3 text-center">0-50 kWh</td></tr>
-              <tr className="border-t bg-gray-50"><td className="p-3 text-gray-700">T2</td><td className="p-3 text-center">136,49 F/kWh</td><td className="p-3 text-center">189,84 F/kWh</td></tr>
-              <tr className="border-t"><td className="p-3 text-gray-700">Seuil T2</td><td className="p-3 text-center">151-250 kWh</td><td className="p-3 text-center">51-500 kWh</td></tr>
-              <tr className="border-t bg-gray-50"><td className="p-3 text-gray-700">Redevance mensuelle</td><td className="p-3 text-center">429 FCFA</td><td className="p-3 text-center">429 FCFA</td></tr>
-              <tr className="border-t"><td className="p-3 text-gray-700">Taxe communale</td><td className="p-3 text-center">2,5%</td><td className="p-3 text-center">2,5%</td></tr>
+              <tr className="border-t">
+                <td className="p-3 text-gray-700">Usage</td>
+                <td className="p-3 text-center">Ménages</td>
+                <td className="p-3 text-center">Entreprises</td>
+                <td className="p-3 text-center">Ménages forte conso</td>
+                <td className="p-3 text-center">Pro forte conso</td>
+              </tr>
+              <tr className="border-t bg-gray-50">
+                <td className="p-3 text-gray-700">Puissance</td>
+                <td className="p-3 text-center">≤ 6 kVA</td>
+                <td className="p-3 text-center">≤ 6 kVA</td>
+                <td className="p-3 text-center">7–36 kVA</td>
+                <td className="p-3 text-center">7–36 kVA</td>
+              </tr>
+              <tr className="border-t">
+                <td className="p-3 text-gray-700">Phase</td>
+                <td className="p-3 text-center">Monophasé</td>
+                <td className="p-3 text-center">Monophasé</td>
+                <td className="p-3 text-center">Mono ou triphasé</td>
+                <td className="p-3 text-center">Triphasé</td>
+              </tr>
+              <tr className="border-t bg-gray-50">
+                <td className="p-3 text-gray-700">T1 (tarif min)</td>
+                <td className="p-3 text-center font-bold text-black">82,00 F/kWh</td>
+                <td className="p-3 text-center font-bold text-gray-700">147,43 F/kWh</td>
+                <td className="p-3 text-center font-bold text-blue-700">111,23 F/kWh</td>
+                <td className="p-3 text-center font-bold text-purple-700">165,01 F/kWh</td>
+              </tr>
+              <tr className="border-t">
+                <td className="p-3 text-gray-700">Seuil T1</td>
+                <td className="p-3 text-center">0–150 kWh</td>
+                <td className="p-3 text-center">0–50 kWh</td>
+                <td className="p-3 text-center">0–150 kWh</td>
+                <td className="p-3 text-center">0–100 kWh</td>
+              </tr>
+              <tr className="border-t bg-gray-50">
+                <td className="p-3 text-gray-700">T2</td>
+                <td className="p-3 text-center">136,49 F/kWh</td>
+                <td className="p-3 text-center">189,84 F/kWh</td>
+                <td className="p-3 text-center">143,54 F/kWh</td>
+                <td className="p-3 text-center">191,01 F/kWh</td>
+              </tr>
+              <tr className="border-t">
+                <td className="p-3 text-gray-700">Seuil T2</td>
+                <td className="p-3 text-center">151–250 kWh</td>
+                <td className="p-3 text-center">51–500 kWh</td>
+                <td className="p-3 text-center">151–400 kWh</td>
+                <td className="p-3 text-center">101–500 kWh</td>
+              </tr>
+              <tr className="border-t bg-gray-50">
+                <td className="p-3 text-gray-700">T3 (Woyofal)</td>
+                <td className="p-3 text-center text-xs text-gray-500">= T2</td>
+                <td className="p-3 text-center text-xs text-gray-500">= T2</td>
+                <td className="p-3 text-center text-xs text-gray-500">= T2</td>
+                <td className="p-3 text-center text-xs text-gray-500">= T2</td>
+              </tr>
+              <tr className="border-t">
+                <td className="p-3 text-gray-700">Redevance (monophasé)</td>
+                <td className="p-3 text-center">429 FCFA</td>
+                <td className="p-3 text-center">429 FCFA</td>
+                <td className="p-3 text-center">429 FCFA</td>
+                <td className="p-3 text-center">—</td>
+              </tr>
+              <tr className="border-t bg-gray-50">
+                <td className="p-3 text-gray-700">Redevance (triphasé)</td>
+                <td className="p-3 text-center">—</td>
+                <td className="p-3 text-center">—</td>
+                <td className="p-3 text-center">1 427 FCFA</td>
+                <td className="p-3 text-center">1 427 FCFA</td>
+              </tr>
+              <tr className="border-t">
+                <td className="p-3 text-gray-700">Taxe communale</td>
+                <td className="p-3 text-center">2,5%</td>
+                <td className="p-3 text-center">2,5%</td>
+                <td className="p-3 text-center">2,5%</td>
+                <td className="p-3 text-center">2,5%</td>
+              </tr>
             </tbody>
           </table>
         </div>

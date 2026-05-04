@@ -27,10 +27,23 @@ TARIFS = {
         1: {'prix': 147.43, 'seuil_min': 0, 'seuil_max': 50},
         2: {'prix': 189.84, 'seuil_min': 51, 'seuil_max': 500},
         3: {'prix': 189.84, 'seuil_min': 501, 'seuil_max': None}
+    },
+    'DMP': {
+        1: {'prix': 111.23, 'seuil_min': 0, 'seuil_max': 150},
+        2: {'prix': 143.54, 'seuil_min': 151, 'seuil_max': 400},
+        3: {'prix': 143.54, 'seuil_min': 401, 'seuil_max': None}
+    },
+    'PMP': {
+        1: {'prix': 165.01, 'seuil_min': 0, 'seuil_max': 100},
+        2: {'prix': 191.01, 'seuil_min': 101, 'seuil_max': 500},
+        3: {'prix': 191.01, 'seuil_min': 501, 'seuil_max': None}
     }
 }
 
-REDEVANCE = 429
+# Redevance selon phase du compteur (FCFA)
+REDEVANCE_MONOPHASE = 429    # compteur 1φ
+REDEVANCE_TRIPHASE  = 1427   # compteur 3φ
+REDEVANCE = REDEVANCE_MONOPHASE  # rétrocompatibilité
 TAXE_COMMUNALE = 0.025
 
 
@@ -46,24 +59,30 @@ def determine_tranche(cumul, type_compteur):
         return 3
 
 
-def calculer_recharge(montant_brut, cumul_actuel, type_compteur, avec_redevance=False):
+def calculer_recharge(montant_brut, cumul_actuel, type_compteur,
+                      avec_redevance=False, phase='monophase', nb_mois=0):
     """
-    Calcule kWh obtenus et détail tranches
+    Calcule kWh obtenus et détail tranches.
+    - phase : 'monophase' (429 F) ou 'triphase' (1 427 F)
+    - nb_mois : mois écoulés depuis la dernière recharge (redevance × nb_mois)
+    - avec_redevance : rétrocompat (nb_mois=0 → 1 mois si True)
     """
     # Validation
     if type_compteur not in TARIFS:
         raise ValueError(f"Type compteur invalide : {type_compteur}")
-    
+
     if montant_brut <= 0:
         raise ValueError("Montant doit être positif")
-    
+
     if cumul_actuel < 0:
         raise ValueError("Cumul doit être >= 0")
-    
+
     tarifs = TARIFS[type_compteur]
-    
+
     # Déductions
-    redevance = REDEVANCE if avec_redevance else 0
+    redevance_base = REDEVANCE_TRIPHASE if phase == 'triphase' else REDEVANCE_MONOPHASE
+    mois_effectifs = nb_mois if nb_mois > 0 else (1 if avec_redevance else 0)
+    redevance = redevance_base * mois_effectifs
     taxe = montant_brut * TAXE_COMMUNALE
     montant_net = montant_brut - redevance - taxe
     
@@ -170,6 +189,8 @@ def calculer_recharge(montant_brut, cumul_actuel, type_compteur, avec_redevance=
         'montant_brut': montant_brut,
         'deductions': {
             'redevance': redevance,
+            'nb_mois_redevance': mois_effectifs,
+            'phase': phase,
             'taxe_communale': round(taxe, 2),
             'montant_net': round(montant_net, 2)
         },
@@ -180,7 +201,8 @@ def calculer_recharge(montant_brut, cumul_actuel, type_compteur, avec_redevance=
         'tranche_finale': tranche_finale,
         'prix_moyen_kwh': round(prix_moyen, 2),
         'economie_vs_t2': round(economie_vs_t2, 2),
-        'type_compteur': type_compteur
+        'type_compteur': type_compteur,
+        'note': 'Les dettes éventuelles sur le compteur ne sont pas prises en compte.'
     }
 
 
@@ -198,7 +220,9 @@ def simulate_recharge():
         montant_brut=float(data['montant_brut']),
         cumul_actuel=float(data['cumul_actuel']),
         type_compteur=data['type_compteur'],
-        avec_redevance=data.get('avec_redevance', False)
+        avec_redevance=data.get('avec_redevance', False),
+        phase=data.get('phase', 'monophase'),
+        nb_mois=int(data.get('nb_mois', 0))
     )
     
     return jsonify({

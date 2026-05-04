@@ -4,13 +4,18 @@ import { useAuth } from '../context/AuthContext'
 
 /* ── Calcul local (offline) — miroir de api-mock-server ── */
 const TARIFS_SIM = {
-  DPP: { 1: { prix: 82.00, max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
-  PPP: { 1: { prix: 147.43, max: 50 },  2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } }
+  DPP: { 1: { prix: 82.00,  max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
+  PPP: { 1: { prix: 147.43, max: 50  }, 2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } },
+  DMP: { 1: { prix: 111.23, max: 150 }, 2: { prix: 143.54, max: 400 }, 3: { prix: 143.54, max: null } },
+  PMP: { 1: { prix: 165.01, max: 100 }, 2: { prix: 191.01, max: 500 }, 3: { prix: 191.01, max: null } }
 }
 
-const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, avecRedevance = true) => {
+// Redevance mensuelle selon phase du compteur (× nombre de mois écoulés)
+const REDEVANCE_BASE = { monophase: 429, triphase: 1427 }
+
+const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, phase = 'monophase', nbMois = 0) => {
   const tarifs = TARIFS_SIM[typeCompteur]
-  const redevance = avecRedevance ? 429 : 0
+  const redevance = nbMois > 0 ? REDEVANCE_BASE[phase] * nbMois : 0
   const taxe = Math.round(montant * 0.025)
   let montantReste = montant - redevance - taxe
   let cumul = cumulActuel
@@ -43,6 +48,8 @@ const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, av
   return {
     montant_brut: montant,
     montant_redevance: redevance,
+    nb_mois_redevance: nbMois,
+    phase_compteur: phase,
     taxe,
     montant_net: montant - redevance - taxe,
     kwh_obtenus: parseFloat(kwhTotal.toFixed(2)),
@@ -74,14 +81,16 @@ const sauvegarderRecharge = (data, typeCompteur) => {
 
 /* ═══ Tarifs locaux pour calcul inverse offline ═══ */
 const TARIFS_LOCAL = {
-  DPP: { 1: { prix: 82.00, max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
-  PPP: { 1: { prix: 147.43, max: 50 }, 2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } }
+  DPP: { 1: { prix: 82.00,  max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
+  PPP: { 1: { prix: 147.43, max: 50  }, 2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } },
+  DMP: { 1: { prix: 111.23, max: 150 }, 2: { prix: 143.54, max: 400 }, 3: { prix: 143.54, max: null } },
+  PMP: { 1: { prix: 165.01, max: 100 }, 2: { prix: 191.01, max: 500 }, 3: { prix: 191.01, max: null } }
 }
 
 /* ─── Calcul inverse : kWh souhaités → montant FCFA ─── */
-const calculerMontantPourKwh = (kwhVoulus, cumulActuel, typeCompteur, avecRedevance) => {
+const calculerMontantPourKwh = (kwhVoulus, cumulActuel, typeCompteur, phase, nbMois) => {
   const tarifs = TARIFS_LOCAL[typeCompteur]
-  const redevance = avecRedevance ? 429 : 0
+  const redevance = nbMois > 0 ? REDEVANCE_BASE[phase] * nbMois : 0
   let cumul = cumulActuel
   let montantNet = 0
   let details = {}
@@ -110,6 +119,7 @@ const calculerMontantPourKwh = (kwhVoulus, cumulActuel, typeCompteur, avecRedeva
     montant_brut: Math.ceil(montantBrut / 100) * 100,
     montant_net: montantNet.toFixed(0),
     redevance,
+    nb_mois_redevance: nbMois,
     taxe: taxe.toFixed(0),
     detail_tranches: details,
     cumul_final: cumulActuel + kwhVoulus
@@ -120,9 +130,10 @@ const calculerMontantPourKwh = (kwhVoulus, cumulActuel, typeCompteur, avecRedeva
 const CalculateurInverse = ({ typeCompteur }) => {
   const [kwhVoulus, setKwhVoulus] = useState(50)
   const [cumulActuel, setCumulActuel] = useState(0)
-  const [avecRedevance, setAvecRedevance] = useState(false)
-  const cumulPourCalcul = avecRedevance ? 0 : parseFloat(cumulActuel) || 0
-  const result = calculerMontantPourKwh(parseFloat(kwhVoulus) || 0, cumulPourCalcul, typeCompteur, avecRedevance)
+  const [phase, setPhase] = useState('monophase')
+  const [nbMois, setNbMois] = useState(0)
+  const cumulPourCalcul = nbMois > 0 ? 0 : parseFloat(cumulActuel) || 0
+  const result = calculerMontantPourKwh(parseFloat(kwhVoulus) || 0, cumulPourCalcul, typeCompteur, phase, nbMois)
 
   return (
     <div className="space-y-4">
@@ -130,7 +141,7 @@ const CalculateurInverse = ({ typeCompteur }) => {
         <label className="label">kWh souhaités</label>
         <input type="number" value={kwhVoulus} onChange={e => setKwhVoulus(e.target.value)} min="1" step="1" className="input-field" />
       </div>
-      {!avecRedevance && (
+      {nbMois === 0 && (
       <div>
         <div className="flex justify-between items-baseline mb-2">
           <label className="label">Cumul mensuel actuel (kWh)</label>
@@ -139,9 +150,24 @@ const CalculateurInverse = ({ typeCompteur }) => {
         <input type="number" value={cumulActuel} onChange={e => setCumulActuel(e.target.value)} min="0" step="0.1" className="input-field" />
       </div>
       )}
-      <div className="flex items-center gap-2">
-        <input type="checkbox" checked={avecRedevance} onChange={e => setAvecRedevance(e.target.checked)} className="w-4 h-4 accent-primary" />
-        <label className="text-sm text-gray-700">Appliquer redevance (429 FCFA) — 1ère recharge du mois</label>
+      <div>
+        <label className="label">Phase du compteur</label>
+        <select value={phase} onChange={e => setPhase(e.target.value)} className="input-field">
+          <option value="monophase">Monophasé — redevance 429 FCFA</option>
+          <option value="triphase">Triphasé — redevance 1 427 FCFA</option>
+        </select>
+      </div>
+      <div>
+        <label className="label">Mois écoulés depuis la dernière recharge <span className="text-gray-400 font-normal">(0 = même mois)</span></label>
+        <div className="flex items-center gap-3">
+          <input type="range" min={0} max={12} step={1} value={nbMois} onChange={e => setNbMois(+e.target.value)} className="flex-1 accent-primary" />
+          <span className="text-sm font-bold text-primary w-6 text-right">{nbMois}</span>
+        </div>
+        {nbMois > 0 && (
+          <p className="text-xs text-amber-700 mt-1 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1">
+            Redevance = {REDEVANCE_BASE[phase]} × {nbMois} mois = <strong>{REDEVANCE_BASE[phase] * nbMois} FCFA</strong>
+          </p>
+        )}
       </div>
       {result && (
         <div className="space-y-3 mt-4">
@@ -154,7 +180,7 @@ const CalculateurInverse = ({ typeCompteur }) => {
             <div className="font-semibold text-slate-700 mb-2">Détail</div>
             <div className="space-y-1">
               <div className="flex justify-between"><span>Montant kWh net</span><span className="font-bold">{parseFloat(result.montant_net).toLocaleString()} F</span></div>
-              {result.redevance > 0 && <div className="flex justify-between text-gray-500"><span>+ Redevance</span><span>{result.redevance} F</span></div>}
+              {result.redevance > 0 && <div className="flex justify-between text-gray-500"><span>+ Redevance ({result.nb_mois_redevance} mois × {REDEVANCE_BASE[result.phase_compteur] ?? result.redevance})</span><span>{result.redevance} F</span></div>}
               <div className="flex justify-between text-gray-500"><span>+ Taxe (2,5%)</span><span>{parseFloat(result.taxe).toLocaleString()} F</span></div>
               <div className="flex justify-between font-bold text-primary border-t pt-1"><span>= Total</span><span>{result.montant_brut.toLocaleString()} F</span></div>
             </div>
@@ -183,7 +209,8 @@ const SimulateurRecharge = () => {
     montant_brut: 10000,
     cumul_actuel: 0,
     type_compteur: 'DPP',
-    avecRedevance: false
+    phase: 'monophase',
+    nb_mois: 1
   })
 
   const [result, setResult] = useState(null)
@@ -192,8 +219,8 @@ const SimulateurRecharge = () => {
   const [savedMsg, setSavedMsg] = useState(false)
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target
-    setFormData((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
+    const { name, value, type } = e.target
+    setFormData((prev) => ({ ...prev, [name]: type === 'range' || type === 'number' ? parseFloat(value) || 0 : value }))
   }
 
   const handleSubmit = (e) => {
@@ -204,8 +231,9 @@ const SimulateurRecharge = () => {
       const data = simulerRechargeLocal(
         parseFloat(formData.montant_brut),
         formData.type_compteur,
-        formData.avecRedevance ? 0 : parseFloat(formData.cumul_actuel) || 0,
-        formData.avecRedevance
+        formData.nb_mois > 0 ? 0 : parseFloat(formData.cumul_actuel) || 0,
+        formData.phase,
+        formData.nb_mois
       )
       setResult(data)
       if (isAuth) sauvegarderRecharge(data, formData.type_compteur)
@@ -267,8 +295,10 @@ const SimulateurRecharge = () => {
             <div className="mb-4">
               <label className="label">Type de Compteur</label>
               <select value={formData.type_compteur} onChange={e => setFormData(p => ({...p, type_compteur: e.target.value}))} className="input-field">
-                <option value="DPP">DPP (Domestique)</option>
-                <option value="PPP">PPP (Professionnel)</option>
+                <option value="DPP">DPP — Domestique Petite Puissance</option>
+                <option value="PPP">PPP — Professionnel Petite Puissance</option>
+                <option value="DMP">DMP — Domestique Moyenne Puissance</option>
+                <option value="PMP">PMP — Professionnel Moyenne Puissance</option>
               </select>
             </div>
             <CalculateurInverse typeCompteur={formData.type_compteur} />
@@ -298,12 +328,17 @@ const SimulateurRecharge = () => {
               <Zap className="w-5 h-5 text-primary" /> Paramètres
             </h2>
 
+          {/* Avertissement dettes */}
+          <p className="text-xs text-gray-400 mb-4">⚠ Les dettes sur compteur ne sont pas incluses dans ce calcul.</p>
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="label">Type de Compteur</label>
               <select name="type_compteur" value={formData.type_compteur} onChange={handleChange} className="input-field">
-                <option value="DPP">DPP (Domestique)</option>
-                <option value="PPP">PPP (Professionnel)</option>
+                <option value="DPP">DPP — Domestique Petite Puissance</option>
+                <option value="PPP">PPP — Professionnel Petite Puissance</option>
+                <option value="DMP">DMP — Domestique Moyenne Puissance</option>
+                <option value="PMP">PMP — Professionnel Moyenne Puissance</option>
               </select>
             </div>
 
@@ -312,38 +347,65 @@ const SimulateurRecharge = () => {
               <input type="number" name="montant_brut" value={formData.montant_brut} onChange={handleChange} min="100" step="100" className="input-field" required />
             </div>
 
-            {!formData.avecRedevance && (
+            {formData.nb_mois === 0 && (
             <div>
               <div className="flex justify-between items-baseline mb-2">
                 <label className="label">Cumul Mensuel Actuel (kWh)</label>
-                <span className="text-xs text-primary font-semibold">À vérifier au compteur avec le code : 814</span>
+                <span className="text-xs text-primary font-semibold">Code compteur : 814</span>
               </div>
-              <input type="number" name="cumul_actuel" value={formData.cumul_actuel} onChange={handleChange} min="0" step="0.1" className="input-field" required />
-              {/* Info cumul */}
-              <div className="mt-2 bg-amber-50 border border-amber-200 rounded-xl p-3">
-                <p className="text-xs font-semibold text-amber-800 mb-1">💡 Pourquoi ce champ est important ?</p>
-                <p className="text-xs text-amber-700 leading-relaxed">
-                  Deux recharges du même montant donnent des kWh différents selon votre cumul.
-                </p>
-                <div className="mt-2 grid grid-cols-2 gap-2 text-[11px]">
-                  <div className="bg-white rounded-lg p-2 border border-amber-100">
-                    <span className="font-bold text-green-700">Cumul = 0</span><br />
-                    <span className="text-gray-600">10 000 F → ~104 kWh</span><br />
-                    <span className="text-green-600 font-medium">T1 à 82 F/kWh</span>
-                  </div>
-                  <div className="bg-white rounded-lg p-2 border border-amber-100">
-                    <span className="font-bold text-orange-700">Cumul = 200</span><br />
-                    <span className="text-gray-600">10 000 F → ~73 kWh</span><br />
-                    <span className="text-orange-600 font-medium">T2 à 136,49 F/kWh</span>
-                  </div>
-                </div>
-              </div>
+              <input type="number" name="cumul_actuel" value={formData.cumul_actuel} onChange={handleChange} min="0" step="0.1" className="input-field" />
+              <p className="text-xs text-gray-500 mt-1">
+                Première recharge du mois ? Laissez <strong>0</strong>. Sinon, saisissez le cumul lu avec le code 814.
+              </p>
             </div>
             )}
 
-            <div className="flex items-center gap-2">
-              <input type="checkbox" name="avecRedevance" checked={formData.avecRedevance} onChange={handleChange} className="w-4 h-4 text-primary" />
-              <label className="text-sm text-gray-700">Appliquer redevance (429 FCFA) - Début de mois</label>
+            <div>
+              <label className="label">Phase du compteur</label>
+              <select name="phase" value={formData.phase} onChange={handleChange} className="input-field">
+                <option value="monophase">Monophasé — redevance 429 FCFA</option>
+                <option value="triphase">Triphasé — redevance 1 427 FCFA</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="label">Redevance</label>
+
+              {/* Étape 1 : est-ce la première recharge du mois ? */}
+              <div className="flex gap-2 mt-1">
+                <button
+                  type="button"
+                  onClick={() => setFormData(p => ({ ...p, nb_mois: 0 }))}
+                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${formData.nb_mois === 0 ? 'bg-gray-200 border-gray-400 text-gray-800' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'}`}
+                >
+                  Déjà rechargé ce mois
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setFormData(p => ({ ...p, nb_mois: p.nb_mois === 0 ? 1 : p.nb_mois }))}
+                  className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${formData.nb_mois > 0 ? 'bg-primary text-white border-primary' : 'bg-white border-gray-200 text-gray-500 hover:border-primary/50'}`}
+                >
+                  Première recharge du mois
+                </button>
+              </div>
+
+              {/* Étape 2 : si première recharge, depuis combien de mois ? */}
+              {formData.nb_mois > 0 && (
+                <div className="mt-3">
+                  <p className="text-xs text-gray-500 mb-1">Depuis combien de mois n'avez-vous pas rechargé ?</p>
+                  <div className="flex items-center gap-3">
+                    <input type="range" name="nb_mois" min={1} max={12} step={1} value={formData.nb_mois} onChange={handleChange} className="flex-1 accent-primary" />
+                    <span className="text-sm font-bold text-primary w-6 text-right">{formData.nb_mois}</span>
+                  </div>
+                  <p className="text-xs text-amber-700 mt-1 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1">
+                    Redevance = {REDEVANCE_BASE[formData.phase]} × {formData.nb_mois} mois = <strong>{REDEVANCE_BASE[formData.phase] * formData.nb_mois} FCFA</strong>
+                  </p>
+                </div>
+              )}
+
+              {formData.nb_mois === 0 && (
+                <p className="text-xs text-gray-400 mt-1">Redevance déjà prélevée ce mois — non déduite.</p>
+              )}
             </div>
 
             <button type="submit" disabled={loading} className="btn-primary w-full flex items-center justify-center gap-2">

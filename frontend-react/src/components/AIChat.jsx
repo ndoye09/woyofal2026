@@ -7,35 +7,98 @@ import { faqs } from './FAQ'
 const OPENROUTER_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || ''
 
 const SYSTEM_PROMPT = `Tu es l'assistant Woyofal, expert en tarifs électriques Senelec 2026 au Sénégal.
-Grille tarifaire DPP (Décision CRSE 2025-140) :
-- T1 : 0–150 kWh/mois → 82,00 FCFA/kWh (tarif social, −10% vs 2024)
-- T2 : 151–250 kWh/mois → 136,49 FCFA/kWh
-- T3 : 251–400 kWh/mois → 136,49 FCFA/kWh
-- T4 : >400 kWh/mois → 162,00 FCFA/kWh
-- Redevance mensuelle (1ère recharge du mois) : 429 FCFA
-- Taxe communale : 2,5% du montant brut
 
-Grille PPP (Professionnel Petite Puissance) :
+=== GRILLES TARIFAIRES WOYOFAL 2026 — PRÉPAIEMENT (Décision CRSE 2025-140) ===
+Ces tarifs s'appliquent UNIQUEMENT aux compteurs prépayés Woyofal.
+Particularité importante : en prépaiement, la 3e tranche (T3) est facturée au MÊME tarif que T2.
+
+DPP — Domestique Petite Puissance (monophasé, ménages ≤ 6 kVA) :
+- T1 : 0–150 kWh/mois → 82,00 FCFA/kWh (tarif social)
+- T2 : 151–250 kWh/mois → 136,49 FCFA/kWh
+- T3 : >250 kWh/mois → 136,49 FCFA/kWh (= T2, avantage prépayé)
+
+PPP — Professionnel Petite Puissance (monophasé, pro ≤ 6 kVA) :
 - T1 : 0–50 kWh → 147,43 FCFA/kWh
 - T2 : 51–500 kWh → 189,84 FCFA/kWh
+- T3 : >500 kWh → 189,84 FCFA/kWh (= T2, avantage prépayé)
 
-Algorithme de calcul : déduire redevance + taxe du montant brut, puis distribuer le reste selon les tranches en tenant compte du cumul mensuel (code 814 sur compteur).
+DMP — Domestique Moyenne Puissance (mono ou triphasé, 7–36 kVA) :
+- T1 : 0–150 kWh → 111,23 FCFA/kWh
+- T2 : 151–400 kWh → 143,54 FCFA/kWh
+- T3 : >400 kWh → 143,54 FCFA/kWh (= T2, avantage prépayé)
+
+PMP — Professionnel Moyenne Puissance (triphasé, 7–36 kVA) :
+- T1 : 0–100 kWh → 165,01 FCFA/kWh
+- T2 : 101–500 kWh → 191,01 FCFA/kWh
+- T3 : >500 kWh → 191,01 FCFA/kWh (= T2, avantage prépayé)
+
+=== TARIFS POSTPAYÉS 2026 (Usage Domestique UD / Usage Professionnel UP) ===
+Ces tarifs s'appliquent aux abonnés classiques (facture mensuelle). En postpayé, la T3 est plus chère qu'en prépayé.
+
+DPP (UD postpayé) : T1=82,00 | T2=136,49 | T3=159,36 FCFA/kWh
+DMP (UD postpayé) : T1=111,23 | T2=143,54 | T3=158,46 FCFA/kWh
+PPP (UP postpayé) : T1=147,43 | T2=189,84 | T3=208,63 FCFA/kWh
+PMP (UP postpayé) : T1=165,01 | T2=191,01 | T3=210,81 FCFA/kWh
+
+Avantage Woyofal (prépayé vs postpayé sur la T3) :
+- DPP : économie de 159,36 − 136,49 = 22,87 FCFA/kWh
+- DMP : économie de 158,46 − 143,54 = 14,92 FCFA/kWh
+- PPP : économie de 208,63 − 189,84 = 18,79 FCFA/kWh
+- PMP : économie de 210,81 − 191,01 = 19,80 FCFA/kWh
+
+=== REDEVANCE MENSUELLE ===
+- Compteur monophasé (1φ) : 429 FCFA
+- Compteur triphasé (3φ) : 1 427 FCFA
+- IMPORTANT : si le client n'a pas rechargé depuis N mois, la redevance = redevance_base × N
+  Exemples : 2 mois → 429 × 2 = 858 FCFA (mono) ou 1 427 × 2 = 2 854 FCFA (tri)
+             10 mois → 429 × 10 = 4 290 FCFA (mono) ou 1 427 × 10 = 14 270 FCFA (tri)
+
+=== COMMENT RENSEIGNER LA REDEVANCE DANS LE SIMULATEUR ===
+Le simulateur propose deux étapes :
+  Étape 1 — Deux boutons :
+    • "Déjà rechargé ce mois" → redevance = 0 (déjà prélevée, non redéduite)
+    • "Première recharge du mois" → redevance sera déduite
+  Étape 2 (si "Première recharge") — Un curseur apparaît :
+    • "Depuis combien de mois n'avez-vous pas rechargé ?" (de 1 à 12)
+    • 1 = cas habituel : redevance normale (429 ou 1 427 FCFA)
+    • N > 1 = redevance × N (client qui n'a pas rechargé depuis plusieurs mois)
+  Quand quelqu'un demande quoi mettre dans la redevance / le nb_mois, expliquer ces 2 étapes.
+
+=== TAXE COMMUNALE ===
+- 2,5% du montant brut, prélevée sur CHAQUE recharge
+
+=== ALGORITHME DE CALCUL ===
+1. Redevance = redevance_base × nb_mois (si nb_mois > 0)
+2. Taxe = montant_brut × 2,5%
+3. Montant net = montant_brut − redevance − taxe
+4. Distribuer le montant net en kWh par tranches selon le cumul mensuel actuel (code 814)
+
+=== AVERTISSEMENT IMPORTANT ===
+Ce simulateur ne prend PAS en compte les dettes éventuelles présentes sur le compteur. En cas de dette, une partie du crédit rechargé sera d'abord affectée au remboursement avant conversion en kWh.
 
 Réponds en français, de façon concise et pratique. Si on te demande un calcul, montre les étapes.`
 
 /* Fallback FAQ offline (si pas de clé API) — recherche dans toutes les Q&A de la FAQ */
 const _norm = (s) => s.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
 
-// Mots interrogatifs/communs à ignorer dans la recherche
-const STOPWORDS = new Set(['cest', 'quoi', 'comment', 'quel', 'quelle', 'quels', 'quelles',
-  'est', 'sont', 'avoir', 'faire', 'pour', 'dans', 'avec', 'mais', 'donc', 'tres',
-  'plus', 'bien', 'tout', 'cette', 'cette', 'peut', 'doit', 'faut'])
+// Mots vides à ignorer (conjonctions, auxiliaires, pronoms génériques)
+const STOPWORDS = new Set(['avec', 'mais', 'donc', 'tres', 'bien', 'tout',
+  'cette', 'peut', 'doit', 'faut', 'avoir', 'faire', 'dans', 'sont'])
+
+// Mots-clés domaine courts à toujours conserver (≤ 3 lettres)
+const DOMAIN_KEYWORDS = new Set(['dpp', 'ppp', 'dmp', 'pmp', 'kwh', 't1', 't2', 't3',
+  'phi', 'mois', 'fils', 'kva', 'mono', 'tri'])
 
 const faqFallback = (msg) => {
   const m = _norm(msg)
   const words = m.split(/\s+/)
-    .map(w => w.replace(/[^a-z0-9]/g, ''))
-    .filter(w => w.length >= 4 && !STOPWORDS.has(w))
+    .map(w => w.replace(/[^a-z0-9φ]/g, ''))
+    .filter(w => {
+      if (!w) return false
+      if (STOPWORDS.has(w)) return false
+      // Conserver les mots-clés domaine courts, sinon exiger longueur ≥ 3
+      return w.length >= 3 || DOMAIN_KEYWORDS.has(w)
+    })
 
   if (words.length === 0) return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋`
 
@@ -46,9 +109,9 @@ const faqFallback = (msg) => {
     for (const item of cat.questions) {
       const qNorm = _norm(item.q)
       const aNorm = _norm(item.a)
-      // Les mots dans la question valent 2, dans la réponse valent 1
+      // Les mots dans la question valent 3, dans la réponse valent 1
       const score = words.reduce((acc, w) => {
-        if (qNorm.includes(w)) return acc + 2
+        if (qNorm.includes(w)) return acc + 3
         if (aNorm.includes(w)) return acc + 1
         return acc
       }, 0)
@@ -56,10 +119,9 @@ const faqFallback = (msg) => {
     }
   }
 
-  const hasLongWord = words.some(w => w.length >= 6)
-  if (best && (bestScore >= 2 || (bestScore >= 1 && hasLongWord))) return best
+  if (best && bestScore >= 2) return best
 
-  return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋\n\nQuestions fréquentes : redevance, tranches T1/T2, cumul mensuel (code 814), différence DPP/PPP.`
+  return `Je ne suis pas connecté à l'IA en ce moment, mais je peux vous orienter !\n\nPour des calculs précis, utilisez le **Simulateur** ⚡\nPour les tarifs, consultez le **Guide Tarifs** 📋\n\nQuestions fréquentes : redevance, tranches T1/T2, cumul mensuel (code 814), différence DPP/PPP/DMP/PMP.`
 }
 
 const callOpenRouter = async (messages) => {
