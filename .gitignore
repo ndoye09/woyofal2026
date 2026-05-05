@@ -57,3 +57,4 @@ htmlcov/
 
 # Keep only samples
 !data/raw/sample_*.csv
+.vercel

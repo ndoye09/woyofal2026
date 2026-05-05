@@ -60,6 +60,16 @@ const respond = (res, statusCode, data) => {
   res.end(JSON.stringify(data));
 };
 
+const respondHTML = (res, html) => {
+  res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+  res.end(html);
+};
+
+const respondRaw = (res, contentType, body) => {
+  res.writeHead(200, { 'Content-Type': contentType });
+  res.end(body);
+};
+
 const simulateRecharge = (montant, typeCompteur = 'DPP', cumulActuel = 0, avecRedevance = true) => {
   const tarifs = TARIFS[typeCompteur];
   const redevance = avecRedevance ? 429 : 0;
@@ -360,6 +370,140 @@ const server = http.createServer(async (req, res) => {
   // ─── Health Check ─────────────────────────────────────────────────────────
   if (pathname === '/api/health' && req.method === 'GET') {
     return respond(res, 200, { status: 'ok', timestamp: new Date().toISOString() });
+  }
+
+  // ─── Accueil ───────────────────────────────────────────────────────────────
+  if (pathname === '/' && req.method === 'GET') {
+    const html = `<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#1a1a2e"/>
+  <meta name="description" content="Woyofal Data Platform – API de simulation de recharge Sénelec"/>
+  <title>Woyofal API</title>
+  <link rel="manifest" href="/manifest.json"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh; color: #e0e0e0;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 2rem 1rem;
+    }
+    .badge {
+      background: #22c55e; color: #052e16; font-size: .75rem;
+      font-weight: 700; padding: .2rem .7rem; border-radius: 999px;
+      letter-spacing: .05em; margin-bottom: 1.5rem;
+    }
+    h1 { font-size: 2.2rem; font-weight: 800; color: #fff; text-align: center; }
+    h1 span { color: #facc15; }
+    .subtitle { color: #94a3b8; margin-top: .5rem; text-align: center; font-size: .95rem; }
+    .version { color: #475569; font-size: .8rem; margin-top: .25rem; }
+    .grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1rem; margin-top: 2.5rem; width: 100%; max-width: 900px;
+    }
+    .card {
+      background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px; padding: 1rem 1.25rem;
+      display: flex; align-items: center; gap: .85rem;
+      transition: background .2s, transform .15s;
+      cursor: default;
+    }
+    .card:hover { background: rgba(255,255,255,.1); transform: translateY(-2px); }
+    .method {
+      font-size: .7rem; font-weight: 700; padding: .25rem .55rem;
+      border-radius: 6px; flex-shrink: 0; letter-spacing: .04em;
+    }
+    .get  { background: #166534; color: #86efac; }
+    .post { background: #1e3a8a; color: #93c5fd; }
+    .path { font-size: .85rem; color: #e2e8f0; font-family: monospace; word-break: break-all; }
+    .footer { margin-top: 3rem; color: #334155; font-size: .8rem; text-align: center; }
+    .ping { display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+            background: #22c55e; margin-right: .4rem;
+            animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.5;transform:scale(.8)} }
+    #install-btn {
+      display: none; margin-top: 1.5rem;
+      background: #facc15; color: #1a1a2e; border: none;
+      padding: .6rem 1.4rem; border-radius: 8px; font-weight: 700;
+      cursor: pointer; font-size: .9rem;
+    }
+    #install-btn:hover { background: #fbbf24; }
+  </style>
+</head>
+<body>
+  <div class="badge"><span class="ping"></span>RUNNING</div>
+  <h1>⚡ <span>Woyofal</span> API</h1>
+  <p class="subtitle">Plateforme de simulation de recharge Sénelec</p>
+  <p class="version">v1.0.0 &nbsp;·&nbsp; Mock Server &nbsp;·&nbsp; Port 5000</p>
+  <button id="install-btn">📲 Installer l'application</button>
+  <div class="grid">
+    <div class="card"><span class="method post">POST</span><span class="path">/api/auth/login</span></div>
+    <div class="card"><span class="method post">POST</span><span class="path">/api/auth/register</span></div>
+    <div class="card"><span class="method get">GET</span><span class="path">/api/auth/simulations</span></div>
+    <div class="card"><span class="method post">POST</span><span class="path">/api/simulation/recharge</span></div>
+    <div class="card"><span class="method get">GET</span><span class="path">/api/simulation/tarifs</span></div>
+    <div class="card"><span class="method post">POST</span><span class="path">/api/simulation/recommandation</span></div>
+    <div class="card"><span class="method get">GET</span><span class="path">/api/consommation/kpis</span></div>
+    <div class="card"><span class="method get">GET</span><span class="path">/api/consommation/evolution</span></div>
+    <div class="card"><span class="method post">POST</span><span class="path">/api/ai/chat</span></div>
+    <div class="card"><span class="method get">GET</span><span class="path">/api/health</span></div>
+  </div>
+  <p class="footer">© 2026 Woyofal Data Platform</p>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault(); deferredPrompt = e;
+      document.getElementById('install-btn').style.display = 'inline-block';
+    });
+    document.getElementById('install-btn').addEventListener('click', async () => {
+      if (!deferredPrompt) return;
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') document.getElementById('install-btn').style.display = 'none';
+      deferredPrompt = null;
+    });
+  </script>
+</body>
+</html>`;
+    return respondHTML(res, html);
+  }
+
+  // ─── PWA Manifest ─────────────────────────────────────────────────────────
+  if (pathname === '/manifest.json' && req.method === 'GET') {
+    return respond(res, 200, {
+      name: 'Woyofal API',
+      short_name: 'Woyofal',
+      description: 'Plateforme de simulation de recharge Sénelec',
+      start_url: '/',
+      display: 'standalone',
+      background_color: '#1a1a2e',
+      theme_color: '#1a1a2e',
+      icons: [
+        { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>", sizes: '192x192', type: 'image/svg+xml' },
+        { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>", sizes: '512x512', type: 'image/svg+xml' }
+      ]
+    });
+  }
+
+  // ─── Service Worker ────────────────────────────────────────────────────────
+  if (pathname === '/sw.js' && req.method === 'GET') {
+    return respondRaw(res, 'application/javascript', `
+const CACHE = 'woyofal-v1';
+const ASSETS = ['/'];
+self.addEventListener('install', e => e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS))));
+self.addEventListener('fetch', e => {
+  if (e.request.url.includes('/api/')) return;
+  e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+});
+    `.trim());
   }
 
   // 404
