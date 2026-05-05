@@ -229,7 +229,7 @@ const CalculateurInverse = ({ typeCompteur }) => {
 
 const SimulateurRecharge = () => {
   const { isAuth } = useAuth()
-  const [mode, setMode] = useState('inverse') // 'direct' | 'inverse'
+  const [mode, setMode] = useState('direct') // 'direct' | 'inverse'
   const [formData, setFormData] = useState({
     montant_brut: 10000,
     cumul_actuel: 0,
@@ -294,17 +294,17 @@ const SimulateurRecharge = () => {
       <div className="mb-8 px-0">
         <div className="bg-slate-100 rounded-2xl p-1 flex flex-col sm:flex-row gap-1 w-full sm:w-auto sm:max-w-fit sm:mx-auto">
           <button
+            onClick={() => setMode('direct')}
+            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
+          >
+            <Zap className="w-4 h-4" /> FCFA → kWh
+          </button>
+          <button
             onClick={() => setMode('inverse')}
-            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
+            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-violet-600 text-white shadow-[0_0_24px_rgba(139,92,246,0.4)]' : 'text-slate-600 hover:bg-slate-200'}`}
           >
             <ArrowLeftRight className="w-4 h-4" /> kWh → FCFA
             <span className="bg-accent text-navy text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Exclusif</span>
-          </button>
-          <button
-            onClick={() => setMode('direct')}
-            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-slate-600 text-white' : 'text-slate-600 hover:bg-slate-200'}`}
-          >
-            <Zap className="w-4 h-4" /> FCFA → kWh
           </button>
         </div>
       </div>
