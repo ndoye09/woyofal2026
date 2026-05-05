@@ -141,11 +141,48 @@ const CalculateurInverse = ({ typeCompteur }) => {
         <label className="label">kWh souhaités</label>
         <input type="number" value={kwhVoulus} onChange={e => setKwhVoulus(e.target.value)} min="1" step="1" className="input-field" />
       </div>
+
+      {/* ─── Boutons Première / Déjà rechargé ─── */}
+      <div>
+        <label className="label">Redevance</label>
+        <div className="flex gap-2 mt-1">
+          <button
+            type="button"
+            onClick={() => setNbMois(nbMois === 0 ? 1 : nbMois)}
+            className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${nbMois > 0 ? 'bg-primary text-white border-primary' : 'bg-white border-gray-200 text-gray-500 hover:border-primary/50'}`}
+          >
+            Première recharge du mois
+          </button>
+          <button
+            type="button"
+            onClick={() => setNbMois(0)}
+            className={`flex-1 py-2 rounded-xl text-sm font-semibold border transition ${nbMois === 0 ? 'bg-gray-200 border-gray-400 text-gray-800' : 'bg-white border-gray-200 text-gray-500 hover:border-gray-300'}`}
+          >
+            Déjà rechargé ce mois
+          </button>
+        </div>
+        {nbMois > 0 && (
+          <div className="mt-3">
+            <p className="text-xs text-gray-500 mb-1">Depuis combien de mois n'avez-vous pas rechargé ?</p>
+            <div className="flex items-center gap-3">
+              <input type="range" min={1} max={12} step={1} value={nbMois} onChange={e => setNbMois(+e.target.value)} className="flex-1 accent-primary" />
+              <span className="text-sm font-bold text-primary w-6 text-right">{nbMois}</span>
+            </div>
+            <p className="text-xs text-amber-700 mt-1 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1">
+              Redevance = {REDEVANCE_BASE[phase]} × {nbMois} mois = <strong>{REDEVANCE_BASE[phase] * nbMois} FCFA</strong>
+            </p>
+          </div>
+        )}
+        {nbMois === 0 && (
+          <p className="text-xs text-gray-400 mt-1">Redevance déjà prélevée ce mois — non déduite.</p>
+        )}
+      </div>
+
       {nbMois === 0 && (
       <div>
         <div className="flex justify-between items-baseline mb-2">
           <label className="label">Cumul mensuel actuel (kWh)</label>
-          <span className="text-xs text-blue-600 font-semibold">À vérifier au compteur avec le code : 814</span>
+          <span className="text-xs text-blue-600 font-semibold">Code compteur : 814</span>
         </div>
         <input type="number" value={cumulActuel} onChange={e => setCumulActuel(e.target.value)} min="0" step="0.1" className="input-field" />
       </div>
@@ -156,18 +193,6 @@ const CalculateurInverse = ({ typeCompteur }) => {
           <option value="monophase">Monophasé — redevance 429 FCFA</option>
           <option value="triphase">Triphasé — redevance 1 427 FCFA</option>
         </select>
-      </div>
-      <div>
-        <label className="label">Mois écoulés depuis la dernière recharge <span className="text-gray-400 font-normal">(0 = même mois)</span></label>
-        <div className="flex items-center gap-3">
-          <input type="range" min={0} max={12} step={1} value={nbMois} onChange={e => setNbMois(+e.target.value)} className="flex-1 accent-primary" />
-          <span className="text-sm font-bold text-primary w-6 text-right">{nbMois}</span>
-        </div>
-        {nbMois > 0 && (
-          <p className="text-xs text-amber-700 mt-1 bg-amber-50 border border-amber-200 rounded-lg px-2 py-1">
-            Redevance = {REDEVANCE_BASE[phase]} × {nbMois} mois = <strong>{REDEVANCE_BASE[phase] * nbMois} FCFA</strong>
-          </p>
-        )}
       </div>
       {result && (
         <div className="space-y-3 mt-4">
@@ -204,7 +229,7 @@ const CalculateurInverse = ({ typeCompteur }) => {
 
 const SimulateurRecharge = () => {
   const { isAuth } = useAuth()
-  const [mode, setMode] = useState('direct') // 'direct' | 'inverse'
+  const [mode, setMode] = useState('inverse') // 'direct' | 'inverse'
   const [formData, setFormData] = useState({
     montant_brut: 10000,
     cumul_actuel: 0,
@@ -269,17 +294,17 @@ const SimulateurRecharge = () => {
       <div className="mb-8 px-0">
         <div className="bg-slate-100 rounded-2xl p-1 flex flex-col sm:flex-row gap-1 w-full sm:w-auto sm:max-w-fit sm:mx-auto">
           <button
-            onClick={() => setMode('direct')}
-            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
-          >
-            <Zap className="w-4 h-4" /> FCFA → kWh
-          </button>
-          <button
             onClick={() => setMode('inverse')}
-            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-violet-600 text-white shadow-[0_0_24px_rgba(139,92,246,0.4)]' : 'text-slate-600 hover:bg-slate-200'}`}
+            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'inverse' ? 'bg-primary text-white shadow-glow' : 'text-slate-600 hover:bg-slate-200'}`}
           >
             <ArrowLeftRight className="w-4 h-4" /> kWh → FCFA
             <span className="bg-accent text-navy text-[10px] px-2 py-0.5 rounded-full font-bold uppercase">Exclusif</span>
+          </button>
+          <button
+            onClick={() => setMode('direct')}
+            className={`flex items-center justify-center gap-2 px-4 py-3 sm:py-2.5 rounded-xl font-semibold text-sm transition ${mode === 'direct' ? 'bg-slate-600 text-white' : 'text-slate-600 hover:bg-slate-200'}`}
+          >
+            <Zap className="w-4 h-4" /> FCFA → kWh
           </button>
         </div>
       </div>
