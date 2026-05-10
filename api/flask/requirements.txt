@@ -1,0 +1,11 @@
+flask
+flask-cors
+flask-limiter
+flask-jwt-extended
+bcrypt
+requests
+psycopg2-binary
+pymongo
+redis
+gunicorn
+python-dotenv

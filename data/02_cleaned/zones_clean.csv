@@ -1,0 +1,24 @@
+zone_id,region,commune,population,type_zone,densite
+1,Dakar,Dakar Plateau,150000,urbain,très_elevee
+2,Dakar,Pikine,300000,urbain,très_elevee
+3,Dakar,Guédiawaye,280000,urbain,très_elevee
+4,Dakar,Rufisque,180000,urbain,elevee
+5,Thiès,Thiès,250000,urbain,elevee
+6,Thiès,Mbour,120000,urbain,moyenne
+7,Thiès,Tivaouane,45000,semi_urbain,moyenne
+8,Diourbel,Diourbel,100000,urbain,moyenne
+9,Diourbel,Touba,750000,urbain,très_elevee
+10,Diourbel,Mbacké,85000,semi_urbain,moyenne
+11,Saint-Louis,Saint-Louis,180000,urbain,elevee
+12,Saint-Louis,Richard Toll,65000,semi_urbain,faible
+13,Kaolack,Kaolack,200000,urbain,elevee
+14,Kaolack,Nioro du Rip,40000,semi_urbain,faible
+15,Louga,Louga,90000,urbain,moyenne
+16,Fatick,Fatick,35000,semi_urbain,faible
+17,Kolda,Kolda,70000,urbain,moyenne
+18,Tambacounda,Tambacounda,85000,urbain,faible
+19,Ziguinchor,Ziguinchor,160000,urbain,elevee
+20,Matam,Matam,45000,semi_urbain,faible
+21,Kaffrine,Kaffrine,50000,semi_urbain,faible
+22,Kédougou,Kédougou,25000,rural,très_faible
+23,Sédhiou,Sédhiou,35000,semi_urbain,faible

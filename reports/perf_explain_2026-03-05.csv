@@ -1,0 +1,6 @@
+﻿test,execution_time_ms,notes
+simple_queries,27.212,aggregate simple queries (EXPLAIN ANALYZE)
+aggregations_by_month,59.074,group by month/year
+top_users,68.508,top users by consumption
+complex_joins,154.806,joins across fact and dimensions
+analytic_complex,648.209,heavy analytic aggregation

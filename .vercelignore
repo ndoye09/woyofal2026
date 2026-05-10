@@ -1,0 +1,17 @@
+﻿*.pdf
+*.tex
+*.zip
+*.docx
+*.exe
+data/
+notebooks/
+logs/
+models/
+reports/
+scripts/
+dags/
+woyofal_dbt/
+docs/
+sql/
+tests/
+apps/

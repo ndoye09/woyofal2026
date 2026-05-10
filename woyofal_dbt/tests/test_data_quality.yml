@@ -1,0 +1,28 @@
+version: 2
+
+models:
+  - name: fact_consumption
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - date_id
+            - user_id
+      - cumul_croissant:
+          column_name: conso_cumul_mois
+          user_id_column: user_id
+          date_column: date_id
+      - tranche_coherente:
+          cumul_column: conso_cumul_mois
+          tranche_column: tranche
+      - no_future_dates:
+          date_column: created_at
+
+  - name: fact_recharges
+    tests:
+      - montant_net_valide:
+          montant_brut_column: montant_brut
+          montant_net_column: montant_net
+      - dbt_utils.expression_is_true:
+          expression: "kwh_obtenus > 0"
+      - dbt_utils.expression_is_true:
+          expression: "ABS(kwh_obtenus - (kwh_t1 + kwh_t2 + kwh_t3)) < 0.01"
