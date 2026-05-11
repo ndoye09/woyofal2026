@@ -3,6 +3,7 @@ import { Calculator, AlertCircle, TrendingUp, Zap, ArrowLeftRight, Save, CheckCi
 import { useAuth } from '../context/AuthContext'
 
 /* ── Calcul local (offline) — miroir de api-mock-server ── */
+// Updated for deployment
 const TARIFS_SIM = {
   DPP: { 1: { prix: 82.00,  max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
   PPP: { 1: { prix: 147.43, max: 50  }, 2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } },
