@@ -44,7 +44,7 @@ const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, ph
       montant_net: montantReste,
       montant_minimum_require: montantBrutMinimum,
       montant_manquant: montantManquant,
-      details: `Il manque ${montantManquant} FCFA. Vous avez rechargé ${montant} FCFA, mais vous devez recharger un minimum de ${montantBrutMinimum} FCFA pour obtenir 1 kWh.`,
+      details: `Il te manque ${montantManquant} FCFA. Tu as rechargé ${montant} FCFA, mais tu dois recharger un minimum de ${montantBrutMinimum} FCFA pour obtenir 1 kWh.`,
       montant_brut: montant,
       montant_redevance: redevance,
       nb_mois_redevance: nbMois,
