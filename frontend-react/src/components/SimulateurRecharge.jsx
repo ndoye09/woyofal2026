@@ -3,7 +3,6 @@ import { Calculator, AlertCircle, TrendingUp, Zap, ArrowLeftRight, Save, CheckCi
 import { useAuth } from '../context/AuthContext'
 
 /* ── Calcul local (offline) — miroir de api-mock-server ── */
-// Updated for deployment
 const TARIFS_SIM = {
   DPP: { 1: { prix: 82.00,  max: 150 }, 2: { prix: 136.49, max: 250 }, 3: { prix: 136.49, max: null } },
   PPP: { 1: { prix: 147.43, max: 50  }, 2: { prix: 189.84, max: 500 }, 3: { prix: 189.84, max: null } },
@@ -22,39 +21,6 @@ const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, ph
   let cumul = cumulActuel
   let kwhTotal = 0
   const detailTranches = {}
-
-  // Calculer le montant minimum pour obtenir 1 kWh
-  let minMontantPour1kwh = 0
-  if (montantReste > 0) {
-    // Déterminer la première tranche applicable
-    let trancheApplicable = 1
-    if (cumul >= 250) trancheApplicable = 3
-    else if (cumul >= 150) trancheApplicable = 2
-    minMontantPour1kwh = tarifs[trancheApplicable].prix
-  }
-
-  // Vérifier si montant insuffisant
-  if (montantReste <= 0) {
-    const montantBrutMinimum = Math.ceil(((minMontantPour1kwh + (nbMois > 0 ? redevance : 0)) / (1 - 0.025)) / 100) * 100
-    const montantManquant = montantBrutMinimum - montant
-    
-    return {
-      error: true,
-      message: `Montant insuffisant pour obtenir 1 kWh`,
-      montant_insuffisant: true,
-      montant_net: montantReste,
-      montant_minimum_require: montantBrutMinimum,
-      montant_manquant: montantManquant,
-      details: `Il te manque ${montantManquant} FCFA. Tu as rechargé ${montant} FCFA, mais tu dois recharger un minimum de ${montantBrutMinimum} FCFA pour obtenir 1 kWh.`,
-      montant_brut: montant,
-      montant_redevance: redevance,
-      nb_mois_redevance: nbMois,
-      phase_compteur: phase,
-      taxe,
-      type_compteur: typeCompteur,
-      timestamp: new Date().toISOString()
-    }
-  }
 
   for (let t = 1; t <= 3; t++) {
     if (montantReste <= 0) break
@@ -80,7 +46,6 @@ const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, ph
 
   const trancheFinal = cumul <= 150 ? 1 : cumul <= 250 ? 2 : 3
   return {
-    error: false,
     montant_brut: montant,
     montant_redevance: redevance,
     nb_mois_redevance: nbMois,
@@ -99,7 +64,6 @@ const simulerRechargeLocal = (montant, typeCompteur = 'DPP', cumulActuel = 0, ph
 
 /* ── Sauvegarder une recharge dans localStorage ── */
 const sauvegarderRecharge = (data, typeCompteur) => {
-  if (data.error) return // Ne pas sauvegarder les erreurs
   const entree = {
     date: new Date().toISOString(),
     montant_brut: data.montant_brut,
@@ -499,90 +463,49 @@ const SimulateurRecharge = () => {
 
           {result ? (
             <div className="space-y-4">
-              {result.error && result.montant_insuffisant ? (
-                <>
-                  <div className="bg-red-50 p-6 rounded-2xl border-2 border-red-300">
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="w-6 h-6 text-red-600 mt-1 flex-shrink-0" />
-                      <div>
-                        <div className="text-lg font-bold text-red-800 mb-2">Montant insuffisant</div>
-                        <p className="text-sm text-red-700 mb-4">
-                          {result.details}
-                        </p>
-                        <div className="bg-white p-4 rounded-xl border border-red-200">
-                          <div className="text-xs text-red-600 font-medium mb-1"> Montant minimum à recharger :</div>
-                          <div className="text-2xl font-bold text-red-800">{result.montant_minimum_require.toLocaleString()} FCFA</div>
-                          <p className="text-xs text-red-600 mt-2">
-                            Cela vous permettra d'obtenir 1 kWh avec les conditions actuelles.
-                          </p>
-                        </div>
-                      </div>
+              <div className="bg-gradient-to-r from-primary/10 to-blue-100 p-6 rounded-2xl border border-primary/20">
+                <div className="text-sm text-primary font-medium mb-1">kWh Obtenus</div>
+                <div className="text-4xl font-bold font-display gradient-text">{result.kwh_obtenus.toFixed(2)} kWh</div>
+                <div className="text-sm text-slate-600 mt-2">Prix moyen : {(result.montant_net / result.kwh_obtenus).toFixed(2)} FCFA/kWh</div>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div className="text-sm font-semibold text-slate-700 mb-2">Déductions</div>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between"><span className="text-gray-600">Montant brut</span><span className="font-semibold">{result.montant_brut.toLocaleString()} FCFA</span></div>
+                  {result.montant_redevance > 0 && (<div className="flex justify-between text-red-600"><span>- Redevance</span><span>{result.montant_redevance} FCFA</span></div>)}
+                  <div className="flex justify-between text-red-600"><span>- Taxe communale (2.5%)</span><span>{result.taxe.toFixed(0)} FCFA</span></div>
+                  <div className="flex justify-between font-bold text-success border-t pt-1"><span>Montant net</span><span>{result.montant_net.toLocaleString()} FCFA</span></div>
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                <div className="text-sm font-semibold text-slate-700 mb-3">⚡ Détail par Tranche</div>
+                <div className="space-y-2">
+                  {Object.entries(result.detail_tranches).map(([tranche, data]) => (
+                    <div key={tranche} className="bg-white p-3 rounded-xl border-l-4 border-primary">
+                      <div className="flex justify-between items-center mb-1"><span className="font-semibold text-slate-800">{tranche}</span><span className="text-lg font-bold text-primary">{data.kwh.toFixed(2)} kWh</span></div>
+                      <div className="text-xs text-gray-600 flex justify-between"><span>Prix : {data.prix_unitaire} FCFA/kWh</span><span>Total : {data.montant.toLocaleString()} FCFA</span></div>
                     </div>
-                  </div>
+                  ))}
+                </div>
+              </div>
 
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <div className="text-sm font-semibold text-slate-700 mb-2">Détail des déductions</div>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between"><span className="text-gray-600">Montant brut</span><span className="font-semibold">{result.montant_brut.toLocaleString()} FCFA</span></div>
-                      {result.montant_redevance > 0 && (<div className="flex justify-between text-red-600"><span>- Redevance</span><span>{result.montant_redevance} FCFA</span></div>)}
-                      <div className="flex justify-between text-red-600"><span>- Taxe communale (2.5%)</span><span>{result.taxe.toFixed(0)} FCFA</span></div>
-                      <div className="flex justify-between font-bold border-t pt-1" style={{color: result.montant_net < 0 ? '#ef4444' : '#10b981'}}><span>Montant disponible</span><span>{result.montant_net.toLocaleString()} FCFA</span></div>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="bg-gradient-to-r from-primary/10 to-blue-100 p-6 rounded-2xl border border-primary/20">
-                    <div className="text-sm text-primary font-medium mb-1">kWh Obtenus</div>
-                    <div className="text-4xl font-bold font-display gradient-text">{result.kwh_obtenus.toFixed(2)} kWh</div>
-                    <div className="text-sm text-slate-600 mt-2">Prix moyen : {(result.montant_net / result.kwh_obtenus).toFixed(2)} FCFA/kWh</div>
-                  </div>
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-red-50 p-3 rounded-xl border border-red-100"><div className="text-xs text-primary mb-1">Cumul Avant</div><div className="text-lg sm:text-xl font-bold font-display text-navy">{result.cumul_initial.toFixed(1)} kWh</div></div>
+                <div className="bg-success/10 p-3 rounded-xl border border-success/20"><div className="text-xs text-success mb-1">Cumul Final</div><div className="text-lg sm:text-xl font-bold font-display text-success">{result.cumul_final.toFixed(1)} kWh</div></div>
+              </div>
 
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <div className="text-sm font-semibold text-slate-700 mb-2">Déductions</div>
-                    <div className="space-y-1 text-sm">
-                      <div className="flex justify-between"><span className="text-gray-600">Montant brut</span><span className="font-semibold">{result.montant_brut.toLocaleString()} FCFA</span></div>
-                      {result.montant_redevance > 0 && (<div className="flex justify-between text-red-600"><span>- Redevance</span><span>{result.montant_redevance} FCFA</span></div>)}
-                      <div className="flex justify-between text-red-600"><span>- Taxe communale (2.5%)</span><span>{result.taxe.toFixed(0)} FCFA</span></div>
-                      <div className="flex justify-between font-bold text-success border-t pt-1"><span>Montant net</span><span>{result.montant_net.toLocaleString()} FCFA</span></div>
-                    </div>
-                  </div>
-
-                  <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    <div className="text-sm font-semibold text-slate-700 mb-3">⚡ Détail par Tranche</div>
-                    <div className="space-y-2">
-                      {Object.entries(result.detail_tranches).map(([tranche, data]) => (
-                        <div key={tranche} className="bg-white p-3 rounded-xl border-l-4 border-primary">
-                          <div className="flex justify-between items-center mb-1"><span className="font-semibold text-slate-800">{tranche}</span><span className="text-lg font-bold text-primary">{data.kwh.toFixed(2)} kWh</span></div>
-                          <div className="text-xs text-gray-600 flex justify-between"><span>Prix : {data.prix_unitaire} FCFA/kWh</span><span>Total : {data.montant.toLocaleString()} FCFA</span></div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="bg-red-50 p-3 rounded-xl border border-red-100"><div className="text-xs text-primary mb-1">Cumul Avant</div><div className="text-lg sm:text-xl font-bold font-display text-navy">{result.cumul_initial.toFixed(1)} kWh</div></div>
-                    <div className="bg-success/10 p-3 rounded-xl border border-success/20"><div className="text-xs text-success mb-1">Cumul Final</div><div className="text-lg sm:text-xl font-bold font-display text-success">{result.cumul_final.toFixed(1)} kWh</div></div>
-                  </div>
-
-                  <div className={`p-4 rounded-2xl border-2 text-center ${getTrancheColor(result.tranche_finale)}`}>
-                    <div className="text-sm font-medium mb-1">Vous serez en</div>
-                    <div className="text-2xl font-bold">Tranche {result.tranche_finale}</div>
-                    {result.tranche_finale === 1 && (<div className="text-xs mt-1">✅ Tarif social préservé</div>)}
-                    {result.tranche_finale > 1 && (<div className="text-xs mt-1">⚠️ Hors tarif social</div>)}
-                  </div>
-                </>
-              )}
+              <div className={`p-4 rounded-2xl border-2 text-center ${getTrancheColor(result.tranche_finale)}`}>
+                <div className="text-sm font-medium mb-1">Vous serez en</div>
+                <div className="text-2xl font-bold">Tranche {result.tranche_finale}</div>
+                {result.tranche_finale === 1 && (<div className="text-xs mt-1">✅ Tarif social préservé</div>)}
+                {result.tranche_finale > 1 && (<div className="text-xs mt-1">⚠️ Hors tarif social</div>)}
+              </div>
 
               {/* ── Bouton Sauvegarder ── */}
               <div className="flex flex-wrap items-center gap-3 pt-2">
-                {result.error ? (
-                  <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl border-2 border-red-200 bg-red-50 text-red-400 text-sm cursor-not-allowed" title="Impossible de sauvegarder une simulation en erreur">
-                    <Save className="w-4 h-4" />
-                    <span>Sauvegarder dans l'historique</span>
-                    <span className="ml-1 text-xs bg-red-200 text-red-600 px-2 py-0.5 rounded-full font-medium">Simulation invalide</span>
-                  </div>
-                ) : isAuth ? (
+                {isAuth ? (
                   <button
                     onClick={() => {
                       sauvegarderRecharge(result, formData.type_compteur)
